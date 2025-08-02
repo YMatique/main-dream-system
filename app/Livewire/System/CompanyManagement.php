@@ -3,6 +3,9 @@
 namespace App\Livewire\System;
 
 use Livewire\Component;
+use Livewire\WithPagination;
+use Illuminate\Validation\Rule;
+use App\Models\System\Company;
 
 class CompanyManagement extends Component
 {
