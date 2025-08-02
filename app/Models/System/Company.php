@@ -52,7 +52,7 @@ class Company extends Model
         return $this->hasMany(\App\Models\Company\Employee::class);
     }
 
-    public function clients(): HasMany
+    public function clients()
     {
         return $this->hasMany(\App\Models\Company\Client::class);
     }

@@ -4,6 +4,7 @@ use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\System\CompanyController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,5 +21,25 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
+
+
+Route::prefix('system')
+    ->middleware(['auth', 'verified', 'role:super_admin'])
+    ->name('system.')
+    ->group(function () {
+        
+        // Dashboard do Sistema
+        Route::get('/dashboard', function () {
+            return view('system.dashboard');
+        })->name('dashboard');
+        
+        // Gestão de Empresas
+        Route::get('/companies', [CompanyController::class, 'index'])->name('companies');
+        Route::get('/companies/{id}', [CompanyController::class, 'show'])->name('companies.show');
+        
+        // Outras rotas do sistema serão adicionadas aqui...
+        // Route::get('/plans', [PlanController::class, 'index'])->name('plans');
+        // Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions');
+    });
 
 require __DIR__.'/auth.php';

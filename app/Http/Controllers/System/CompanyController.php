@@ -11,7 +11,7 @@ class CompanyController extends Controller
     /**
      * Display the company management page.
      */
-    public function index(): View
+    public function index()
     {
         return view('livewire.system.company-management');
     }
@@ -19,7 +19,7 @@ class CompanyController extends Controller
     /**
      * Show company details.
      */
-    public function show(int $id): View
+    public function show(int $id)
     {
         return view('livewire.system.company-details', compact('id'));
     }
