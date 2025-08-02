@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\System\CompanyController;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
+use App\Livewire\System\SubscriptionManagement;
 
 Route::get('/', function () {
     return view('welcome');
@@ -41,7 +42,7 @@ Route::prefix('system')
         
         // Outras rotas do sistema serão adicionadas aqui...
         Route::get('/plans', PlanManagement::class)->name('plans');
-        // Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions');
+        Route::get('/subscriptions', SubscriptionManagement::class)->name('subscriptions');
     });
 
 require __DIR__.'/auth.php';
