@@ -104,4 +104,216 @@ class SubscriptionManagement extends Component
         return view('livewire.system.subscription-management',compact('subscriptions', 'companies', 'plans'))
             ->layout('layouts.system');
     }
+
+    public function openModal()
+    {
+        $this->resetForm();
+        $this->showModal = true;
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->resetForm();
+        $this->resetValidation();
+    }
+
+    public function resetForm()
+    {
+        $this->editingId = null;
+        $this->company_id = '';
+        $this->plan_id = '';
+        $this->starts_at = now()->format('Y-m-d');
+        $this->ends_at = '';
+        $this->billing_cycle = 'monthly';
+        $this->amount_paid_mzn = '';
+        $this->amount_paid_usd = '';
+        $this->payment_currency = 'MZN';
+        $this->notes = '';
+    }
+
+    public function updatedPlanId()
+    {
+        if ($this->plan_id) {
+            $plan = Plan::find($this->plan_id);
+            if ($plan) {
+                $this->amount_paid_mzn = $plan->price_mzn;
+                $this->amount_paid_usd = $plan->price_usd;
+                $this->billing_cycle = $plan->billing_cycle;
+                $this->calculateEndDate();
+            }
+        }
+    }
+
+    public function updatedStartsAt()
+    {
+        $this->calculateEndDate();
+    }
+
+    public function updatedBillingCycle()
+    {
+        $this->calculateEndDate();
+    }
+
+    private function calculateEndDate()
+    {
+        if ($this->starts_at && $this->billing_cycle) {
+            $startDate = Carbon::parse($this->starts_at);
+            $endDate = Subscription::calculateEndDate($startDate, $this->billing_cycle);
+            $this->ends_at = $endDate->format('Y-m-d');
+        }
+    }
+
+    public function save()
+    {
+        $this->validate();
+
+        try {
+            $data = [
+                'company_id' => $this->company_id,
+                'plan_id' => $this->plan_id,
+                'starts_at' => $this->starts_at,
+                'ends_at' => $this->ends_at,
+                'billing_cycle' => $this->billing_cycle,
+                'amount_paid_mzn' => $this->amount_paid_mzn,
+                'amount_paid_usd' => $this->amount_paid_usd,
+                'payment_currency' => $this->payment_currency,
+                'notes' => $this->notes,
+            ];
+
+            if ($this->editingId) {
+                $subscription = Subscription::findOrFail($this->editingId);
+                $subscription->update($data);
+                session()->flash('message', 'Subscrição atualizada com sucesso!');
+            } else {
+                $subscription = Subscription::create($data);
+                $subscription->storePlanSnapshot();
+                session()->flash('message', 'Subscrição criada com sucesso!');
+            }
+
+            $this->closeModal();
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erro ao salvar subscrição: ' . $e->getMessage());
+        }
+    }
+
+    public function edit($id)
+    {
+        $subscription = Subscription::with(['company', 'plan'])->findOrFail($id);
+        
+        $this->editingId = $id;
+        $this->company_id = $subscription->company_id;
+        $this->plan_id = $subscription->plan_id;
+        $this->starts_at = $subscription->starts_at->format('Y-m-d');
+        $this->ends_at = $subscription->ends_at->format('Y-m-d');
+        $this->billing_cycle = $subscription->billing_cycle;
+        $this->amount_paid_mzn = $subscription->amount_paid_mzn;
+        $this->amount_paid_usd = $subscription->amount_paid_usd;
+        $this->payment_currency = $subscription->payment_currency;
+        $this->notes = $subscription->notes;
+        
+        $this->showModal = true;
+    }
+
+    public function confirmCancel($id)
+    {
+        $this->cancelId = $id;
+        $this->cancelReason = '';
+        $this->showCancelModal = true;
+    }
+
+    public function cancelSubscription()
+    {
+        try {
+            $subscription = Subscription::findOrFail($this->cancelId);
+            $subscription->cancel($this->cancelReason);
+            
+            session()->flash('message', 'Subscrição cancelada com sucesso!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erro ao cancelar subscrição: ' . $e->getMessage());
+        }
+
+        $this->showCancelModal = false;
+        $this->cancelId = null;
+        $this->cancelReason = '';
+    }
+
+    public function suspend($id)
+    {
+        try {
+            $subscription = Subscription::findOrFail($id);
+            $subscription->suspend();
+            
+            session()->flash('message', 'Subscrição suspensa com sucesso!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erro ao suspender subscrição: ' . $e->getMessage());
+        }
+    }
+
+    public function reactivate($id)
+    {
+        try {
+            $subscription = Subscription::findOrFail($id);
+            $subscription->reactivate();
+            
+            session()->flash('message', 'Subscrição reativada com sucesso!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erro ao reativar subscrição: ' . $e->getMessage());
+        }
+    }
+
+    public function extend($id, $days = 30)
+    {
+        try {
+            $subscription = Subscription::findOrFail($id);
+            $subscription->extend($days);
+            
+            session()->flash('message', "Subscrição estendida por {$days} dias!");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erro ao estender subscrição: ' . $e->getMessage());
+        }
+    }
+
+    public function renew($id)
+    {
+        try {
+            $subscription = Subscription::findOrFail($id);
+            $subscription->renew();
+            
+            session()->flash('message', 'Subscrição renovada com sucesso!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erro ao renovar subscrição: ' . $e->getMessage());
+        }
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingStatusFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPlanFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingCompanyFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingExpiringFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
+    }
 }
