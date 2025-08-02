@@ -31,18 +31,34 @@
 
                         <!-- Navigation Links -->
                         <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                            <x-nav-link :href="route('system.dashboard')" :active="request()->routeIs('system.dashboard')">
+                            <a href="{{ route('system.dashboard') }}" 
+                               class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none
+                                      {{ request()->routeIs('system.dashboard') 
+                                         ? 'border-blue-400 text-gray-900 dark:text-white focus:border-blue-700' 
+                                         : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' }}">
                                 Dashboard
-                            </x-nav-link>
-                            <x-nav-link :href="route('system.companies')" :active="request()->routeIs('system.companies*')">
+                            </a>
+                            <a href="{{ route('system.companies') }}" 
+                               class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none
+                                      {{ request()->routeIs('system.companies*') 
+                                         ? 'border-blue-400 text-gray-900 dark:text-white focus:border-blue-700' 
+                                         : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' }}">
                                 Empresas
-                            </x-nav-link>
-                            <x-nav-link :href="route('system.plans')" :active="request()->routeIs('system.plans*')">
+                            </a>
+                            <a href="{{ route('system.plans') }}" 
+                               class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none
+                                      {{ request()->routeIs('system.plans*') 
+                                         ? 'border-blue-400 text-gray-900 dark:text-white focus:border-blue-700' 
+                                         : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' }}">
                                 Planos
-                            </x-nav-link>
-                            <x-nav-link :href="route('system.subscriptions')" :active="request()->routeIs('system.subscriptions*')">
+                            </a>
+                            <a href="{{ route('system.subscriptions') }}" 
+                               class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none
+                                      {{ request()->routeIs('system.subscriptions*') 
+                                         ? 'border-blue-400 text-gray-900 dark:text-white focus:border-blue-700' 
+                                         : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700 focus:text-gray-700 dark:focus:text-gray-300 focus:border-gray-300 dark:focus:border-gray-700' }}">
                                 Subscrições
-                            </x-nav-link>
+                            </a>
                         </div>
                     </div>
 
@@ -59,9 +75,10 @@
                         </button>
 
                         <!-- User Menu -->
-                        <x-dropdown align="right" width="48">
-                            <x-slot name="trigger">
-                                <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                        <div class="ml-3 relative" x-data="{ open: false }">
+                            <div>
+                                <button @click="open = ! open" 
+                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
                                     <div>{{ Auth::user()->name }}</div>
                                     <div class="ml-1">
                                         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -69,24 +86,61 @@
                                         </svg>
                                     </div>
                                 </button>
-                            </x-slot>
+                            </div>
 
-                            <x-slot name="content">
-                                <x-dropdown-link :href="route('profile.edit')">
+                            <div x-show="open" 
+                                 @click.away="open = false"
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="transform opacity-0 scale-95"
+                                 x-transition:enter-end="transform opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="transform opacity-100 scale-100"
+                                 x-transition:leave-end="transform opacity-0 scale-95"
+                                 class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                 style="display: none;">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
                                     Perfil
-                                </x-dropdown-link>
-
-                                <!-- Authentication -->
+                                </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <x-dropdown-link :href="route('logout')"
-                                            onclick="event.preventDefault(); this.closest('form').submit();">
+                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
                                         Sair
-                                    </x-dropdown-link>
+                                    </button>
                                 </form>
-                            </x-slot>
-                        </x-dropdown>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Hamburger Menu (Mobile) -->
+                    <div class="-mr-2 flex items-center sm:hidden" x-data="{ open: false }">
+                        <button @click="open = ! open" 
+                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
+                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Responsive Navigation Menu -->
+            <div x-show="open" class="block sm:hidden" x-data="{ open: false }">
+                <div class="pt-2 pb-3 space-y-1">
+                    <a href="{{ route('system.dashboard') }}" 
+                       class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition duration-150 ease-in-out
+                              {{ request()->routeIs('system.dashboard') 
+                                 ? 'border-blue-400 text-blue-700 bg-blue-50 dark:text-blue-300 dark:bg-blue-900/50' 
+                                 : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }}">
+                        Dashboard
+                    </a>
+                    <a href="{{ route('system.companies') }}" 
+                       class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium transition duration-150 ease-in-out
+                              {{ request()->routeIs('system.companies*') 
+                                 ? 'border-blue-400 text-blue-700 bg-blue-50 dark:text-blue-300 dark:bg-blue-900/50' 
+                                 : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600' }}">
+                        Empresas
+                    </a>
                 </div>
             </div>
         </nav>
@@ -122,5 +176,6 @@
     </div>
 
     @livewireScripts
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </body>
 </html>

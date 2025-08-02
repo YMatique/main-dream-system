@@ -6,6 +6,7 @@ use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\System\CompanyController;
 use App\Livewire\System\CompanyManagement;
+use App\Livewire\System\PlanManagement;
 
 Route::get('/', function () {
     return view('welcome');
@@ -39,7 +40,7 @@ Route::prefix('system')
         // Route::get('/companies/{id}', [CompanyController::class, 'show'])->name('companies.show');
         
         // Outras rotas do sistema serão adicionadas aqui...
-        // Route::get('/plans', [PlanController::class, 'index'])->name('plans');
+        Route::get('/plans', PlanManagement::class)->name('plans');
         // Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions');
     });
 
