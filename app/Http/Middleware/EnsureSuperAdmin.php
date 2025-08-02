@@ -22,7 +22,7 @@ class EnsureSuperAdmin
         // Assumindo que o super admin tem um campo role = 'super_admin' ou is_super_admin = true
         $user = auth()->user();
         
-        if (!$user->hasRole('super_admin') && !$user->is_super_admin) {
+        if (!$user->is_super_admin) {
             abort(403, 'Acesso negado. Apenas super administradores podem aceder esta área.');
         }
         return $next($request);

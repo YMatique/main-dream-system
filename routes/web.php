@@ -5,6 +5,7 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\System\CompanyController;
+use App\Livewire\System\CompanyManagement;
 
 Route::get('/', function () {
     return view('welcome');
@@ -34,8 +35,8 @@ Route::prefix('system')
         })->name('dashboard');
         
         // Gestão de Empresas
-        Route::get('/companies', [CompanyController::class, 'index'])->name('companies');
-        Route::get('/companies/{id}', [CompanyController::class, 'show'])->name('companies.show');
+        Route::get('/companies', CompanyManagement::class)->name('companies');
+        // Route::get('/companies/{id}', [CompanyController::class, 'show'])->name('companies.show');
         
         // Outras rotas do sistema serão adicionadas aqui...
         // Route::get('/plans', [PlanController::class, 'index'])->name('plans');

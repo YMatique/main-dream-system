@@ -70,7 +70,8 @@ class CompanyManagement extends Component
             })
             ->orderBy('created_at', 'desc')
             ->paginate($this->perPage);
-        return view('livewire.system.company-management');
+
+        return view('livewire.system.company-management', compact('companies'))->layout('layouts.system');
     }
     public function openModal()
     {
