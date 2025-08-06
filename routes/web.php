@@ -5,6 +5,7 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\System\CompanyController;
+use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
 use App\Livewire\System\SubscriptionManagement;
@@ -72,6 +73,8 @@ Route::middleware(['auth', 'user.type:super_admin'])->prefix('system')->name('sy
     
     // Plans Management (will be implemented later)
     Route::get('/plans', PlanManagement::class)->name('plans');
+
+    Route::get('/logs', ActivityLogsManagement::class)->name('logs');
     
     // System Settings
     Route::get('/settings', function() {
