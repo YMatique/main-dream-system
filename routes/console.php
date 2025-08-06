@@ -205,3 +205,5 @@ Schedule::call(function () {
             
             Log::info('Estatísticas de empresas atualizadas');
         })->dailyAt('06:00');
+
+Schedule::command('logs:clean --days=90')->monthly();
