@@ -8,6 +8,7 @@ use App\Http\Controllers\System\CompanyController;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
 use App\Livewire\System\SubscriptionManagement;
+use App\Livewire\System\UserManagement;
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,6 +44,7 @@ Route::prefix('system')
         // Outras rotas do sistema serão adicionadas aqui...
         Route::get('/plans', PlanManagement::class)->name('plans');
         Route::get('/subscriptions', SubscriptionManagement::class)->name('subscriptions');
+        Route::get('/users',UserManagement::class)->name('users');
     });
 
 require __DIR__.'/auth.php';

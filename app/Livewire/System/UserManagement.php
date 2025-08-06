@@ -92,11 +92,13 @@ class UserManagement extends Component
     {
         $this->loadData();
     }
+
     public function render()
     {
         $users = $this->getUsers();
         
-        return view('livewire.system.user-management',[ 'users' => $users,])->title('Gestão de Usuários');
+        return view('livewire.system.user-management', compact('users'))
+            ->title('Gestão de Usuários')->layout('layouts.system');
     }
 
     public function loadData()
@@ -262,29 +264,18 @@ class UserManagement extends Component
         $user = User::create([
             'name' => $this->name,
             'email' => $this->email,
-            'password' => $this->password, // Will be hashed by the model cast
+            'password' => bcrypt($this->password),
             'company_id' => $this->user_type === 'super_admin' ? null : $this->company_id,
             'user_type' => $this->user_type,
             'phone' => $this->phone,
             'permissions' => $permissions,
             'status' => $this->is_active ? 'active' : 'inactive',
             'email_verified_at' => now(), // Auto-verify for admin created users
-            'created_by_super_admin' => true,
         ]);
 
         if ($this->send_welcome_email) {
             $this->sendWelcomeEmail($user);
         }
-
-        // Log activity
-        activity()
-            ->performedOn($user)
-            ->withProperties([
-                'company_id' => $this->company_id,
-                'user_type' => $this->user_type,
-                'created_by_super_admin' => true,
-            ])
-            ->log('User created by Super Admin');
     }
 
     private function updateUser()
@@ -303,8 +294,7 @@ class UserManagement extends Component
 
         // Only update password if provided
         if ($this->password) {
-            $updateData['password'] = $this->password; // Will be hashed by cast
-            $updateData['password_reset_required'] = true; // Force password change
+            $updateData['password'] = bcrypt($this->password);
         }
 
         $user->update($updateData);
@@ -312,19 +302,17 @@ class UserManagement extends Component
         if ($this->send_welcome_email && $this->password) {
             $this->sendWelcomeEmail($user, true); // true = resending
         }
-
-        // Log activity
-        activity()
-            ->performedOn($user)
-            ->withProperties(['changes' => $user->getChanges()])
-            ->log('User updated by Super Admin');
     }
 
     private function sendWelcomeEmail($user, $resending = false)
     {
         try {
-            $notificationService = app(NotificationService::class);
-            $notificationService->sendWelcomeEmail($user, $this->password, $resending);
+            // TODO: Implementar NotificationService
+            // $notificationService = app(NotificationService::class);
+            // $notificationService->sendWelcomeEmail($user, $this->password, $resending);
+            
+            // Por enquanto apenas log
+            \Log::info("Welcome email should be sent to: {$user->email}");
         } catch (\Exception $e) {
             // Log error but don't fail the user creation
             logger()->error('Failed to send welcome email: ' . $e->getMessage());
@@ -346,12 +334,6 @@ class UserManagement extends Component
 
         $action = $newStatus === 'active' ? 'ativado' : 'desativado';
         session()->flash('success', "Usuário {$action} com sucesso!");
-
-        // Log activity
-        activity()
-            ->performedOn($user)
-            ->withProperties(['old_status' => $user->status, 'new_status' => $newStatus])
-            ->log('User status changed by Super Admin');
     }
 
     public function resetPassword($userId)
@@ -362,29 +344,23 @@ class UserManagement extends Component
         $newPassword = $this->generateRandomPassword();
         
         $user->update([
-            'password' => $newPassword, // Will be hashed by cast
-            'password_reset_required' => true, // Force password change on next login
+            'password' => bcrypt($newPassword),
         ]);
 
         // Send new password via email
         try {
-            $notificationService = app(NotificationService::class);
-            $notificationService->sendPasswordResetEmail($user, $newPassword);
+            // TODO: Implementar NotificationService
+            \Log::info("Password reset email should be sent to: {$user->email} with password: {$newPassword}");
             
-            session()->flash('success', 'Nova senha enviada por email para o usuário.');
+            session()->flash('success', 'Nova senha gerada: ' . $newPassword);
         } catch (\Exception $e) {
             session()->flash('error', 'Senha redefinida, mas falhou ao enviar email.');
         }
-
-        // Log activity
-        activity()
-            ->performedOn($user)
-            ->log('Password reset by Super Admin');
     }
 
     private function generateRandomPassword($length = 8)
     {
-        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         return substr(str_shuffle($characters), 0, $length);
     }
 
@@ -404,41 +380,6 @@ class UserManagement extends Component
             $this->showDeleteModal = false;
             return;
         }
-
-        // Prevent deleting the last super admin
-        if ($user->isSuperAdmin()) {
-            $superAdminCount = User::superAdmin()->active()->count();
-            
-            if ($superAdminCount <= 1) {
-                session()->flash('error', 'Não é possível eliminar o último Super Administrador.');
-                $this->showDeleteModal = false;
-                return;
-            }
-        }
-
-        // Prevent deleting the last admin of a company
-        if ($user->isCompanyAdmin() && $user->company_id) {
-            $adminCount = User::where('company_id', $user->company_id)
-                             ->where('user_type', 'company_admin')
-                             ->where('status', 'active')
-                             ->count();
-            
-            if ($adminCount <= 1) {
-                session()->flash('error', 'Não é possível eliminar o último administrador da empresa.');
-                $this->showDeleteModal = false;
-                return;
-            }
-        }
-
-        // Log activity before deletion
-        activity()
-            ->performedOn($user)
-            ->withProperties([
-                'user_name' => $user->name,
-                'user_email' => $user->email,
-                'company_name' => $user->company?->name,
-            ])
-            ->log('User deleted by Super Admin');
 
         $user->delete();
         
@@ -491,61 +432,4 @@ class UserManagement extends Component
     {
         $this->resetPage();
     }
-
-    /**
-     * Bulk create users from array (useful for initial setup)
-     */
-    public function bulkCreateUsers($companyId, $usersData)
-    {
-        $created = [];
-        $errors = [];
-
-        foreach ($usersData as $userData) {
-            try {
-                // Validate basic required fields
-                if (empty($userData['name']) || empty($userData['email'])) {
-                    $errors[] = "Dados incompletos para: " . ($userData['email'] ?? 'email não fornecido');
-                    continue;
-                }
-
-                // Check if email already exists
-                if (User::where('email', $userData['email'])->exists()) {
-                    $errors[] = "Email já existe: " . $userData['email'];
-                    continue;
-                }
-
-                $user = User::create([
-                    'name' => $userData['name'],
-                    'email' => $userData['email'],
-                    'password' => $userData['password'] ?? $this->generateRandomPassword(),
-                    'company_id' => $companyId,
-                    'user_type' => $userData['user_type'] ?? 'company_user',
-                    'phone' => $userData['phone'] ?? null,
-                    'permissions' => $userData['permissions'] ?? [],
-                    'status' => 'active',
-                    'email_verified_at' => now(),
-                    'created_by_super_admin' => true,
-                ]);
-
-                $created[] = $user;
-
-                // Send welcome email if requested
-                if (!empty($userData['send_welcome_email'])) {
-                    $this->sendWelcomeEmail($user);
-                }
-
-            } catch (\Exception $e) {
-                $errors[] = "Erro ao criar usuário {$userData['email']}: " . $e->getMessage();
-            }
-        }
-
-        return [
-            'created' => $created,
-            'errors' => $errors,
-            'total' => count($usersData),
-            'success_count' => count($created),
-            'error_count' => count($errors),
-        ];
-    }
-
 }
