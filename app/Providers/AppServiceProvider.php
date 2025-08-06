@@ -21,8 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Auth::login(function ($user) {
-            app(AuditService::class)->logLogin($user);
-        });
+        // Auth::login(function ($user) {
+        //     app(AuditService::class)->logLogin($user);
+        // });
     }
 }
