@@ -49,6 +49,13 @@ Route::prefix('system')
     });
     */
 
+    // Aplicar middlewares nas rotas do sistema
+// Route::prefix('system')
+//     ->middleware(['auth', 'verified', 'role:super_admin', 'audit', 'security'])
+//     ->name('system.')
+//     ->group(function () {
+//         // Suas rotas...
+//     });
     // System Administration routes (Super Admin only)
 Route::middleware(['auth', 'user.type:super_admin'])->prefix('system')->name('system.')->group(function () {
     
