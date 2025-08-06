@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\ActivityLoggerService;
 use App\Services\AuditService;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
@@ -20,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
         //
          $this->app->singleton(AuditService::class, function ($app) {
             return new AuditService();
+        });
+         $this->app->singleton(ActivityLoggerService::class, function ($app) {
+            return new ActivityLoggerService();
         });
     }
 
