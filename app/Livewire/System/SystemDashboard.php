@@ -68,7 +68,7 @@ class SystemDashboard extends Component
         // Revenue total (simulado - você pode implementar baseado na sua lógica de preços)
         $this->totalRevenue = Subscription::active()
             ->join('plans', 'subscriptions.plan_id', '=', 'plans.id')
-            ->sum('plans.price');
+            ->sum('plans.price_mzn');
 
         // Dados para gráficos
         $this->loadSubscriptionTrends($days);
@@ -96,7 +96,7 @@ class SystemDashboard extends Component
 
     private function loadRevenueTrends($days)
     {
-        $this->revenueTrends = Subscription::selectRaw('DATE(subscriptions.created_at) as date, SUM(plans.price) as revenue')
+        $this->revenueTrends = Subscription::selectRaw('DATE(subscriptions.created_at) as date, SUM(plans.price_mzn) as revenue')
             ->join('plans', 'subscriptions.plan_id', '=', 'plans.id')
             ->where('subscriptions.created_at', '>=', Carbon::now()->subDays($days))
             ->groupBy('date')
@@ -137,9 +137,9 @@ class SystemDashboard extends Component
     private function loadExpiringSubscriptions()
     {
         $this->expiringSubscriptions = Subscription::with(['company', 'plan'])
-            ->where('expires_at', '<=', Carbon::now()->addDays(7))
+            ->where('ends_at', '<=', Carbon::now()->addDays(7))
             ->where('status', 'active')
-            ->orderBy('expires_at')
+            ->orderBy('ends_at')
             ->limit(5)
             ->get();
     }
@@ -149,7 +149,7 @@ class SystemDashboard extends Component
         $alerts = [];
 
         // Verificar subscriptions expiradas
-        $expiredCount = Subscription::where('expires_at', '<', now())
+        $expiredCount = Subscription::where('ends_at', '<', now())
                                   ->where('status', 'active')
                                   ->count();
         if ($expiredCount > 0) {
