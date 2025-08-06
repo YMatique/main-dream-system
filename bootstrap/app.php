@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\CheckPermission;
+use App\Http\Middleware\CheckUserType;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,7 +15,31 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
              'role' => \App\Http\Middleware\EnsureSuperAdmin::class,
+             'user.type' => CheckUserType::class,
+              'permission' => CheckPermission::class,
         ]);
+
+
+        /**
+         *    Middleware global (opcional)
+        $middleware->append(CheckUserType::class);
+        
+     Middleware de grupo (opcional)
+        $middleware->group('system', [
+            'auth',
+            'user.type:super_admin'
+        ]);
+
+        $middleware->group('company', [
+            'auth',
+            'user.type:super_admin,company_admin'
+        ]);
+
+        $middleware->group('app', [
+            'auth',
+            'user.type:super_admin,company_admin,company_user'
+        ]);
+         */
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

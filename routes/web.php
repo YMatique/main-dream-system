@@ -26,7 +26,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
 
-
+/*
 Route::prefix('system')
     ->middleware(['auth', 'verified', 'role:super_admin'])
     ->name('system.')
@@ -46,5 +46,36 @@ Route::prefix('system')
         Route::get('/subscriptions', SubscriptionManagement::class)->name('subscriptions');
         Route::get('/users',UserManagement::class)->name('users');
     });
+    */
 
+    // System Administration routes (Super Admin only)
+Route::middleware(['auth', 'user.type:super_admin'])->prefix('system')->name('system.')->group(function () {
+    
+     Route::get('/dashboard', function () {
+            return view('system.dashboard');
+        })->name('dashboard');
+        
+    // Company Management
+    Route::get('/companies', CompanyManagement::class)->name('companies');
+    
+    // User Management  
+    Route::get('/users', UserManagement::class)->name('users');
+    
+    // Subscription Management
+    Route::get('/subscriptions', SubscriptionManagement::class)->name('subscriptions');
+    
+    // Plans Management (will be implemented later)
+    Route::get('/plans', PlanManagement::class)->name('plans');
+    
+    // System Settings
+    Route::get('/settings', function() {
+        return view('system.settings');
+    })->name('settings');
+    
+    // System Reports
+    Route::get('/reports', function() {
+        return view('system.reports');
+    })->name('reports');
+    
+});
 require __DIR__.'/auth.php';
