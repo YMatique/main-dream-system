@@ -18,7 +18,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-       protected $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'password',
@@ -62,7 +62,7 @@ class User extends Authenticatable
         ];
     }
 
-        /**
+    /**
      * The attributes that should be appended to arrays.
      *
      * @var array
@@ -82,11 +82,11 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
 
-     public function company()
+    public function company()
     {
         return $this->belongsTo(\App\Models\System\Company::class);
     }
@@ -120,10 +120,10 @@ class User extends Authenticatable
     /**
      * Scope para super admins
      */
-    public function scopeSuperAdmin($query)
-    {
-        return $query->where('user_type', 'super_admin');
-    }
+    // public function scopeSuperAdmin($query)
+    // {
+    //     return $query->where('user_type', 'super_admin');
+    // }
 
     /**
      * Scope para admins de empresa
@@ -156,7 +156,7 @@ class User extends Authenticatable
      */
     public function getUserTypeTextAttribute(): string
     {
-        return match($this->user_type) {
+        return match ($this->user_type) {
             'super_admin' => 'Super Administrador',
             'company_admin' => 'Administrador da Empresa',
             'company_user' => 'Usuário',
@@ -169,7 +169,7 @@ class User extends Authenticatable
      */
     public function getStatusTextAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'active' => 'Ativo',
             'inactive' => 'Inativo',
             'suspended' => 'Suspenso',
@@ -185,7 +185,7 @@ class User extends Authenticatable
         if (!$this->last_login_at) {
             return false;
         }
-        
+
         return $this->last_login_at->greaterThan(now()->subMinutes(15));
     }
 
@@ -215,10 +215,10 @@ class User extends Authenticatable
     /**
      * Check if user is super admin
      */
-    public function isSuperAdmin(): bool
-    {
-        return $this->user_type === 'super_admin' || $this->is_super_admin;
-    }
+    // public function isSuperAdmin(): bool
+    // {
+    //     return $this->user_type === 'super_admin' || $this->is_super_admin;
+    // }
 
     /**
      * Check if user is company admin
@@ -287,7 +287,7 @@ class User extends Authenticatable
     public function grantPermission(string $permission): void
     {
         $permissions = $this->permissions ?? [];
-        
+
         if (!in_array($permission, $permissions)) {
             $permissions[] = $permission;
             $this->update(['permissions' => $permissions]);
@@ -300,7 +300,7 @@ class User extends Authenticatable
     public function revokePermission(string $permission): void
     {
         $permissions = $this->permissions ?? [];
-        
+
         if (($key = array_search($permission, $permissions)) !== false) {
             unset($permissions[$key]);
             $this->update(['permissions' => array_values($permissions)]);
@@ -371,7 +371,7 @@ class User extends Authenticatable
             'settings.manage',
         ];
 
-        return match($userType) {
+        return match ($userType) {
             'super_admin' => ['*'], // All permissions
             'company_admin' => $allPermissions, // All company permissions
             'company_user' => [
@@ -398,5 +398,47 @@ class User extends Authenticatable
                 $user->created_by_super_admin = auth()->user()->isSuperAdmin();
             }
         });
+    }
+
+    /**
+     * Check if user has permission (compatibilidade com CheckPermission middleware)
+     */
+    public function hasPermissionTo(string $permission): bool
+    {
+        return $this->hasPermission($permission);
+    }
+
+    /**
+     * Method to update last login (compatibilidade com middleware)
+     */
+    // public function updateLastLogin(): void
+    // {
+    //     $this->update([
+    //         'last_login_at' => now(),
+    //     ]);
+    // }
+
+    /**
+     * Método melhorado isSuperAdmin para compatibilidade
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->user_type === 'super_admin' || $this->is_super_admin == true;
+    }
+
+    /**
+     * Scope para super admins
+     */
+    public function scopeSuperAdmin($query)
+    {
+        return $query->where('user_type', 'super_admin')->orWhere('is_super_admin', true);
+    }
+
+    /**
+     * Accessor para compatibilidade
+     */
+    public function getIsSuperAdminAttribute()
+    {
+        return $this->user_type === 'super_admin' || $this->attributes['is_super_admin'] ?? false;
     }
 }
