@@ -2,6 +2,7 @@
 
 namespace App\Models\System;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Company extends Model
 {
-     use HasFactory, Notifiable;
+     use HasFactory, Notifiable, LogsActivity;
 
     protected $fillable = [
         'name',
@@ -29,6 +30,12 @@ class Company extends Model
 
     protected $attributes = [
         'status' => 'active',
+    ];
+
+    // Campos que não devem aparecer nos logs
+    protected $hiddenForLogs = [
+        'api_key',
+        'secret_token'
     ];
 
     // Relationships
