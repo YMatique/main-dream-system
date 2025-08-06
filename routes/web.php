@@ -8,6 +8,7 @@ use App\Http\Controllers\System\CompanyController;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
 use App\Livewire\System\SubscriptionManagement;
+use App\Livewire\System\SystemDashboard;
 use App\Livewire\System\UserManagement;
 
 Route::get('/', function () {
@@ -51,9 +52,7 @@ Route::prefix('system')
     // System Administration routes (Super Admin only)
 Route::middleware(['auth', 'user.type:super_admin'])->prefix('system')->name('system.')->group(function () {
     
-     Route::get('/dashboard', function () {
-            return view('system.dashboard');
-        })->name('dashboard');
+     Route::get('/dashboard', SystemDashboard::class)->name('dashboard');
 
     // Company Management
     Route::get('/companies', CompanyManagement::class)->name('companies');
