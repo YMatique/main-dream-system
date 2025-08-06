@@ -215,7 +215,7 @@ class ActivityLogsManagement extends Component
             'commonActions' => $commonActions,
             'categories' => $categories,
             'levels' => $levels
-        ]);
+        ])->layout('layouts.system');
     }
      // Métodos auxiliares para a interface
     public function getActionOptions()
