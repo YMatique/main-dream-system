@@ -190,7 +190,7 @@ Schedule::call(function () {
             Log::info('Otimização do banco executada');
         })->weeklyOn(5, '04:00');
 
-Schedule::callcall(function () {
+Schedule::call(function () {
             // Atualizar last_activity_at das empresas baseado na atividade dos usuários
             DB::statement("
                 UPDATE companies c 
