@@ -54,7 +54,7 @@ Route::middleware(['auth', 'user.type:super_admin'])->prefix('system')->name('sy
      Route::get('/dashboard', function () {
             return view('system.dashboard');
         })->name('dashboard');
-        
+
     // Company Management
     Route::get('/companies', CompanyManagement::class)->name('companies');
     
@@ -78,4 +78,54 @@ Route::middleware(['auth', 'user.type:super_admin'])->prefix('system')->name('sy
     })->name('reports');
     
 });
+
+//Rotas para Admin de Empresa 
+
+// Administração da Empresa (Company Admin + Super Admin)
+Route::prefix('admin')
+    ->middleware(['auth', 'verified', 'user.type:super_admin,company_admin'])
+    ->name('admin.')
+    ->group(function () {
+        
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+        
+        // Gestão de Funcionários
+        Route::get('/employees', function () {
+            return view('admin.employees.index');
+        })->name('employees');
+        
+        // Gestão de Clientes
+        Route::get('/clients', function () {
+            return view('admin.clients.index');
+        })->name('clients');
+        
+        // Outros módulos da empresa...
+    });//Rotas para (Todos os usuários da empresa)
+Route::prefix('app')
+    ->middleware(['auth', 'verified', 'user.type:super_admin,company_admin,company_user'])
+    ->name('app.')
+    ->group(function () {
+        
+        // Formulários de Ordens de Reparação
+        Route::get('/repair-orders/form1', function () {
+            return view('app.repair-orders.form1');
+        })->name('repair-orders.form1')->middleware('permission:repair_orders.create');
+        
+        Route::get('/repair-orders/form2', function () {
+            return view('app.repair-orders.form2');
+        })->name('repair-orders.form2')->middleware('permission:repair_orders.create');
+        
+        // Listagens
+        Route::get('/repair-orders/list', function () {
+            return view('app.repair-orders.list');
+        })->name('repair-orders.list')->middleware('permission:repair_orders.view');
+        
+        // Faturação
+        Route::get('/billing', function () {
+            return view('app.billing.index');
+        })->name('billing')->middleware('permission:billing.view');
+        
+    });
 require __DIR__.'/auth.php';
