@@ -22,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'security'=> \App\Http\Middleware\SecurityMiddleware::class,
             // 'permission' => \App\Http\Middleware\PermissionMiddleware::class, verificar o alias do middleware
         ]);
-
+        $middleware->append( \App\Http\Middleware\LogActivity::class, );
 
         /**
          *    Middleware global (opcional)
