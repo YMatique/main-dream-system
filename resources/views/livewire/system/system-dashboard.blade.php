@@ -105,7 +105,6 @@
             @endforeach
         </div>
     @endif
-
     <!-- Cards de Métricas Principais -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Total de Empresas -->
@@ -266,12 +265,16 @@
             </div>
         </div>
     </div>
+    @livewire('system.audit-widget')
 </div>
 
-@push('scripts')
+
+@section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('asasa');
+    
     // Configuração comum dos charts
     const chartConfig = {
         responsive: true,
@@ -430,4 +433,4 @@ document.addEventListener('livewire:init', () => {
     });
 });
 </script>
-@endpush
+@endsection

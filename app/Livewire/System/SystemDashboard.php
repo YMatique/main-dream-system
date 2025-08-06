@@ -217,6 +217,6 @@ class SystemDashboard extends Component
     // }
     public function render()
     {
-        return view('livewire.system.system-dashboard')->title('Dashboard do Sistema')->layout('layouts.system');
+        return view('livewire.system.system-dashboard')->layout('layouts.system');
     }
 }
