@@ -225,7 +225,403 @@ Route::get('companies/login', CompanyLogin::class)->name('company.login');
 //Rotas para Admin de Empresa 
 Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,company_user'])->name('company.')->group(function(){
    Route::get('dashboard', Dashboard::class)->name('dashboard'); 
+
+   // ===== GESTÃO DE DADOS =====
+        Route::prefix('manage')->name('manage.')->group(function () {
+            
+            // Funcionários
+            Route::get('/employees', function () {
+                return view('company.manage.employees', [
+                    'title' => 'Gestão de Funcionários',
+                    'company' => auth()->user()->company,
+                    'employees_count' => auth()->user()->company->employees()->count()
+                ]);
+            })->name('employees');
+            
+            // Clientes
+            Route::get('/clients', function () {
+                return view('company.manage.clients', [
+                    'title' => 'Gestão de Clientes',
+                    'company' => auth()->user()->company,
+                    'clients_count' => \App\Models\Company\Client::where('company_id', auth()->user()->company_id)->count()
+                ]);
+            })->name('clients');
+            
+            // Materiais
+            Route::get('/materials', function () {
+                return view('company.manage.materials', [
+                    'title' => 'Gestão de Materiais',
+                    'company' => auth()->user()->company,
+                    'materials_count' => \App\Models\Company\Material::where('company_id', auth()->user()->company_id)->count()
+                ]);
+            })->name('materials');
+            
+            // Departamentos
+            Route::get('/departments', function () {
+                return view('company.manage.departments', [
+                    'title' => 'Gestão de Departamentos',
+                    'company' => auth()->user()->company,
+                    'departments_count' => \App\Models\Company\Department::where('company_id', auth()->user()->company_id)->count()
+                ]);
+            })->name('departments');
+            
+            // Tipos de Manutenção
+            Route::get('/maintenance-types', function () {
+                return view('company.manage.maintenance-types', [
+                    'title' => 'Tipos de Manutenção',
+                    'company' => auth()->user()->company,
+                    'types_count' => \App\Models\Company\MaintenanceType::where('company_id', auth()->user()->company_id)->count()
+                ]);
+            })->name('maintenance-types');
+            
+            // Estados
+            Route::get('/statuses', function () {
+                return view('company.manage.statuses', [
+                    'title' => 'Gestão de Estados',
+                    'company' => auth()->user()->company,
+                    'statuses_count' => \App\Models\Company\Status::where('company_id', auth()->user()->company_id)->count()
+                ]);
+            })->name('statuses');
+            
+            // Localizações
+            Route::get('/locations', function () {
+                return view('company.manage.locations', [
+                    'title' => 'Gestão de Localizações',
+                    'company' => auth()->user()->company,
+                    'locations_count' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->count()
+                ]);
+            })->name('locations');
+            
+            // Números de Máquina
+            Route::get('/machine-numbers', function () {
+                return view('company.manage.machine-numbers', [
+                    'title' => 'Números de Máquina',
+                    'company' => auth()->user()->company,
+                    'machines_count' => \App\Models\Company\MachineNumber::where('company_id', auth()->user()->company_id)->count()
+                ]);
+            })->name('machine-numbers');
+            
+            // Solicitantes
+            Route::get('/requesters', function () {
+                return view('company.manage.requesters', [
+                    'title' => 'Gestão de Solicitantes',
+                    'company' => auth()->user()->company,
+                    'requesters_count' => \App\Models\Company\Requester::where('company_id', auth()->user()->company_id)->count()
+                ]);
+            })->name('requesters');
+            
+            // Custos por Cliente
+            Route::get('/client-costs', function () {
+                return view('company.manage.client-costs', [
+                    'title' => 'Custos por Cliente',
+                    'company' => auth()->user()->company,
+                    'costs_count' => \App\Models\Company\ClientCost::where('company_id', auth()->user()->company_id)->count()
+                ]);
+            })->name('client-costs');
+        });
+
+        // ===== FORMULÁRIOS DE ORDENS DE REPARAÇÃO =====
+        Route::prefix('repair-orders')->name('repair-orders.')->group(function () {
+            
+            // Formulário 1 - Inicial
+            Route::get('/form1', function () {
+                return view('company.repair-orders.form1', [
+                    'title' => 'Formulário 1 - Ordem Inicial',
+                    'company' => auth()->user()->company,
+                    'clients' => \App\Models\Company\Client::where('company_id', auth()->user()->company_id)->active()->get(),
+                    'maintenance_types' => \App\Models\Company\MaintenanceType::where('company_id', auth()->user()->company_id)->active()->get(),
+                    'statuses' => \App\Models\Company\Status::where('company_id', auth()->user()->company_id)->forForm('form1')->get(),
+                    'locations' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->forForm('form1')->get(),
+                    'requesters' => \App\Models\Company\Requester::where('company_id', auth()->user()->company_id)->active()->get(),
+                    'machine_numbers' => \App\Models\Company\MachineNumber::where('company_id', auth()->user()->company_id)->active()->get()
+                ]);
+            })->name('form1');
+            
+            // Formulário 2 - Técnicos + Materiais  
+            Route::get('/form2/{order?}', function ($order = null) {
+                return view('company.repair-orders.form2', [
+                    'title' => 'Formulário 2 - Técnicos e Materiais',
+                    'company' => auth()->user()->company,
+                    'order' => $order,
+                    'employees' => \App\Models\Company\Employee::where('company_id', auth()->user()->company_id)->active()->get(),
+                    'materials' => \App\Models\Company\Material::where('company_id', auth()->user()->company_id)->active()->get(),
+                    'statuses' => \App\Models\Company\Status::where('company_id', auth()->user()->company_id)->forForm('form2')->get(),
+                    'locations' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->forForm('form2')->get()
+                ]);
+            })->name('form2');
+            
+            // Formulário 3 - Faturação Real
+            Route::get('/form3/{order?}', function ($order = null) {
+                return view('company.repair-orders.form3', [
+                    'title' => 'Formulário 3 - Faturação Real',
+                    'company' => auth()->user()->company,
+                    'order' => $order,
+                    'materials' => \App\Models\Company\Material::where('company_id', auth()->user()->company_id)->active()->get(),
+                    'statuses' => \App\Models\Company\Status::where('company_id', auth()->user()->company_id)->forForm('form3')->get(),
+                    'locations' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->forForm('form3')->get()
+                ]);
+            })->name('form3');
+            
+            // Formulário 4 - Número de Máquina
+            Route::get('/form4/{order?}', function ($order = null) {
+                return view('company.repair-orders.form4', [
+                    'title' => 'Formulário 4 - Número de Máquina',
+                    'company' => auth()->user()->company,
+                    'order' => $order,
+                    'statuses' => \App\Models\Company\Status::where('company_id', auth()->user()->company_id)->forForm('form4')->get(),
+                    'locations' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->forForm('form4')->get(),
+                    'machine_numbers' => \App\Models\Company\MachineNumber::where('company_id', auth()->user()->company_id)->active()->get()
+                ]);
+            })->name('form4');
+            
+            // Formulário 5 - Equipamento + Validação
+            Route::get('/form5/{order?}', function ($order = null) {
+                return view('company.repair-orders.form5', [
+                    'title' => 'Formulário 5 - Equipamento e Validação',
+                    'company' => auth()->user()->company,
+                    'order' => $order,
+                    'clients' => \App\Models\Company\Client::where('company_id', auth()->user()->company_id)->active()->get(),
+                    'employees' => \App\Models\Company\Employee::where('company_id', auth()->user()->company_id)->active()->get(),
+                    'machine_numbers' => \App\Models\Company\MachineNumber::where('company_id', auth()->user()->company_id)->active()->get()
+                ]);
+            })->name('form5');
+        });
+        
+        // ===== LISTAGENS DE ORDENS =====
+        Route::prefix('orders')->name('orders.')->group(function () {
+            
+            // Listagens por formulário
+            Route::get('/form1-list', function () {
+                return view('company.orders.list', [
+                    'title' => 'Listagem - Formulário 1',
+                    'form_type' => 'form1',
+                    'company' => auth()->user()->company,
+                    'orders_count' => 0 // TODO: implementar quando tiver RepairOrder model
+                ]);
+            })->name('form1-list');
+            
+            Route::get('/form2-list', function () {
+                return view('company.orders.list', [
+                    'title' => 'Listagem - Formulário 2', 
+                    'form_type' => 'form2',
+                    'company' => auth()->user()->company,
+                    'orders_count' => 0
+                ]);
+            })->name('form2-list');
+            
+            Route::get('/form3-list', function () {
+                return view('company.orders.list', [
+                    'title' => 'Listagem - Formulário 3',
+                    'form_type' => 'form3', 
+                    'company' => auth()->user()->company,
+                    'orders_count' => 0
+                ]);
+            })->name('form3-list');
+            
+            Route::get('/form4-list', function () {
+                return view('company.orders.list', [
+                    'title' => 'Listagem - Formulário 4',
+                    'form_type' => 'form4',
+                    'company' => auth()->user()->company,
+                    'orders_count' => 0
+                ]);
+            })->name('form4-list');
+            
+            Route::get('/form5-list', function () {
+                return view('company.orders.list', [
+                    'title' => 'Listagem - Formulário 5',
+                    'form_type' => 'form5',
+                    'company' => auth()->user()->company,
+                    'orders_count' => 0
+                ]);
+            })->name('form5-list');
+            
+            // Listagem avançada (todos os campos de todos os formulários)
+            Route::get('/advanced-list', function () {
+                return view('company.orders.advanced-list', [
+                    'title' => 'Listagem Avançada',
+                    'company' => auth()->user()->company,
+                    'all_fields' => [
+                        'form1' => ['carimbo', 'ordem_reparacao', 'tipo_manutencao', 'cliente', 'estado', 'localizacao', 'descricao_avaria', 'mes', 'ano', 'solicitante', 'numero_maquina'],
+                        'form2' => ['carimbo', 'ordem_reparacao', 'localizacao', 'estado_obra', 'tempo_total', 'tecnicos', 'material', 'material_adicional', 'actividade_realizada'],
+                        'form3' => ['carimbo', 'ordem_reparacao', 'localizacao', 'estado', 'data_faturacao', 'horas_faturadas', 'materiais'],
+                        'form4' => ['carimbo', 'ordem_reparacao', 'localizacao', 'estado', 'numero_maquina'],
+                        'form5' => ['carimbo', 'ordem_reparacao', 'numero_equipamento', 'data_faturacao_1', 'horas_faturadas_1', 'data_faturacao_2', 'horas_faturadas_2', 'cliente', 'descricao_actividades', 'tecnico']
+                    ]
+                ]);
+            })->name('advanced-list');
+        });
+        
+        // ===== SISTEMA DE FATURAÇÃO =====
+        Route::prefix('billing')->name('billing.')->group(function () {
+            
+            // Faturação Real
+            Route::get('/real', function () {
+                return view('company.billing.real', [
+                    'title' => 'Faturação Real',
+                    'company' => auth()->user()->company,
+                    'billing_count' => 0, // TODO: implementar
+                    'total_amount_mzn' => 0,
+                    'total_amount_usd' => 0
+                ]);
+            })->name('real');
+            
+            // Faturação Estimada
+            Route::get('/estimated', function () {
+                return view('company.billing.estimated', [
+                    'title' => 'Faturação Estimada',
+                    'company' => auth()->user()->company,
+                    'billing_count' => 0,
+                    'total_amount_mzn' => 0,
+                    'total_amount_usd' => 0
+                ]);
+            })->name('estimated');
+            
+            // Faturação HH (Preços do Sistema)
+            Route::get('/hh', function () {
+                return view('company.billing.hh', [
+                    'title' => 'Faturação HH',
+                    'company' => auth()->user()->company,
+                    'billing_count' => 0,
+                    'total_amount_mzn' => 0,
+                    'total_amount_usd' => 0
+                ]);
+            })->name('hh');
+        });
+        
+        // ===== AVALIAÇÃO DE DESEMPENHO (apenas Company Admin) =====
+        Route::prefix('performance')
+            ->middleware('user.type:company_admin')
+            ->name('performance.')
+            ->group(function () {
+                
+                // Gestão de Métricas
+                Route::get('/metrics', function () {
+                    return view('company.performance.metrics', [
+                        'title' => 'Métricas de Desempenho',
+                        'company' => auth()->user()->company,
+                        'departments' => \App\Models\Company\Department::where('company_id', auth()->user()->company_id)->active()->get(),
+                        'metrics_count' => 0 // TODO: implementar PerformanceMetric model
+                    ]);
+                })->name('metrics');
+                
+                // Avaliações
+                Route::get('/evaluations', function () {
+                    return view('company.performance.evaluations', [
+                        'title' => 'Avaliações de Desempenho',
+                        'company' => auth()->user()->company,
+                        'employees' => \App\Models\Company\Employee::where('company_id', auth()->user()->company_id)->active()->get(),
+                        'evaluations_count' => 0 // TODO: implementar
+                    ]);
+                })->name('evaluations');
+                
+                // Relatórios de Desempenho
+                Route::get('/reports', function () {
+                    return view('company.performance.reports', [
+                        'title' => 'Relatórios de Desempenho',
+                        'company' => auth()->user()->company,
+                        'employees' => \App\Models\Company\Employee::where('company_id', auth()->user()->company_id)->active()->get(),
+                        'departments' => \App\Models\Company\Department::where('company_id', auth()->user()->company_id)->active()->get()
+                    ]);
+                })->name('reports');
+            });
+        
+        // ===== RELATÓRIOS E EXPORTAÇÕES =====
+        Route::prefix('reports')->name('reports.')->group(function () {
+            
+            Route::get('/export', function () {
+                return view('company.reports.export', [
+                    'title' => 'Exportações',
+                    'company' => auth()->user()->company,
+                    'available_exports' => [
+                        'repair_orders' => 'Ordens de Reparação',
+                        'billing' => 'Faturação', 
+                        'employees' => 'Funcionários',
+                        'clients' => 'Clientes',
+                        'materials' => 'Materiais',
+                        'performance' => 'Avaliações de Desempenho'
+                    ]
+                ]);
+            })->name('export');
+            
+            Route::get('/analytics', function () {
+                return view('company.reports.analytics', [
+                    'title' => 'Analytics',
+                    'company' => auth()->user()->company,
+                    'stats' => [
+                        'orders_this_month' => 0,
+                        'billing_this_month' => 0,
+                        'active_employees' => \App\Models\Company\Employee::where('company_id', auth()->user()->company_id)->active()->count(),
+                        'active_clients' => \App\Models\Company\Client::where('company_id', auth()->user()->company_id)->active()->count()
+                    ]
+                ]);
+            })->name('analytics');
+        });
+        
+        // ===== CONFIGURAÇÕES DA EMPRESA (apenas Company Admin) =====
+        Route::prefix('settings')
+            ->middleware('user.type:company_admin')
+            ->name('settings.')
+            ->group(function () {
+                
+                Route::get('/profile', function () {
+                    return view('company.settings.profile', [
+                        'title' => 'Perfil da Empresa',
+                        'company' => auth()->user()->company
+                    ]);
+                })->name('profile');
+                
+                Route::get('/users', function () {
+                    return view('company.settings.users', [
+                        'title' => 'Gestão de Usuários',
+                        'company' => auth()->user()->company,
+                        'users' => auth()->user()->company->users
+                    ]);
+                })->name('users');
+                
+                Route::get('/preferences', function () {
+                    return view('company.settings.preferences', [
+                        'title' => 'Preferências',
+                        'company' => auth()->user()->company,
+                        'settings' => auth()->user()->company->settings ?? []
+                    ]);
+                })->name('preferences');
+            });
 }); 
+
+
+// ===== PORTAL DO FUNCIONÁRIO =====
+Route::prefix('employee')
+    ->middleware(['auth.unified', 'user.type:company_admin,company_user'])
+    ->name('employee.')
+    ->group(function () {
+        
+        Route::get('/portal', function () {
+            return view('employee.portal', [
+                'title' => 'Portal do Funcionário',
+                'user' => auth()->user(),
+                'company' => auth()->user()->company,
+                'employee' => auth()->user()->company->employees()->where('email', auth()->user()->email)->first()
+            ]);
+        })->name('portal');
+        
+        Route::get('/performance', function () {
+            return view('employee.performance', [
+                'title' => 'Meu Desempenho',
+                'user' => auth()->user(),
+                'employee' => auth()->user()->company->employees()->where('email', auth()->user()->email)->first(),
+                'evaluations' => [] // TODO: implementar quando tiver PerformanceEvaluation model
+            ]);
+        })->name('performance');
+        
+        Route::get('/profile', function () {
+            return view('employee.profile', [
+                'title' => 'Meu Perfil',
+                'user' => auth()->user(),
+                'employee' => auth()->user()->company->employees()->where('email', auth()->user()->email)->first()
+            ]);
+        })->name('profile');
+    });
 // Administração da Empresa (Company Admin + Super Admin)
 /*
 |--------------------------------------------------------------------------
