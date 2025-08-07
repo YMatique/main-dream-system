@@ -13,10 +13,10 @@ class LanguageSwitcher extends Component
     {
         $this->currentLocale = app()->getLocale();
         $this->availableLocales = [
-            'pt' => ['name' => 'Português', 'flag' => 'mz'],
-            'en' => ['name' => 'English', 'flag' => 'us'],
-            'zh' => ['name' => '中文', 'flag' => 'cn'],
-            'fr' => ['name' => 'Français', 'flag' => 'fr'],
+            'pt' => ['name' => 'Português', 'flag' => '🇲🇿'],
+            'en' => ['name' => 'English', 'flag' => '🇺🇸'],
+            'zh' => ['name' => '中文', 'flag' => '🇨🇳'],
+            'fr' => ['name' => 'Français', 'flag' => '🇫🇷'],
         ];
     }
     

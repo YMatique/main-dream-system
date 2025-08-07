@@ -17,57 +17,101 @@ use App\Livewire\System\UserManagement;
 // })->name('home');
 
 // WEBSITE ROUTES
-Route::get('lang/{locale}', function ($locale) {
+// Route::get('lang/{locale}', function ($locale) {
+//     if (in_array($locale, config('app.available_locales'))) {
+//         session(['locale' => $locale]);
+//     }
+//     return redirect()->back();
+// })->name('lang.switch');
+
+Route::get('/', function () {
+    $locale = session('locale', config('app.locale'));
+    return redirect("/{$locale}");
+})->name('root');
+// Rotas com prefixo de idioma
+Route::group([
+    'prefix' => '{locale}',
+    'middleware' => 'setlocale',
+    'where' => ['locale' => '[a-zA-Z]{2}']
+], function () {
+    
+    // Home
+    Route::get('/', function () {
+        return view('pages.home');
+    })->name('home');
+    
+    // Sobre
+    Route::get('/sobre', function () {
+        return view('pages.about');
+    })->name('about');
+    
+    Route::get('/missao', function () {
+        return view('pages.mission');
+    })->name('mission');
+    
+    Route::get('/equipe', function () {
+        return view('pages.team');
+    })->name('team');
+    
+    // Serviços
+    Route::get('/servicos', function () {
+        return view('pages.services');
+    })->name('services');
+    
+    Route::get('/servicos/engenharia', function () {
+        return view('pages.services.engineering');
+    })->name('services.engineering');
+    
+    Route::get('/servicos/manutencao', function () {
+        return view('pages.services.maintenance');
+    })->name('services.maintenance');
+    
+    Route::get('/servicos/tecnologia', function () {
+        return view('pages.services.technology');
+    })->name('services.technology');
+    
+    Route::get('/servicos/pecas', function () {
+        return view('pages.services.spare-parts');
+    })->name('services.spare_parts');
+    
+    // Projetos
+    Route::get('/projetos', function () {
+        return view('pages.projects');
+    })->name('projects');
+    
+    // Contato
+    Route::get('/contacto', function () {
+        return view('pages.contact');
+    })->name('contact');
+    
+    Route::post('/contacto', function () {
+        // Lógica de envio do formulário
+        return back()->with('success', __('messages.contact.success'));
+    })->name('contact.send');
+});
+
+// Rota para troca de idioma
+Route::get('/lang/{locale}', function ($locale) {
     if (in_array($locale, config('app.available_locales'))) {
         session(['locale' => $locale]);
     }
-    return redirect()->back();
+    
+    // Pegar a URL anterior e adaptar o prefixo
+    $previousUrl = url()->previous();
+    $previousPath = parse_url($previousUrl, PHP_URL_PATH);
+    
+    // Remover o prefixo de idioma anterior se existir
+    $availableLocales = config('app.available_locales');
+    foreach ($availableLocales as $lang) {
+        if (str_starts_with($previousPath, "/{$lang}")) {
+            $previousPath = substr($previousPath, 3); // Remove /xx
+            break;
+        }
+    }
+    
+    // Redirecionar com novo prefixo
+    return redirect("/{$locale}{$previousPath}");
 })->name('lang.switch');
-
-Route::get('/', function () {
-    return view('pages.home');
-})->name('home');
-
-Route::get('/sobre', function () {
-    return view('pages.about');
-})->name('about');
-
-Route::get('/missao', function () {
-    return view('pages.mission');
-})->name('mission');
-
-Route::get('/equipe', function () {
-    return view('pages.team');
-})->name('team');
-
-Route::get('/servicos', function () {
-    return view('pages.services');
-})->name('services');
-
-Route::get('/servicos/engenharia', function () {
-    return view('pages.services.engineering');
-})->name('services.engineering');
-
-Route::get('/servicos/manutencao', function () {
-    return view('pages.services.maintenance');
-})->name('services.maintenance');
-
-Route::get('/servicos/tecnologia', function () {
-    return view('pages.services.technology');
-})->name('services.technology');
-
-Route::get('/servicos/pecas', function () {
-    return view('pages.services.spare-parts');
-})->name('services.spare_parts');
-
-Route::get('/projetos', function () {
-    return view('pages.projects');
-})->name('projects');
-
-Route::get('/contacto', function () {
-    return view('pages.contact');
-})->name('contact');
-
 
 
 // 
