@@ -85,7 +85,7 @@
 <body>
     <div class="page-wrapper">
         <!-- Preloader -->
-        <div class="preloader"></div>
+        {{-- <div class="preloader"></div> --}}
 
         <!-- Header -->
         @include('layouts.header')
@@ -93,6 +93,7 @@
         <!-- Main Content -->
         <main>
             @yield('content')
+            {{ $slot }}
         </main>
 
         <!-- Footer -->
