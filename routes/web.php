@@ -5,6 +5,8 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\System\CompanyController;
+use App\Livewire\Auth\System\ForgotPassword;
+use App\Livewire\Auth\System\ResetPassword;
 use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
@@ -115,6 +117,10 @@ Route::get('/lang/{locale}', function ($locale) {
 
 
 // 
+Route::middleware('guest')->group(function () {
+    Route::get('system/forgot-password', ForgotPassword::class)->name('password.request');
+    Route::get('system/reset-password/{token}', ResetPassword::class)->name('password.reset');
+});
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

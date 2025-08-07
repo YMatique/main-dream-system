@@ -18,7 +18,7 @@ class PermissionMiddleware
         $user = auth()->user();
         
         if (!$user) {
-            return redirect()->route('login');
+            return redirect()->route('system.login');
         }
         
         // Super admins têm todas as permissões

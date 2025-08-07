@@ -16,7 +16,7 @@ class EnsureSuperAdmin
     public function handle(Request $request, Closure $next): Response
     {
          if (!auth()->check()) {
-            return redirect()->route('login');
+            return redirect()->route('system.login');
         }
 
         // Assumindo que o super admin tem um campo role = 'super_admin' ou is_super_admin = true
@@ -25,7 +25,7 @@ class EnsureSuperAdmin
         // Check if user status is active
         if ($user->status !== 'active') {
             auth()->logout();
-            return redirect()->route('login')->with('error', 'Sua conta está inativa.');
+            return redirect()->route('system.login')->with('error', 'Sua conta está inativa.');
         }
 
            $isSuperAdmin = $user->is_super_admin 

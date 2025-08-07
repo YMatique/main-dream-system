@@ -17,7 +17,7 @@ class CheckPermission
     public function handle(Request $request, Closure $next,  string $permission): Response
     {
          if (!Auth::check()) {
-            return redirect()->route('login');
+            return redirect()->route('system.login');
         }
 
         $user = Auth::user();
@@ -25,7 +25,7 @@ class CheckPermission
         // Check if user is active
         if ($user->status !== 'active') {
             Auth::logout();
-            return redirect()->route('login')->with('error', 'Sua conta está inativa. Entre em contato com o administrador.');
+            return redirect()->route('system.login')->with('error', 'Sua conta está inativa. Entre em contato com o administrador.');
         }
 
         // Check if user has the required permission
