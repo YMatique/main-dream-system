@@ -17,7 +17,60 @@ Route::get('/', function () {
 })->name('home');
 
 // WEBSITE ROUTES
+Route::get('lang/{locale}', function ($locale) {
+    if (in_array($locale, config('app.available_locales'))) {
+        session(['locale' => $locale]);
+    }
+    return redirect()->back();
+})->name('lang.switch');
 
+Route::get('/', function () {
+    return view('pages.home');
+})->name('home');
+
+Route::get('/sobre', function () {
+    return view('pages.about');
+})->name('about');
+
+Route::get('/missao', function () {
+    return view('pages.mission');
+})->name('mission');
+
+Route::get('/equipe', function () {
+    return view('pages.team');
+})->name('team');
+
+Route::get('/servicos', function () {
+    return view('pages.services');
+})->name('services');
+
+Route::get('/servicos/engenharia', function () {
+    return view('pages.services.engineering');
+})->name('services.engineering');
+
+Route::get('/servicos/manutencao', function () {
+    return view('pages.services.maintenance');
+})->name('services.maintenance');
+
+Route::get('/servicos/tecnologia', function () {
+    return view('pages.services.technology');
+})->name('services.technology');
+
+Route::get('/servicos/pecas', function () {
+    return view('pages.services.spare-parts');
+})->name('services.spare_parts');
+
+Route::get('/projetos', function () {
+    return view('pages.projects');
+})->name('projects');
+
+Route::get('/contacto', function () {
+    return view('pages.contact');
+})->name('contact');
+
+
+
+// 
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
