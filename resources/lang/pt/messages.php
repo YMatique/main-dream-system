@@ -4,7 +4,7 @@ return [
     'tagline' => 'Engenharia | Manutenção | Tecnologia | Peças',
     'meta_description' => 'MainGDream fornece soluções completas em engenharia, manutenção, tecnologia e peças sobressalentes.',
     'meta_keywords' => 'engenharia, manutenção, tecnologia, peças sobressalentes, Moçambique',
-    
+
     // Navigation
     'nav' => [
         'home' => 'Início',
@@ -21,15 +21,27 @@ return [
         'projects' => 'Projetos',
         'contact' => 'Contacto',
     ],
-    
+
     // Company Info
     'company' => [
         'mission' => 'Fornecer soluções completas e inteligentes em engenharia, manutenção, tecnologia e fornecimento de peças sobressalentes, garantindo performance, confiabilidade e inovação em todas as operações dos clientes.',
         'vision' => 'Ser referência em soluções técnicas e tecnológicas a nível nacional, regional e internacional, destacando-se pela excelência, inovação e confiança dos nossos serviços.',
     ],
-    
+
     // Contact
     'address' => 'Beira, Sofala, Moçambique',
     'phone' => '+258 84 123 4567',
     'email' => 'info@maingdream.co.mz',
+
+    // Adicionar ao array existente:
+    'footer' => [
+        'description' => 'Fornecemos soluções completas e inteligentes em engenharia, manutenção, tecnologia e peças sobressalentes para garantir o sucesso das suas operações.',
+        'mission_title' => 'Nossa Missão',
+        'quick_links' => 'Links Rápidos',
+        'our_services' => 'Nossos Serviços',
+        'get_in_touch' => 'Entre em Contacto',
+        'full_address' => 'Beira, Sofala, Moçambique',
+        'copyright' => 'Todos os direitos reservados.',
+        'tagline' => 'Engenharia | Manutenção | Tecnologia | Peças',
+    ],
 ];

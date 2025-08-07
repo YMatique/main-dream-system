@@ -123,4 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    // Language settings
+    'locale' => 'pt',
+    'fallback_locale' => 'pt',
+    'available_locales' => ['pt', 'en', 'zh', 'fr'],
 ];
