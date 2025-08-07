@@ -16,16 +16,6 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-      <style>
-        .sidebar-open { transform: translateX(0); }
-        .sidebar-closed { transform: translateX(-100%); }
-        .dropdown-menu { display: none; }
-        .dropdown-menu.show { display: block; }
-        .dark-mode { background-color: #111827; color: #f9fafb; }
-        .dark-mode .bg-white { background-color: #1f2937; }
-        .dark-mode .text-zinc-900 { color: #f9fafb; }
-        .dark-mode .border-zinc-200 { border-color: #374151; }
-    </style>    
 </head>
 
 <body class="font-sans antialiased bg-zinc-50 dark:bg-zinc-900">
@@ -214,7 +204,7 @@
                 </div>
             </div> --}}
             <!-- User Profile (bottom of sidebar) - Linhas 125-190 -->
-            {{-- <div class="border-t border-zinc-200 dark:border-zinc-700 p-4">
+            <div class="border-t border-zinc-200 dark:border-zinc-700 p-4">
                 <div class="flex items-center">
                     <div
                         class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
@@ -256,37 +246,6 @@
                                 @csrf
                                 <button type="submit"
                                     class="block w-full text-left px-4 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-600">
-                                    Terminar Sessão
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
-                <!-- User Profile (bottom of sidebar) -->
-            <div class="border-t border-zinc-200 p-4">
-                <div class="flex items-center">
-                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                        <span class="text-sm font-medium text-white">{{ substr(Auth::user()->name, 0, 1) }}</span>
-                    </div>
-                    <div class="ml-3 flex-1 min-w-0">
-                        <p class="text-sm font-medium text-zinc-900 truncate">{{ Auth::user()->name }}</p>
-                        <p class="text-xs text-zinc-500 truncate">Super Administrador</p>
-                    </div>
-                    <div class="ml-2 relative">
-                        <button id="userMenuBtn" class="p-1 rounded-md text-zinc-400 hover:text-zinc-500">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
-                            </svg>
-                        </button>
-                        
-                        <div id="userDropdown" class="dropdown-menu absolute bottom-full mb-2 right-4 w-48 rounded-lg shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5">
-                            <a href="#" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">Perfil</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">Configurações</a>
-                            <div class="border-t border-zinc-100"></div>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">
                                     Terminar Sessão
                                 </button>
                             </form>
@@ -405,75 +364,7 @@
     </div>
 
     @livewireScripts
-     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementos
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const sidebarOpenBtn = document.getElementById('sidebarOpenBtn');
-            const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
-            const userMenuBtn = document.getElementById('userMenuBtn');
-            const userDropdown = document.getElementById('userDropdown');
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const darkModeIcon = document.getElementById('darkModeIcon');
-            const app = document.getElementById('app');
-
-            // Sidebar Mobile
-            function openSidebar() {
-                sidebar.classList.remove('sidebar-closed');
-                sidebar.classList.add('sidebar-open');
-                overlay.classList.remove('hidden');
-            }
-
-            function closeSidebar() {
-                sidebar.classList.remove('sidebar-open');
-                sidebar.classList.add('sidebar-closed');
-                overlay.classList.add('hidden');
-            }
-
-            // Event listeners para sidebar
-            sidebarOpenBtn.addEventListener('click', openSidebar);
-            sidebarCloseBtn.addEventListener('click', closeSidebar);
-            overlay.addEventListener('click', closeSidebar);
-
-            // User dropdown menu
-            userMenuBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                userDropdown.classList.toggle('show');
-            });
-
-            // Fechar dropdown ao clicar fora
-            document.addEventListener('click', function() {
-                userDropdown.classList.remove('show');
-            });
-
-            // Dark mode
-            let isDarkMode = localStorage.getItem('darkMode') === 'true';
-
-            function updateDarkMode() {
-                if (isDarkMode) {
-                    app.classList.add('dark-mode');
-                    darkModeIcon.innerHTML = `
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    `;
-                } else {
-                    app.classList.remove('dark-mode');
-                    darkModeIcon.innerHTML = `
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                    `;
-                }
-                localStorage.setItem('darkMode', isDarkMode);
-            }
-
-            darkModeToggle.addEventListener('click', function() {
-                isDarkMode = !isDarkMode;
-                updateDarkMode();
-            });
-
-            // Aplicar dark mode inicial
-            updateDarkMode();
-        });
-    </script>
+    
     @yield('scripts')
 </body>
 
