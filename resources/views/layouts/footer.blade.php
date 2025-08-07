@@ -13,7 +13,7 @@
                         <div class="footer-column col-md-7 col-sm-6 col-xs-12">
                             <div class="footer-widget logo-widget">
                                 <div class="logo">
-                                    <a href="{{ route('home') }}">
+                                    <a href="{{ route('home',  ['locale' => app()->getLocale()]) }}">
                                         <img src="{{ asset('images/footer-logo-maingdream.png') }}" alt="MainGDream" />
                                     </a>
                                 </div>
@@ -33,11 +33,11 @@
                                 <h2>{{ __('messages.footer.quick_links') }}</h2>
                                 <div class="widget-content">
                                     <ul class="list">
-                                        <li><a href="{{ route('home') }}">{{ __('messages.nav.home') }}</a></li>
-                                        <li><a href="{{ route('about') }}">{{ __('messages.nav.about') }}</a></li>
-                                        <li><a href="{{ route('services') }}">{{ __('messages.nav.services') }}</a></li>
-                                        <li><a href="{{ route('projects') }}">{{ __('messages.nav.projects') }}</a></li>
-                                        <li><a href="{{ route('contact') }}">{{ __('messages.nav.contact') }}</a></li>
+                                        <li><a href="{{ route('home', ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.home') }}</a></li>
+                                        <li><a href="{{ route('about',  ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.about') }}</a></li>
+                                        <li><a href="{{ route('services',  ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.services') }}</a></li>
+                                        <li><a href="{{ route('projects',  ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.projects') }}</a></li>
+                                        <li><a href="{{ route('contact',  ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.contact') }}</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -56,10 +56,10 @@
                                 <h2>{{ __('messages.footer.our_services') }}</h2>
                                 <div class="widget-content">
                                     <ul class="list">
-                                        <li><a href="{{ route('services.engineering') }}">{{ __('messages.nav.engineering') }}</a></li>
-                                        <li><a href="{{ route('services.maintenance') }}">{{ __('messages.nav.maintenance') }}</a></li>
-                                        <li><a href="{{ route('services.technology') }}">{{ __('messages.nav.technology') }}</a></li>
-                                        <li><a href="{{ route('services.spare_parts') }}">{{ __('messages.nav.spare_parts') }}</a></li>
+                                        <li><a href="{{ route('services.engineering', ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.engineering') }}</a></li>
+                                        <li><a href="{{ route('services.maintenance', ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.maintenance') }}</a></li>
+                                        <li><a href="{{ route('services.technology',  ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.technology') }}</a></li>
+                                        <li><a href="{{ route('services.spare_parts',  ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.spare_parts') }}</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -122,7 +122,7 @@
             <div class="clearfix">
                 <div class="pull-left">
                     <div class="copyright">
-                        &copy; {{ date('Y') }} <a href="{{ route('home') }}">MainGDream</a>. {{ __('messages.footer.copyright') }}
+                        &copy; {{ date('Y') }} <a href="{{ route('home',  ['locale' => app()->getLocale()]) }}">MainGDream</a>. {{ __('messages.footer.copyright') }}
                     </div>
                 </div>
                 <div class="pull-right">

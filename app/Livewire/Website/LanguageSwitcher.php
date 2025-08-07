@@ -2,28 +2,31 @@
 
 namespace App\Livewire\Website;
 
+use App\Helpers\LocaleHelper;
 use Livewire\Component;
 
 class LanguageSwitcher extends Component
 {
-     public $currentLocale;
+      public $currentLocale;
     public $availableLocales;
-    
+    public $alternateUrls;
+
     public function mount()
     {
         $this->currentLocale = app()->getLocale();
         $this->availableLocales = [
-            'pt' => ['name' => 'Português', 'flag' => '🇲🇿'],
+               'pt' => ['name' => 'Português', 'flag' => '🇲🇿'],
             'en' => ['name' => 'English', 'flag' => '🇺🇸'],
             'zh' => ['name' => '中文', 'flag' => '🇨🇳'],
             'fr' => ['name' => 'Français', 'flag' => '🇫🇷'],
         ];
+              // Gerar URLs alternativas para a página atual
+        $this->alternateUrls = LocaleHelper::getAlternateUrls();
     }
-    
+
     public function switchLanguage($locale)
     {
-        session(['locale' => $locale]);
-        return redirect()->to(request()->header('Referer'));
+        return redirect($this->alternateUrls[$locale] ?? "/{$locale}");
     }
     public function render()
     {

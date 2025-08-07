@@ -25,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
          $this->app->singleton(ActivityLoggerService::class, function ($app) {
             return new ActivityLoggerService();
         });
+
+          require_once app_path('helpers.php');
     }
 
     /**
@@ -44,5 +46,20 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(Failed::class, function (Failed $event) {
             app(AuditService::class)->logFailedLogin($event->credentials['email'] ?? 'unknown');
         });
+
+
+
+         // Registrar helper global
+        if (!function_exists('locale_route')) {
+            function locale_route($name, $parameters = [], $locale = null) {
+                return \App\Helpers\LocaleHelper::route($name, $parameters, $locale);
+            }
+        }
+        
+        if (!function_exists('alternate_urls')) {
+            function alternate_urls() {
+                return \App\Helpers\LocaleHelper::getAlternateUrls();
+            }
+        }
     }
 }

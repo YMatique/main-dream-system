@@ -11,6 +11,7 @@ use App\Livewire\System\PlanManagement;
 use App\Livewire\System\SubscriptionManagement;
 use App\Livewire\System\SystemDashboard;
 use App\Livewire\System\UserManagement;
+use App\Livewire\Website\Home;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -36,52 +37,50 @@ Route::group([
 ], function () {
     
     // Home
-    Route::get('/', function () {
-        return view('pages.home');
-    })->name('home');
+    Route::get('/', Home::class)->name('home');
     
     // Sobre
     Route::get('/sobre', function () {
-        return view('pages.about');
+        return view('website.about');
     })->name('about');
     
     Route::get('/missao', function () {
-        return view('pages.mission');
+        return view('website.mission');
     })->name('mission');
     
     Route::get('/equipe', function () {
-        return view('pages.team');
+        return view('website.team');
     })->name('team');
     
     // Serviços
     Route::get('/servicos', function () {
-        return view('pages.services');
+        return view('website.services');
     })->name('services');
     
     Route::get('/servicos/engenharia', function () {
-        return view('pages.services.engineering');
+        return view('website.services.engineering');
     })->name('services.engineering');
     
     Route::get('/servicos/manutencao', function () {
-        return view('pages.services.maintenance');
+        return view('website.services.maintenance');
     })->name('services.maintenance');
     
     Route::get('/servicos/tecnologia', function () {
-        return view('pages.services.technology');
+        return view('website.services.technology');
     })->name('services.technology');
     
     Route::get('/servicos/pecas', function () {
-        return view('pages.services.spare-parts');
+        return view('website.services.spare-parts');
     })->name('services.spare_parts');
     
     // Projetos
     Route::get('/projetos', function () {
-        return view('pages.projects');
+        return view('website.projects');
     })->name('projects');
     
     // Contato
     Route::get('/contacto', function () {
-        return view('pages.contact');
+        return view('website.contact');
     })->name('contact');
     
     Route::post('/contacto', function () {

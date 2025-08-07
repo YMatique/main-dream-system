@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'company' => \App\Http\Middleware\CompanyMiddleware::class,
             'security'=> \App\Http\Middleware\SecurityMiddleware::class,
             // 'permission' => \App\Http\Middleware\PermissionMiddleware::class, verificar o alias do middleware
+            'setlocale'=> \App\Http\Middleware\SetLocale::class,
         ]);
         $middleware->append( \App\Http\Middleware\LogActivity::class, );
 
