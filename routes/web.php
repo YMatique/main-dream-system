@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\System\CompanyController;
 use App\Livewire\Auth\System\ForgotPassword;
 use App\Livewire\Auth\System\ResetPassword;
+use App\Livewire\Company\CompanyLogin;
 use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
@@ -213,6 +214,7 @@ Route::middleware(['user.type:super_admin'])->prefix('system')->name('system.')-
     
 });
 
+Route::get('companies/login', CompanyLogin::class)->name('company.login');
 //Rotas para Admin de Empresa 
 
 // Administração da Empresa (Company Admin + Super Admin)
