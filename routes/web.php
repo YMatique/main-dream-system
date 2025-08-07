@@ -12,6 +12,7 @@ use App\Livewire\System\SubscriptionManagement;
 use App\Livewire\System\SystemDashboard;
 use App\Livewire\System\UserManagement;
 use App\Livewire\Website\Home;
+use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -264,6 +265,41 @@ Route::prefix('app')
     });
 */
 
+
+/*
+|--------------------------------------------------------------------------
+| System Authentication Routes
+|--------------------------------------------------------------------------
+*/
+
+// Login específico para o sistema
+Route::get('/system/login', \App\Livewire\System\SystemLogin::class)
+    ->middleware('guest')
+    ->name('system.login');
+
+// Logout do sistema
+Route::post('/system/logout', function () {
+    $user = Auth::user();
+    
+    // Log do logout
+    if ($user) {
+        $logger = app(\App\Services\ActivityLoggerService::class);
+        $logger->log(
+            'system_logout',
+            "Super Admin {$user->name} fez logout do sistema de administração",
+            'auth',
+            'info'
+        );
+    }
+    
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    
+    return redirect()->route('system.login')->with('message', 'Logout realizado com sucesso.');
+})
+    ->middleware('auth')
+    ->name('system.logout');
 /*
 Route::prefix('company')
     ->middleware(['auth', 'verified', 'user_type:company_admin,company_user', 'active_subscription'])

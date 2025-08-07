@@ -19,11 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => CheckPermission::class,
             'audit' => \App\Http\Middleware\AuditMiddleware::class,
             'company' => \App\Http\Middleware\CompanyMiddleware::class,
-            'security'=> \App\Http\Middleware\SecurityMiddleware::class,
+            'security' => \App\Http\Middleware\SecurityMiddleware::class,
             // 'permission' => \App\Http\Middleware\PermissionMiddleware::class, verificar o alias do middleware
-            'setlocale'=> \App\Http\Middleware\SetLocale::class,
+            'setlocale' => \App\Http\Middleware\SetLocale::class,
+
+            'system.auth' => \App\Http\Middleware\SystemAuth::class,
         ]);
-        $middleware->append( \App\Http\Middleware\LogActivity::class, );
+        $middleware->append(\App\Http\Middleware\LogActivity::class,);
 
         /**
          *    Middleware global (opcional)

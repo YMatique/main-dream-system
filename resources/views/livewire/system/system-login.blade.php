@@ -1,4 +1,5 @@
-{{-- resources/views/livewire/auth/system-login.blade.php --}}
+<div>
+    {{-- resources/views/livewire/auth/system-login.blade.php --}}
 
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 relative overflow-hidden">
     <!-- Background Pattern -->
@@ -177,3 +178,4 @@
         animation-delay: 4s;
     }
 </style>
+</div>

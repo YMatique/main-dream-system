@@ -33,12 +33,15 @@ class SystemLogin extends Component
 
     public function render()
     {
+        // dd('Renderizando a view de login do sistema');
         return view('livewire.system.system-login');
     }
 
     public function login()
     {
+                // dd('Login attempt:', $this->email, $this->password, $this->remember);
         $this->validate();
+
 
         $this->ensureIsNotRateLimited();
 
