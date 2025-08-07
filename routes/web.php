@@ -172,7 +172,7 @@ Route::prefix('system')
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'user.type:super_admin'])->prefix('system')->name('system.')->group(function () {
+Route::middleware(['user.type:super_admin'])->prefix('system')->name('system.')->group(function () {
     
      Route::get('/dashboard', SystemDashboard::class)->name('dashboard');
 
