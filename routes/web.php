@@ -300,6 +300,9 @@ Route::post('/system/logout', function () {
 })
     ->middleware('auth')
     ->name('system.logout');
+
+
+
 /*
 Route::prefix('company')
     ->middleware(['auth', 'verified', 'user_type:company_admin,company_user', 'active_subscription'])

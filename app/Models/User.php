@@ -441,4 +441,15 @@ class User extends Authenticatable
     {
         return $this->user_type === 'super_admin' || $this->attributes['is_super_admin'] ?? false;
     }
+
+
+
+
+    /**
+     * Send the password reset notification.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPassword($token));
+    }
 }
