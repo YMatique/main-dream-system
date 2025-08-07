@@ -214,6 +214,12 @@ Route::middleware(['user.type:super_admin'])->prefix('system')->name('system.')-
     
 });
 
+/*
+|--------------------------------------------------------------------------
+| Área das Empresas
+|--------------------------------------------------------------------------
+*/
+
 Route::get('companies/login', CompanyLogin::class)->name('company.login');
 //Rotas para Admin de Empresa 
 

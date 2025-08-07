@@ -154,4 +154,228 @@ class Company extends Model
     {
         return $this->email;
     }
+
+    
+
+    /**
+     * Check if company is inactive.
+     */
+    public function isInactive(): bool
+    {
+        return $this->status === 'inactive';
+    }
+
+   
+    /**
+     * Activate the company.
+     */
+    public function activate(): void
+    {
+        $this->update(['status' => 'active']);
+    }
+
+    /**
+     * Suspend the company.
+     */
+    public function suspend(): void
+    {
+        $this->update(['status' => 'suspended']);
+    }
+
+    /**
+     * Deactivate the company.
+     */
+    public function deactivate(): void
+    {
+        $this->update(['status' => 'inactive']);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Subscription Methods
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Check if company has an active subscription.
+     */
+    // public function hasActiveSubscription(): bool
+    // {
+    //     $subscription = $this->currentSubscription;
+        
+    //     if (!$subscription) {
+    //         return false;
+    //     }
+
+    //     return $subscription->status === 'active' && 
+    //            $subscription->expires_at > now();
+    // }
+
+    /**
+     * Check if subscription is expired.
+     */
+    public function hasExpiredSubscription(): bool
+    {
+        return !$this->hasActiveSubscription();
+    }
+
+    /**
+     * Get days until subscription expires.
+     */
+    public function getDaysUntilExpiration(): int
+    {
+        $subscription = $this->currentSubscription;
+        
+        if (!$subscription || $subscription->expires_at <= now()) {
+            return 0;
+        }
+
+        return $subscription->expires_at->diffInDays(now());
+    }
+
+    /**
+     * Check if subscription is expiring soon (within 7 days).
+     */
+    public function isSubscriptionExpiringSoon(): bool
+    {
+        $daysUntilExpiration = $this->getDaysUntilExpiration();
+        return $daysUntilExpiration > 0 && $daysUntilExpiration <= 7;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Management
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Get company admins.
+     */
+    public function getAdmins()
+    {
+        return $this->users()->where('user_type', 'company_admin')->get();
+    }
+
+    /**
+     * Get regular company users.
+     */
+    public function getRegularUsers()
+    {
+        return $this->users()->where('user_type', 'company_user')->get();
+    }
+
+    /**
+     * Get total active users count.
+     */
+    public function getActiveUsersCount(): int
+    {
+        return $this->users()->active()->count();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Settings Methods
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Get a setting value.
+     */
+    public function getSetting(string $key, $default = null)
+    {
+        return data_get($this->settings, $key, $default);
+    }
+
+    /**
+     * Set a setting value.
+     */
+    public function setSetting(string $key, $value): void
+    {
+        $settings = $this->settings ?? [];
+        data_set($settings, $key, $value);
+        $this->update(['settings' => $settings]);
+    }
+
+    /**
+     * Remove a setting.
+     */
+    public function removeSetting(string $key): void
+    {
+        $settings = $this->settings ?? [];
+        data_forget($settings, $key);
+        $this->update(['settings' => $settings]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+
+   
+
+   
+
+    /**
+     * Scope to get companies with active subscriptions.
+     */
+    public function scopeWithActiveSubscription($query)
+    {
+        return $query->whereHas('currentSubscription', function ($q) {
+            $q->where('status', 'active')
+              ->where('expires_at', '>', now());
+        });
+    }
+
+    /**
+     * Scope to get companies with expired subscriptions.
+     */
+    public function scopeWithExpiredSubscription($query)
+    {
+        return $query->whereDoesntHave('currentSubscription')
+                    ->orWhereHas('currentSubscription', function ($q) {
+                        $q->where('status', '!=', 'active')
+                          ->orWhere('expires_at', '<=', now());
+                    });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Utility Methods
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Get company's initials for avatar.
+     */
+    public function getInitials(): string
+    {
+        $words = explode(' ', $this->name);
+        $initials = '';
+        
+        foreach (array_slice($words, 0, 2) as $word) {
+            $initials .= strtoupper(substr($word, 0, 1));
+        }
+        
+        return $initials ?: 'C';
+    }
+
+    /**
+     * Get formatted address.
+     */
+    public function getFullAddress(): string
+    {
+        $parts = array_filter([$this->address, $this->city, $this->country]);
+        return implode(', ', $parts);
+    }
+
+    /**
+     * Check if company can be deleted.
+     */
+    public function canBeDeleted(): bool
+    {
+        // Company can only be deleted if it has no users and no subscriptions
+        return $this->users()->count() === 0 && 
+               $this->subscriptions()->count() === 0;
+    }
 }
