@@ -4,9 +4,12 @@ namespace App\Models\Company;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Department extends Model
+class Client extends Model
 {
-     protected $fillable = ['company_id', 'name', 'description', 'is_active'];
+     protected $fillable = [
+        'company_id', 'name', 'description', 'email', 
+        'phone', 'address', 'is_active'
+    ];
 
     protected function casts(): array
     {
@@ -18,9 +21,9 @@ class Department extends Model
         return $this->belongsTo(\App\Models\System\Company::class);
     }
 
-    public function employees()
+    public function clientCosts()
     {
-        return $this->hasMany(Employee::class);
+        return $this->hasMany(ClientCost::class);
     }
 
     public function scopeActive($query)
