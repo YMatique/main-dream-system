@@ -14,39 +14,20 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'role' => \App\Http\Middleware\EnsureSuperAdmin::class,
-            'user.type' => CheckUserType::class,
-            'permission' => CheckPermission::class,
+            // 'role' => \App\Http\Middleware\EnsureSuperAdmin::class,
+            // 'user.type' => CheckUserType::class,
+            // 'permission' => CheckPermission::class,
             'audit' => \App\Http\Middleware\AuditMiddleware::class,
-            'company' => \App\Http\Middleware\CompanyMiddleware::class,
+            // 'company' => \App\Http\Middleware\CompanyMiddleware::class,
             'security' => \App\Http\Middleware\SecurityMiddleware::class,
             // 'permission' => \App\Http\Middleware\PermissionMiddleware::class, verificar o alias do middleware
             'setlocale' => \App\Http\Middleware\SetLocale::class,
 
-            'system.auth' => \App\Http\Middleware\SystemAuth::class,
+            // 'system.auth' => \App\Http\Middleware\SystemAuth::class,
+             'auth.unified' => \App\Http\Middleware\AuthenticatedMiddleware::class,
+            'user.type' => \App\Http\Middleware\UserTypeMiddleware::class,
         ]);
         $middleware->append(\App\Http\Middleware\LogActivity::class,);
-
-        /**
-         *    Middleware global (opcional)
-        $middleware->append(CheckUserType::class);
-        
-     Middleware de grupo (opcional)
-        $middleware->group('system', [
-            'auth',
-            'user.type:super_admin'
-        ]);
-
-        $middleware->group('company', [
-            'auth',
-            'user.type:super_admin,company_admin'
-        ]);
-
-        $middleware->group('app', [
-            'auth',
-            'user.type:super_admin,company_admin,company_user'
-        ]);
-         */
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

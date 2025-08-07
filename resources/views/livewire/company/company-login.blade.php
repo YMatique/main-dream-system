@@ -1,6 +1,7 @@
 {{-- resources/views/livewire/company/company-login.blade.php --}}
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 relative overflow-hidden">
+<div>
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 relative overflow-hidden">
     <!-- Background Pattern -->
     <div class="absolute inset-0 bg-black/20">
         <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="1"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
@@ -11,7 +12,7 @@
     <div class="absolute top-40 right-20 w-72 h-72 bg-gradient-to-r from-purple-500/30 to-blue-500/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
     <div class="absolute -bottom-8 left-40 w-72 h-72 bg-gradient-to-r from-indigo-500/30 to-purple-500/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
 
-    <div class="max-w-md w-full space-y-8 p-8 relative z-10">
+    <div class="max-w-lg w-full space-y-8 p-8 relative z-10">
         <!-- Logo/Brand -->
         <div class="text-center">
             <div class="mx-auto h-20 w-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl">
@@ -103,7 +104,7 @@
                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-white/30 rounded bg-white/20">
                         <span class="ml-2 text-sm text-blue-100">Manter-me conectado</span>
                     </label>
-                    <a href="{{ route('company.password.request') }}" 
+                    <a href="{{ route('password.request') }}" 
                        class="text-sm text-blue-300 hover:text-blue-200 font-medium transition-colors">
                         Esqueceu a senha?
                     </a>
@@ -144,15 +145,15 @@
         <!-- Links de Navegação -->
         <div class="text-center space-y-3">
             <div class="flex justify-center space-x-4 text-sm">
-                <a href="{{ route('system.login') }}" 
+                <a href="{{ route('company.login') }}" 
                    class="text-blue-300 hover:text-blue-200 transition-colors">
                     Acesso Administrativo
                 </a>
-                <span class="text-blue-400">•</span>
+                {{-- <span class="text-blue-400">•</span>
                 <a href="{{ route('home') }}" 
                    class="text-blue-300 hover:text-blue-200 transition-colors">
                     Página Inicial
-                </a>
+                </a> --}}
             </div>
             <p class="text-xs text-blue-400">
                 Sistema seguro com monitoramento de acesso • 
@@ -182,3 +183,4 @@
         animation-delay: 4s;
     }
 </style>
+</div>

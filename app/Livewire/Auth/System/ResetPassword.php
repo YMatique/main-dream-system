@@ -15,7 +15,7 @@ use Livewire\Component;
 
 class ResetPassword extends Component
 {
-     public string $token = '';
+    public string $token = '';
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
@@ -49,13 +49,13 @@ class ResetPassword extends Component
         return view('livewire.auth.system.reset-password');
     }
 
-     public function resetPassword()
+    public function resetPassword()
     {
         $this->validate();
 
         // Verificar se o usuário existe
         $user = \App\Models\User::where('email', $this->email)->first();
-        
+
         if (!$user) {
             throw ValidationException::withMessages([
                 'email' => 'Não foi possível encontrar uma conta com este email.',
@@ -113,15 +113,29 @@ class ResetPassword extends Component
 
     protected function getRedirectRoute($user): string
     {
-        return match($user->user_type) {
+        return match ($user->user_type) {
             'super_admin' => route('system.dashboard'),
-            'company_admin', 'company_user' => route('admin.dashboard'),
+            'company_admin', 'company_user' => route('company.dashboard'),
             default => route('dashboard')
         };
     }
 
     public function goBack()
     {
-        return $this->redirect(route('login'), navigate: true);
+        // Método mais simples: verificar o tipo do usuário pelo email
+        if (!empty($this->email)) {
+            $user = \App\Models\User::where('email', $this->email)->first();
+
+            if ($user && $user->isSuperAdmin()) {
+                return $this->redirect(route('system.login'), navigate: true);
+            }
+
+            if ($user && in_array($user->user_type, ['company_admin', 'company_user'])) {
+                return $this->redirect(route('company.login'), navigate: true);
+            }
+        }
+
+        // Fallback: se não conseguir determinar, vai para login do sistema
+        return $this->redirect(route('company.login'), navigate: true);
     }
 }

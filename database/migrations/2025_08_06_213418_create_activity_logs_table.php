@@ -38,7 +38,7 @@ return new class extends Migration
             $table->enum('level', ['info', 'warning', 'error', 'critical'])->default('info');
             $table->enum('category', [
                 'auth', 'system', 'company', 'user', 'repair_order', 
-                'billing', 'employee', 'client', 'material', 'performance'
+                'billing', 'employee', 'client', 'material', 'performance', 'security'
             ])->default('system');
             $table->timestamps();
 

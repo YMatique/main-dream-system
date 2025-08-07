@@ -8,6 +8,7 @@ use App\Http\Controllers\System\CompanyController;
 use App\Livewire\Auth\System\ForgotPassword;
 use App\Livewire\Auth\System\ResetPassword;
 use App\Livewire\Company\CompanyLogin;
+use App\Livewire\Company\Dashboard;
 use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
@@ -119,8 +120,8 @@ Route::get('/lang/{locale}', function ($locale) {
 
 // 
 Route::middleware('guest')->group(function () {
-    Route::get('system/forgot-password', ForgotPassword::class)->name('password.request');
-    Route::get('system/reset-password/{token}', ResetPassword::class)->name('password.reset');
+    Route::get('system-auth/forgot-password', ForgotPassword::class)->name('password.request');
+    Route::get('system-auth/reset-password/{token}', ResetPassword::class)->name('password.reset');
 });
 
 Route::view('dashboard', 'dashboard')
@@ -173,7 +174,7 @@ Route::prefix('system')
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['user.type:super_admin'])->prefix('system')->name('system.')->group(function () {
+Route::middleware(['auth.unified','user.type:super_admin'])->prefix('system')->name('system.')->group(function () {
     
      Route::get('/dashboard', SystemDashboard::class)->name('dashboard');
 
@@ -222,7 +223,9 @@ Route::middleware(['user.type:super_admin'])->prefix('system')->name('system.')-
 
 Route::get('companies/login', CompanyLogin::class)->name('company.login');
 //Rotas para Admin de Empresa 
-
+Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,company_user'])->name('company.')->group(function(){
+   Route::get('dashboard', Dashboard::class)->name('dashboard'); 
+}); 
 // Administração da Empresa (Company Admin + Super Admin)
 /*
 |--------------------------------------------------------------------------

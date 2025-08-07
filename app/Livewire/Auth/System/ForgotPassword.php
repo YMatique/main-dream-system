@@ -90,7 +90,21 @@ class ForgotPassword extends Component
 
     public function goBack()
     {
-        return $this->redirect(route('login'), navigate: true);
+        // Método mais simples: verificar o tipo do usuário pelo email
+        if (!empty($this->email)) {
+            $user = \App\Models\User::where('email', $this->email)->first();
+            
+            if ($user && $user->isSuperAdmin()) {
+                return $this->redirect(route('system.login'), navigate: true);
+            }
+            
+            if ($user && in_array($user->user_type, ['company_admin', 'company_user'])) {
+                return $this->redirect(route('company.login'), navigate: true);
+            }
+        }
+
+        // Fallback: se não conseguir determinar, vai para login do sistema
+        return $this->redirect(route('system.login'), navigate: true);
     }
 
     public function goToSystemLogin()
