@@ -127,4 +127,17 @@ return [
     'locale' => 'pt',
     'fallback_locale' => 'pt',
     'available_locales' => ['pt', 'en', 'zh', 'fr'],
+
+
+
+    // Adicionar estas configurações
+    'phone' => env('COMPANY_PHONE', '+258 84 123 4567'),
+    'email' => env('COMPANY_EMAIL', 'info@maingdream.co.mz'),
+
+    'social' => [
+        'facebook' => env('FACEBOOK_URL', '#'),
+        'linkedin' => env('LINKEDIN_URL', '#'),
+        'twitter' => env('TWITTER_URL', '#'),
+        'instagram' => env('INSTAGRAM_URL', '#'),
+    ],
 ];
