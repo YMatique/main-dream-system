@@ -11,6 +11,7 @@ use App\Livewire\Company\CompanyLogin;
 use App\Livewire\Company\Dashboard;
 use App\Livewire\Company\DepartmentManagement;
 use App\Livewire\Company\EmployeeManagement;
+use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
@@ -283,13 +284,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             })->name('locations');
             
             // Números de Máquina
-            Route::get('/machine-numbers', function () {
-                return view('company.manage.machine-numbers', [
-                    'title' => 'Números de Máquina',
-                    'company' => auth()->user()->company,
-                    'machines_count' => \App\Models\Company\MachineNumber::where('company_id', auth()->user()->company_id)->count()
-                ]);
-            })->name('machine-numbers');
+            Route::get('/machine-numbers', MachineNumberManagement::class)->name('machine-numbers');
             
             // Solicitantes
             Route::get('/requesters', function () {
