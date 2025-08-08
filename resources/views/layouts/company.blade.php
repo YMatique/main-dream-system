@@ -475,8 +475,8 @@
         <div class="flex flex-col w-0 flex-1 overflow-hidden">
             
             <!-- ============ HEADER MELHORADO COM TOOLTIPS ============ -->
-            <header class="relative z-10 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between h-16 px-6 lg:px-8">
+            <header class="relative z-50 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between h-20 px-6 lg:px-8">
                     
                     <!-- Left Side -->
                     <div class="flex items-center space-x-4">
@@ -509,7 +509,7 @@
                                     </svg>
                                 </button>
                                 <div x-show="tooltip" x-transition 
-                                     class="absolute bottom-full mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
+                                     class="absolute top-full mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
                                     Nova Ordem de Reparação
                                 </div>
                             </div>
@@ -523,7 +523,7 @@
                                     </svg>
                                 </button>
                                 <div x-show="tooltip" x-transition 
-                                     class="absolute bottom-full mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
+                                     class="absolute top-full mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
                                     Pesquisa Avançada
                                 </div>
                             </div>
@@ -544,7 +544,7 @@
                             
                             <!-- Tooltip -->
                             <div x-show="tooltip && !open" x-transition 
-                                 class="absolute bottom-full mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
+                                 class="absolute top-full mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
                                 3 Notificações Novas
                             </div>
 
@@ -600,7 +600,7 @@
                                 </svg>
                             </button>
                             <div x-show="tooltip" x-transition 
-                                 class="absolute bottom-full mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
+                                 class="absolute top-full mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded whitespace-nowrap">
                                 Configurações
                             </div>
                         </div>
