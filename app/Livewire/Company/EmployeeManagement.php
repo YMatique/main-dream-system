@@ -79,6 +79,7 @@ class EmployeeManagement extends Component
 
     public function render()
     {
+        $employees = $this->getEmployees();
         return view('livewire.company.employee-management', compact('employees'))
             ->title('Gestão de Funcionários')
             ->layout('layouts.company');
