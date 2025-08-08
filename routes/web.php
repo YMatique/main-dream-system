@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\System\CompanyController;
 use App\Livewire\Auth\System\ForgotPassword;
 use App\Livewire\Auth\System\ResetPassword;
+use App\Livewire\Company\ClientManagement;
 use App\Livewire\Company\CompanyLogin;
 use App\Livewire\Company\Dashboard;
 use App\Livewire\Company\DepartmentManagement;
@@ -236,13 +237,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             Route::get('/employees',EmployeeManagement::class)->name('employees');
             
             // Clientes
-            Route::get('/clients', function () {
-                return view('company.manage.clients', [
-                    'title' => 'Gestão de Clientes',
-                    'company' => auth()->user()->company,
-                    'clients_count' => \App\Models\Company\Client::where('company_id', auth()->user()->company_id)->count()
-                ]);
-            })->name('clients');
+            Route::get('/clients', ClientManagement::class)->name('clients');
             
             // Materiais
             Route::get('/materials', function () {
