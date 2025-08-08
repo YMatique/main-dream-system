@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\System\CompanyController;
 use App\Livewire\Auth\System\ForgotPassword;
 use App\Livewire\Auth\System\ResetPassword;
+use App\Livewire\Company\ClientCostManagement;
 use App\Livewire\Company\ClientManagement;
 use App\Livewire\Company\CompanyLogin;
 use App\Livewire\Company\Dashboard;
@@ -276,13 +277,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             Route::get('/requesters', RequesterManagement::class)->name('requesters');
             
             // Custos por Cliente
-            Route::get('/client-costs', function () {
-                return view('company.manage.client-costs', [
-                    'title' => 'Custos por Cliente',
-                    'company' => auth()->user()->company,
-                    'costs_count' => \App\Models\Company\ClientCost::where('company_id', auth()->user()->company_id)->count()
-                ]);
-            })->name('client-costs');
+            Route::get('/client-costs', ClientCostManagement::class)->name('client-costs');
         });
 
         // ===== FORMULÁRIOS DE ORDENS DE REPARAÇÃO =====
