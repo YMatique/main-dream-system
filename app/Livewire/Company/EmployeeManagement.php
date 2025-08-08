@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Company;
 
+use App\Models\Company\Department;
 use App\Models\Company\Employee;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -30,6 +31,8 @@ class EmployeeManagement extends Component
     public $departmentFilter = '';
     public $statusFilter = '';
     public $perPage = 10;
+    public $sortBy = 'name';
+    public $sortDirection = 'asc';
 
     // Data collections
     public $departments = [];
@@ -84,19 +87,26 @@ class EmployeeManagement extends Component
             ->title('Gestão de Funcionários')
             ->layout('layouts.company');
     }
-     public function getEmployees()
+    public function loadDepartments()
+    {
+        $this->departments = Department::where('company_id', auth()->user()->company_id)
+            ->active()
+            ->orderBy('name')
+            ->get();
+    }
+    public function getEmployees()
     {
         return Employee::with('department')
             ->where('company_id', auth()->user()->company_id)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('code', 'like', '%' . $this->search . '%')
-                      ->orWhere('email', 'like', '%' . $this->search . '%')
-                      ->orWhere('phone', 'like', '%' . $this->search . '%')
-                      ->orWhereHas('department', function ($deptQuery) {
-                          $deptQuery->where('name', 'like', '%' . $this->search . '%');
-                      });
+                        ->orWhere('code', 'like', '%' . $this->search . '%')
+                        ->orWhere('email', 'like', '%' . $this->search . '%')
+                        ->orWhere('phone', 'like', '%' . $this->search . '%')
+                        ->orWhereHas('department', function ($deptQuery) {
+                            $deptQuery->where('name', 'like', '%' . $this->search . '%');
+                        });
                 });
             })
             ->when($this->departmentFilter, function ($query) {
@@ -112,6 +122,16 @@ class EmployeeManagement extends Component
     public function openModal()
     {
         $this->resetForm();
+        $this->showModal = true;
+    }
+    public function generateAndOpenModal()
+    {
+        $this->generateCode();
+        $this->name = '';
+        $this->email = '';
+        $this->phone = '';
+        $this->department_id = '';
+        $this->is_active = true;
         $this->showModal = true;
     }
 
@@ -158,7 +178,6 @@ class EmployeeManagement extends Component
             }
 
             $this->closeModal();
-
         } catch (\Exception $e) {
             session()->flash('error', 'Erro ao salvar funcionário: ' . $e->getMessage());
         }
@@ -168,7 +187,7 @@ class EmployeeManagement extends Component
     {
         $employee = Employee::where('company_id', auth()->user()->company_id)
             ->findOrFail($id);
-        
+
         $this->editingId = $id;
         $this->name = $employee->name;
         $this->code = $employee->code;
@@ -176,8 +195,18 @@ class EmployeeManagement extends Component
         $this->phone = $employee->phone;
         $this->department_id = $employee->department_id;
         $this->is_active = $employee->is_active;
-        
+
         $this->showModal = true;
+    }
+    // Sorting
+    public function sortBy($field)
+    {
+        if ($this->sortBy === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortBy = $field;
+            $this->sortDirection = 'asc';
+        }
     }
 
     public function confirmDelete($id)
@@ -191,13 +220,12 @@ class EmployeeManagement extends Component
         try {
             $employee = Employee::where('company_id', auth()->user()->company_id)
                 ->findOrFail($this->deleteId);
-            
+
             // TODO: Verificar se o funcionário tem ordens de reparação associadas
             // Se tiver, não permitir eliminar ou marcar como inativo
-            
+
             $employee->delete();
             session()->flash('success', 'Funcionário eliminado com sucesso!');
-            
         } catch (\Exception $e) {
             session()->flash('error', 'Erro ao eliminar funcionário: ' . $e->getMessage());
         }
@@ -211,13 +239,12 @@ class EmployeeManagement extends Component
         try {
             $employee = Employee::where('company_id', auth()->user()->company_id)
                 ->findOrFail($id);
-            
+
             $newStatus = !$employee->is_active;
             $employee->update(['is_active' => $newStatus]);
-            
+
             $statusText = $newStatus ? 'ativado' : 'desativado';
             session()->flash('success', "Funcionário {$statusText} com sucesso!");
-            
         } catch (\Exception $e) {
             session()->flash('error', 'Erro ao alterar status: ' . $e->getMessage());
         }
@@ -229,7 +256,7 @@ class EmployeeManagement extends Component
         $lastEmployee = Employee::where('company_id', auth()->user()->company_id)
             ->orderBy('id', 'desc')
             ->first();
-            
+
         if ($lastEmployee && preg_match('/(\d+)$/', $lastEmployee->code, $matches)) {
             $nextNumber = intval($matches[1]) + 1;
             $this->code = 'FUNC' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
@@ -244,7 +271,7 @@ class EmployeeManagement extends Component
         Employee::where('company_id', auth()->user()->company_id)
             ->whereIn('id', $ids)
             ->update(['is_active' => true]);
-            
+
         session()->flash('success', 'Funcionários ativados com sucesso!');
     }
 
@@ -253,7 +280,7 @@ class EmployeeManagement extends Component
         Employee::where('company_id', auth()->user()->company_id)
             ->whereIn('id', $ids)
             ->update(['is_active' => false]);
-            
+
         session()->flash('success', 'Funcionários desativados com sucesso!');
     }
 
@@ -261,10 +288,10 @@ class EmployeeManagement extends Component
     public function export($format = 'excel')
     {
         $employees = $this->getEmployees()->items();
-        
+
         // TODO: Implement export service
         // return app(ExportService::class)->exportEmployees($employees, $format);
-        
+
         session()->flash('info', 'Exportação em desenvolvimento...');
     }
 
@@ -272,7 +299,7 @@ class EmployeeManagement extends Component
     public function getStatsProperty()
     {
         $companyId = auth()->user()->company_id;
-        
+
         return [
             'total' => Employee::where('company_id', $companyId)->count(),
             'active' => Employee::where('company_id', $companyId)->active()->count(),

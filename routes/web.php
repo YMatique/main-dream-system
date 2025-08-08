@@ -10,6 +10,7 @@ use App\Livewire\Auth\System\ResetPassword;
 use App\Livewire\Company\CompanyLogin;
 use App\Livewire\Company\Dashboard;
 use App\Livewire\Company\DepartmentManagement;
+use App\Livewire\Company\EmployeeManagement;
 use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
@@ -231,13 +232,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
         Route::prefix('manage')->name('manage.')->group(function () {
             
             // Funcionários
-            Route::get('/employees', function () {
-                return view('company.manage.employees', [
-                    'title' => 'Gestão de Funcionários',
-                    'company' => auth()->user()->company,
-                    'employees_count' => auth()->user()->company->employees()->count()
-                ]);
-            })->name('employees');
+            Route::get('/employees',EmployeeManagement::class)->name('employees');
             
             // Clientes
             Route::get('/clients', function () {
