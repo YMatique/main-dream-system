@@ -9,6 +9,7 @@ use App\Livewire\Auth\System\ForgotPassword;
 use App\Livewire\Auth\System\ResetPassword;
 use App\Livewire\Company\CompanyLogin;
 use App\Livewire\Company\Dashboard;
+use App\Livewire\Company\DepartmentManagement;
 use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
@@ -257,13 +258,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             })->name('materials');
             
             // Departamentos
-            Route::get('/departments', function () {
-                return view('company.manage.departments', [
-                    'title' => 'Gestão de Departamentos',
-                    'company' => auth()->user()->company,
-                    'departments_count' => \App\Models\Company\Department::where('company_id', auth()->user()->company_id)->count()
-                ]);
-            })->name('departments');
+            Route::get('/departments', DepartmentManagement::class)->name('departments');
             
             // Tipos de Manutenção
             Route::get('/maintenance-types', function () {

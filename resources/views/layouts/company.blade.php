@@ -475,7 +475,7 @@
         <div class="flex flex-col w-0 flex-1 overflow-hidden">
             
             <!-- ============ HEADER MELHORADO COM TOOLTIPS ============ -->
-            <header class="relative z-50 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <header class="relative  bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between h-20 px-6 lg:px-8">
                     
                     <!-- Left Side -->
