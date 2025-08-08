@@ -13,7 +13,9 @@ use App\Livewire\Company\Dashboard;
 use App\Livewire\Company\DepartmentManagement;
 use App\Livewire\Company\EmployeeManagement;
 use App\Livewire\Company\MachineNumberManagement;
+use App\Livewire\Company\MaintenanceTypeManagement;
 use App\Livewire\Company\RequesterManagement;
+use App\Livewire\Company\StatusLocationManagement;
 use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
@@ -253,22 +255,10 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             Route::get('/departments', DepartmentManagement::class)->name('departments');
             
             // Tipos de Manutenção
-            Route::get('/maintenance-types', function () {
-                return view('company.manage.maintenance-types', [
-                    'title' => 'Tipos de Manutenção',
-                    'company' => auth()->user()->company,
-                    'types_count' => \App\Models\Company\MaintenanceType::where('company_id', auth()->user()->company_id)->count()
-                ]);
-            })->name('maintenance-types');
+            Route::get('/maintenance-types', MaintenanceTypeManagement::class)->name('maintenance-types');
             
             // Estados
-            Route::get('/statuses', function () {
-                return view('company.manage.statuses', [
-                    'title' => 'Gestão de Estados',
-                    'company' => auth()->user()->company,
-                    'statuses_count' => \App\Models\Company\Status::where('company_id', auth()->user()->company_id)->count()
-                ]);
-            })->name('statuses');
+            Route::get('/statuses', StatusLocationManagement::class)->name('statuses');
             
             // Localizações
             Route::get('/locations', function () {

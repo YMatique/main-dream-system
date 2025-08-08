@@ -3,14 +3,16 @@
 namespace App\Livewire\Company;
 
 use App\Models\Company\MaintenanceType;
+use App\Models\Company\ClientCost;
 use Livewire\Component;
+use Livewire\WithPagination;
+use Illuminate\Validation\Rule;
 
 class MaintenanceTypeManagement extends Component
 {
      use WithPagination;
 
-    // Modal states
-    public $showModal = false;
+     public $showModal = false;
     public $showDeleteModal = false;
     public $showRatesModal = false;
     public $editingId = null;
@@ -78,6 +80,7 @@ class MaintenanceTypeManagement extends Component
         'color.regex' => 'Formato de cor inválido.',
     ];
 
+
     public function render()
     {
          $maintenanceTypes = $this->getMaintenanceTypes();
@@ -99,12 +102,12 @@ class MaintenanceTypeManagement extends Component
             ->when($this->statusFilter !== '', function ($query) {
                 $query->where('is_active', $this->statusFilter);
             })
-            ->when($this->rateRangeMin, function ($query) {
-                $query->where('default_hourly_rate', '>=', $this->rateRangeMin);
-            })
-            ->when($this->rateRangeMax, function ($query) {
-                $query->where('default_hourly_rate', '<=', $this->rateRangeMax);
-            })
+            // ->when($this->rateRangeMin, function ($query) {
+            //     $query->where('default_hourly_rate', '>=', $this->rateRangeMin);
+            // })
+            // ->when($this->rateRangeMax, function ($query) {
+            //     $query->where('default_hourly_rate', '<=', $this->rateRangeMax);
+            // })
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);
     }
