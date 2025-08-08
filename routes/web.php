@@ -15,6 +15,7 @@ use App\Livewire\Company\DepartmentManagement;
 use App\Livewire\Company\EmployeeManagement;
 use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\Company\MaintenanceTypeManagement;
+use App\Livewire\Company\MaterialManagement;
 use App\Livewire\Company\RequesterManagement;
 use App\Livewire\Company\StatusLocationManagement;
 use App\Livewire\System\ActivityLogsManagement;
@@ -244,13 +245,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             Route::get('/clients', ClientManagement::class)->name('clients');
             
             // Materiais
-            Route::get('/materials', function () {
-                return view('company.manage.materials', [
-                    'title' => 'Gestão de Materiais',
-                    'company' => auth()->user()->company,
-                    'materials_count' => \App\Models\Company\Material::where('company_id', auth()->user()->company_id)->count()
-                ]);
-            })->name('materials');
+            Route::get('/materials', MaterialManagement::class)->name('materials');
             
             // Departamentos
             Route::get('/departments', DepartmentManagement::class)->name('departments');
@@ -259,7 +254,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             Route::get('/maintenance-types', MaintenanceTypeManagement::class)->name('maintenance-types');
             
             // Estados
-            Route::get('/statuses', StatusLocationManagement::class)->name('statuses');
+            Route::get('/statuses-locations', StatusLocationManagement::class)->name('statuses');
             
             // Localizações
             Route::get('/locations', function () {

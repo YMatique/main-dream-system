@@ -3,148 +3,119 @@
 namespace App\Livewire\Company;
 
 use App\Models\Company\Material;
+use Illuminate\Support\Facades\Log;
 use Livewire\WithPagination;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class MaterialManagement extends Component
 {
-    use WithPagination;
+use WithPagination;
 
-    // Modal states
     public $showModal = false;
     public $showDeleteModal = false;
-    public $showStockModal = false;
     public $editingId = null;
-    public $deleteId = null;
-    public $adjustingStockId = null;
-
-    // Form properties
-    public $name = '';
-    public $description = '';
-    public $unit = '';
-    public $cost_per_unit_mzn = 0;
-    public $cost_per_unit_usd = 0;
-    public $stock_quantity = 0;
-    public $min_stock_alert = 0;
-    public $supplier = '';
+    public $name;
+    public $description;
+    public $unit;
+    public $cost_per_unit_mzn;
+    public $cost_per_unit_usd;
+    public $stock_quantity;
     public $is_active = true;
-
-    // Stock adjustment
-    public $stock_adjustment = 0;
-    public $adjustment_type = 'add'; // 'add' or 'remove'
-    public $adjustment_reason = '';
-
-    // Filter properties
     public $search = '';
-    public $unitFilter = '';
-    public $stockFilter = ''; // 'low', 'out', 'available'
     public $statusFilter = '';
-    public $perPage = 10;
+    public $costRangeMin = null;
+    public $costRangeMax = null;
     public $sortBy = 'name';
     public $sortDirection = 'asc';
+    public $selectedMaterials = [];
+    public $selectAll = false;
 
-    // Common units
-    public $commonUnits = [
-        'peça' => 'Peça',
-        'metro' => 'Metro',
-        'litro' => 'Litro',
-        'kg' => 'Quilograma',
-        'caixa' => 'Caixa',
-        'pacote' => 'Pacote',
-        'rolo' => 'Rolo',
-        'tubo' => 'Tubo',
-        'saco' => 'Saco',
-        'unidade' => 'Unidade'
+    protected $rules = [
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string|max:1000',
+        'unit' => 'required|string|max:50',
+        'cost_per_unit_mzn' => 'required|numeric|min:0',
+        'cost_per_unit_usd' => 'required|numeric|min:0',
+        'stock_quantity' => 'required|integer|min:0',
+        'is_active' => 'boolean',
     ];
 
-    protected function rules()
+    public function mount()
     {
-        return [
-            'name' => [
-                'required',
-                'string',
-                'min:2',
-                'max:255',
-                Rule::unique('materials', 'name')
-                    ->where('company_id', auth()->user()->company_id)
-                    ->ignore($this->editingId)
-            ],
-            'description' => 'nullable|string|max:500',
-            'unit' => 'required|string|max:50',
-            'cost_per_unit_mzn' => 'required|numeric|min:0|max:999999.99',
-            'cost_per_unit_usd' => 'required|numeric|min:0|max:999999.99',
-            'stock_quantity' => 'required|integer|min:0',
-            'min_stock_alert' => 'required|integer|min:0',
-            'supplier' => 'nullable|string|max:255',
-            'is_active' => 'boolean',
-        ];
+        $this->resetForm();
+        Log::info('MaterialManagement mounted', ['user_id' => auth()->id(), 'company_id' => auth()->user()->company_id ?? 'none']);
     }
 
-    protected $messages = [
-        'name.required' => 'O nome é obrigatório.',
-        'name.min' => 'O nome deve ter pelo menos 2 caracteres.',
-        'name.unique' => 'Já existe um material com este nome.',
-        'description.max' => 'A descrição deve ter no máximo 500 caracteres.',
-        'unit.required' => 'A unidade é obrigatória.',
-        'cost_per_unit_mzn.required' => 'O custo em MZN é obrigatório.',
-        'cost_per_unit_mzn.numeric' => 'O custo em MZN deve ser um número.',
-        'cost_per_unit_usd.required' => 'O custo em USD é obrigatório.',
-        'cost_per_unit_usd.numeric' => 'O custo em USD deve ser um número.',
-        'stock_quantity.required' => 'A quantidade em stock é obrigatória.',
-        'stock_quantity.integer' => 'A quantidade deve ser um número inteiro.',
-        'min_stock_alert.required' => 'O alerta de stock mínimo é obrigatório.',
-        'min_stock_alert.integer' => 'O alerta deve ser um número inteiro.',
-        'supplier.max' => 'O fornecedor deve ter no máximo 255 caracteres.',
-    ];
-    public function render()
+    public function getStatsProperty()
     {
-         $materials = $this->getMaterials();
-        $units = $this->getAvailableUnits();
-        return view('livewire.company.material-management',compact('materials', 'units'))
-            ->title('Gestão de Materiais')
-            ->layout('layouts.company');
+        try {
+            $query = Material::where('company_id', auth()->user()->company_id);
+            return [
+                'total' => $query->count(),
+                'active' => $query->active()->count(),
+                'inactive' => $query->where('is_active', false)->count(),
+                'avg_cost_per_unit_mzn' => $query->avg('cost_per_unit_mzn') ?? 0,
+            ];
+        } catch (\Exception $e) {
+            Log::error('Error in getStatsProperty: ' . $e->getMessage());
+            return [
+                'total' => 0,
+                'active' => 0,
+                'inactive' => 0,
+                'avg_cost_per_unit_mzn' => 0,
+            ];
+        }
     }
-     public function getMaterials()
+
+    public function getMaterialsProperty()
     {
-        return Material::where('company_id', auth()->user()->company_id)
-            ->when($this->search, function ($query) {
+        try {
+            $query = Material::where('company_id', auth()->user()->company_id);
+
+            if ($this->search) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%')
-                      ->orWhere('unit', 'like', '%' . $this->search . '%')
-                      ->orWhere('supplier', 'like', '%' . $this->search . '%');
+                      ->orWhere('description', 'like', '%' . $this->search . '%');
                 });
-            })
-            ->when($this->unitFilter, function ($query) {
-                $query->where('unit', $this->unitFilter);
-            })
-            ->when($this->stockFilter, function ($query) {
-                switch ($this->stockFilter) {
-                    case 'low':
-                        $query->whereRaw('stock_quantity <= min_stock_alert AND stock_quantity > 0');
-                        break;
-                    case 'out':
-                        $query->where('stock_quantity', 0);
-                        break;
-                    case 'available':
-                        $query->where('stock_quantity', '>', 0);
-                        break;
-                }
-            })
-            ->when($this->statusFilter !== '', function ($query) {
+            }
+
+            if ($this->statusFilter !== '') {
                 $query->where('is_active', $this->statusFilter);
-            })
-            ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate($this->perPage);
+            }
+
+            if ($this->costRangeMin !== null) {
+                $query->where('cost_per_unit_mzn', '>=', $this->costRangeMin);
+            }
+
+            if ($this->costRangeMax !== null) {
+                $query->where('cost_per_unit_mzn', '<=', $this->costRangeMax);
+            }
+
+            $query->orderBy($this->sortBy, $this->sortDirection);
+
+            $paginated = $query->paginate(10);
+            Log::info('Materials fetched', [
+                'count' => $paginated->count(),
+                'sample' => $paginated->items() ? get_class($paginated->items()[0] ?? null) : 'empty',
+            ]);
+
+            return $paginated;
+        } catch (\Exception $e) {
+            Log::error('Error in getMaterialsProperty: ' . $e->getMessage(), ['query' => $query->toSql(), 'bindings' => $query->getBindings()]);
+            session()->flash('error', 'Erro ao carregar materiais: ' . $e->getMessage());
+            return new \Illuminate\Pagination\LengthAwarePaginator([], 0, 10);
+        }
     }
 
-    public function getAvailableUnits()
+    public function sortBy($field)
     {
-        return Material::where('company_id', auth()->user()->company_id)
-            ->select('unit')
-            ->distinct()
-            ->pluck('unit');
+        if ($this->sortBy === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortBy = $field;
+            $this->sortDirection = 'asc';
+        }
     }
 
     public function openModal()
@@ -157,21 +128,38 @@ class MaterialManagement extends Component
     {
         $this->showModal = false;
         $this->resetForm();
-        $this->resetValidation();
     }
 
     public function resetForm()
     {
         $this->editingId = null;
-        $this->name = '';
-        $this->description = '';
-        $this->unit = '';
-        $this->cost_per_unit_mzn = 0;
-        $this->cost_per_unit_usd = 0;
+        $this->name = null;
+        $this->description = null;
+        $this->unit = null;
+        $this->cost_per_unit_mzn = null;
+        $this->cost_per_unit_usd = null;
         $this->stock_quantity = 0;
-        $this->min_stock_alert = 0;
-        $this->supplier = '';
         $this->is_active = true;
+        $this->resetErrorBag();
+    }
+
+    public function edit($id)
+    {
+        try {
+            $material = Material::where('company_id', auth()->user()->company_id)->findOrFail($id);
+            $this->editingId = $id;
+            $this->name = $material->name;
+            $this->description = $material->description;
+            $this->unit = $material->unit;
+            $this->cost_per_unit_mzn = $material->cost_per_unit_mzn;
+            $this->cost_per_unit_usd = $material->cost_per_unit_usd;
+            $this->stock_quantity = $material->stock_quantity;
+            $this->is_active = $material->is_active;
+            $this->showModal = true;
+        } catch (\Exception $e) {
+            Log::error('Error in edit: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao carregar material para edição: ' . $e->getMessage());
+        }
     }
 
     public function save()
@@ -179,301 +167,150 @@ class MaterialManagement extends Component
         $this->validate();
 
         try {
-            $data = [
-                'company_id' => auth()->user()->company_id,
-                'name' => $this->name,
-                'description' => $this->description ?: null,
-                'unit' => $this->unit,
-                'cost_per_unit_mzn' => $this->cost_per_unit_mzn,
-                'cost_per_unit_usd' => $this->cost_per_unit_usd,
-                'stock_quantity' => $this->stock_quantity,
-                'min_stock_alert' => $this->min_stock_alert,
-                'supplier' => $this->supplier ?: null,
-                'is_active' => $this->is_active,
-            ];
+            Material::updateOrCreate(
+                [
+                    'id' => $this->editingId,
+                    'company_id' => auth()->user()->company_id,
+                ],
+                [
+                    'name' => $this->name,
+                    'description' => $this->description,
+                    'unit' => $this->unit,
+                    'cost_per_unit_mzn' => $this->cost_per_unit_mzn,
+                    'cost_per_unit_usd' => $this->cost_per_unit_usd,
+                    'stock_quantity' => $this->stock_quantity,
+                    'is_active' => $this->is_active,
+                ]
+            );
 
-            if ($this->editingId) {
-                $material = Material::findOrFail($this->editingId);
-                $material->update($data);
-                session()->flash('success', 'Material atualizado com sucesso!');
-            } else {
-                Material::create($data);
-                session()->flash('success', 'Material criado com sucesso!');
-            }
-
+            session()->flash('success', $this->editingId ? 'Material atualizado com sucesso!' : 'Material criado com sucesso!');
             $this->closeModal();
-
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao salvar material: ' . $e->getMessage());
+            Log::error('Error in save: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao salvar: ' . $e->getMessage());
         }
     }
 
-    public function edit($id)
+    public function toggleStatus($id)
     {
-        $material = Material::where('company_id', auth()->user()->company_id)
-            ->findOrFail($id);
-        
-        $this->editingId = $id;
-        $this->name = $material->name;
-        $this->description = $material->description;
-        $this->unit = $material->unit;
-        $this->cost_per_unit_mzn = $material->cost_per_unit_mzn;
-        $this->cost_per_unit_usd = $material->cost_per_unit_usd;
-        $this->stock_quantity = $material->stock_quantity;
-        $this->min_stock_alert = $material->min_stock_alert;
-        $this->supplier = $material->supplier;
-        $this->is_active = $material->is_active;
-        
-        $this->showModal = true;
+        try {
+            $material = Material::where('company_id', auth()->user()->company_id)->findOrFail($id);
+            $material->update(['is_active' => !$material->is_active]);
+            session()->flash('success', 'Status do material atualizado com sucesso!');
+        } catch (\Exception $e) {
+            Log::error('Error in toggleStatus: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao atualizar status: ' . $e->getMessage());
+        }
     }
 
     public function confirmDelete($id)
     {
-        $this->deleteId = $id;
+        $this->editingId = $id;
         $this->showDeleteModal = true;
     }
 
     public function delete()
     {
         try {
-            $material = Material::where('company_id', auth()->user()->company_id)
-                ->findOrFail($this->deleteId);
-            
-            // TODO: Check if material is used in repair orders
-            
-            $material->delete();
+            Material::where('company_id', auth()->user()->company_id)
+                ->where('id', $this->editingId)
+                ->delete();
+
             session()->flash('success', 'Material eliminado com sucesso!');
-            
+            $this->showDeleteModal = false;
+            $this->editingId = null;
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao eliminar material: ' . $e->getMessage());
+            Log::error('Error in delete: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao eliminar: ' . $e->getMessage());
         }
-
-        $this->showDeleteModal = false;
-        $this->deleteId = null;
     }
 
-    public function toggleStatus($id)
+    public function bulkActivate(array $ids)
     {
         try {
-            $material = Material::where('company_id', auth()->user()->company_id)
-                ->findOrFail($id);
-            
-            $newStatus = !$material->is_active;
-            $material->update(['is_active' => $newStatus]);
-            
-            $statusText = $newStatus ? 'ativado' : 'desativado';
-            session()->flash('success', "Material {$statusText} com sucesso!");
-            
+            Material::where('company_id', auth()->user()->company_id)
+                ->whereIn('id', array_keys(array_filter($this->selectedMaterials)))
+                ->update(['is_active' => true]);
+
+            session()->flash('success', 'Materiais ativados com sucesso!');
+            $this->selectedMaterials = [];
+            $this->selectAll = false;
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao alterar status: ' . $e->getMessage());
+            Log::error('Error in bulkActivate: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao ativar materiais: ' . $e->getMessage());
         }
     }
 
-    // Stock management
-    public function openStockModal($id)
-    {
-        $this->adjustingStockId = $id;
-        $this->stock_adjustment = 0;
-        $this->adjustment_type = 'add';
-        $this->adjustment_reason = '';
-        $this->showStockModal = true;
-    }
-
-    public function closeStockModal()
-    {
-        $this->showStockModal = false;
-        $this->adjustingStockId = null;
-        $this->stock_adjustment = 0;
-        $this->adjustment_reason = '';
-    }
-
-    public function adjustStock()
-    {
-        $this->validate([
-            'stock_adjustment' => 'required|integer|min:1',
-            'adjustment_reason' => 'required|string|max:255'
-        ], [
-            'stock_adjustment.required' => 'A quantidade de ajuste é obrigatória.',
-            'stock_adjustment.min' => 'A quantidade deve ser maior que zero.',
-            'adjustment_reason.required' => 'O motivo do ajuste é obrigatório.'
-        ]);
-
-        try {
-            $material = Material::where('company_id', auth()->user()->company_id)
-                ->findOrFail($this->adjustingStockId);
-
-            $oldQuantity = $material->stock_quantity;
-            
-            if ($this->adjustment_type === 'add') {
-                $newQuantity = $oldQuantity + $this->stock_adjustment;
-            } else {
-                $newQuantity = max(0, $oldQuantity - $this->stock_adjustment);
-            }
-
-            $material->update(['stock_quantity' => $newQuantity]);
-
-            // TODO: Log stock adjustment history
-            
-            $actionText = $this->adjustment_type === 'add' ? 'adicionada' : 'removida';
-            session()->flash('success', "Quantidade {$actionText} com sucesso! Stock atual: {$newQuantity}");
-            
-            $this->closeStockModal();
-            
-        } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao ajustar stock: ' . $e->getMessage());
-        }
-    }
-
-    // Quick stock actions
-    public function quickAddStock($id, $quantity)
+    public function bulkDeactivate(array $ids)
     {
         try {
-            $material = Material::where('company_id', auth()->user()->company_id)
-                ->findOrFail($id);
-                
-            $material->increment('stock_quantity', $quantity);
-            session()->flash('success', "{$quantity} unidades adicionadas ao stock!");
-            
+            Material::where('company_id', auth()->user()->company_id)
+                ->whereIn('id', array_keys(array_filter($this->selectedMaterials)))
+                ->update(['is_active' => false]);
+
+            session()->flash('success', 'Materiais desativados com sucesso!');
+            $this->selectedMaterials = [];
+            $this->selectAll = false;
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao adicionar stock: ' . $e->getMessage());
+            Log::error('Error in bulkDeactivate: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao desativar materiais: ' . $e->getMessage());
         }
     }
 
-    public function markAsOutOfStock($id)
+    public function bulkUpdateCosts($percentage)
     {
         try {
-            $material = Material::where('company_id', auth()->user()->company_id)
-                ->findOrFail($id);
-                
-            $material->update(['stock_quantity' => 0]);
-            session()->flash('info', 'Material marcado como fora de stock.');
-            
+            Material::where('company_id', auth()->user()->company_id)
+                ->whereIn('id', array_keys(array_filter($this->selectedMaterials)))
+                ->update([
+                    'cost_per_unit_mzn' => \DB::raw("cost_per_unit_mzn * (1 + $percentage / 100)"),
+                    'cost_per_unit_usd' => \DB::raw("cost_per_unit_usd * (1 + $percentage / 100)"),
+                ]);
+
+            session()->flash('success', 'Custos atualizados com sucesso!');
+            $this->selectedMaterials = [];
+            $this->selectAll = false;
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro: ' . $e->getMessage());
+            Log::error('Error in bulkUpdateCosts: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao atualizar custos: ' . $e->getMessage());
         }
     }
 
-    // Sorting
-    public function sortBy($field)
-    {
-        if ($this->sortBy === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortBy = $field;
-            $this->sortDirection = 'asc';
-        }
-    }
-
-    // Bulk actions
-    public function bulkUpdatePrices($percentage, $currency = 'both')
+    public function updatedSelectAll($value)
     {
         try {
-            $materials = Material::where('company_id', auth()->user()->company_id)
-                ->where('is_active', true)
-                ->get();
-
-            foreach ($materials as $material) {
-                if ($currency === 'mzn' || $currency === 'both') {
-                    $newPriceMzn = $material->cost_per_unit_mzn * (1 + $percentage / 100);
-                    $material->cost_per_unit_mzn = round($newPriceMzn, 2);
-                }
-                
-                if ($currency === 'usd' || $currency === 'both') {
-                    $newPriceUsd = $material->cost_per_unit_usd * (1 + $percentage / 100);
-                    $material->cost_per_unit_usd = round($newPriceUsd, 2);
-                }
-                
-                $material->save();
-            }
-
-            session()->flash('success', 'Preços atualizados em massa com sucesso!');
-            
+            $this->selectedMaterials = $value
+                ? $this->materials->pluck('id')->mapWithKeys(fn($id) => [$id => true])->toArray()
+                : [];
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao atualizar preços: ' . $e->getMessage());
+            Log::error('Error in updatedSelectAll: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao selecionar materiais: ' . $e->getMessage());
         }
     }
 
-    // Export functionality
     public function export($format = 'excel')
     {
-        $materials = $this->getMaterials()->items();
-        
-        // TODO: Implement export service
-        session()->flash('info', 'Exportação em desenvolvimento...');
+        session()->flash('info', 'Funcionalidade de exportação em desenvolvimento.');
     }
 
-    // Statistics
-    public function getStatsProperty()
+    public function log($message)
     {
-        $companyId = auth()->user()->company_id;
-        
-        return [
-            'total' => Material::where('company_id', $companyId)->count(),
-            'active' => Material::where('company_id', $companyId)->active()->count(),
-            'low_stock' => Material::where('company_id', $companyId)
-                ->whereRaw('stock_quantity <= min_stock_alert AND stock_quantity > 0')
-                ->count(),
-            'out_of_stock' => Material::where('company_id', $companyId)
-                ->where('stock_quantity', 0)
-                ->count(),
-            'total_value_mzn' => Material::where('company_id', $companyId)
-                ->selectRaw('SUM(stock_quantity * cost_per_unit_mzn) as total')
-                ->value('total') ?? 0,
-            'total_value_usd' => Material::where('company_id', $companyId)
-                ->selectRaw('SUM(stock_quantity * cost_per_unit_usd) as total')
-                ->value('total') ?? 0,
-        ];
+        Log::info($message);
     }
 
-    // Low stock alerts
-    public function getLowStockMaterialsProperty()
+    public function render()
     {
-        return Material::where('company_id', auth()->user()->company_id)
-            ->whereRaw('stock_quantity <= min_stock_alert AND stock_quantity > 0')
-            ->orderBy('stock_quantity')
-            ->get();
+        return view('livewire.company.material-management', [
+            'materials' => $this->materials,
+        ])->layout('layouts.company');
     }
-
-    // Most used materials
-    public function getMostUsedMaterialsProperty()
-    {
-        // TODO: Implement when repair orders are ready
-        return collect();
-    }
-
-    // Duplicate material
-    public function duplicateMaterial($id)
-    {
-        try {
-            $material = Material::where('company_id', auth()->user()->company_id)
-                ->findOrFail($id);
-            
-            $newMaterial = $material->replicate();
-            $newMaterial->name = $material->name . ' (Cópia)';
-            $newMaterial->stock_quantity = 0; // Reset stock for duplicate
-            $newMaterial->save();
-            
-            session()->flash('success', 'Material duplicado com sucesso!');
-            
-        } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao duplicar material: ' . $e->getMessage());
-        }
-    }
-
-    // Print barcode/labels
-    public function printLabels($ids)
-    {
-        // TODO: Implement barcode/label printing
-        session()->flash('info', 'Impressão de etiquetas em desenvolvimento...');
-    }
-
     // Currency conversion helper
     public function convertCurrency($amount, $from, $to, $rate = 65) // Default MZN/USD rate
     {
         if ($from === $to) return $amount;
-        
-        return $from === 'usd' 
-            ? $amount * $rate 
+
+        return $from === 'usd'
+            ? $amount * $rate
             : $amount / $rate;
     }
 
