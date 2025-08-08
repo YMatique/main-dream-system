@@ -13,6 +13,7 @@ use App\Livewire\Company\Dashboard;
 use App\Livewire\Company\DepartmentManagement;
 use App\Livewire\Company\EmployeeManagement;
 use App\Livewire\Company\MachineNumberManagement;
+use App\Livewire\Company\RequesterManagement;
 use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
@@ -282,13 +283,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             Route::get('/machine-numbers', MachineNumberManagement::class)->name('machine-numbers');
             
             // Solicitantes
-            Route::get('/requesters', function () {
-                return view('company.manage.requesters', [
-                    'title' => 'Gestão de Solicitantes',
-                    'company' => auth()->user()->company,
-                    'requesters_count' => \App\Models\Company\Requester::where('company_id', auth()->user()->company_id)->count()
-                ]);
-            })->name('requesters');
+            Route::get('/requesters', RequesterManagement::class)->name('requesters');
             
             // Custos por Cliente
             Route::get('/client-costs', function () {
