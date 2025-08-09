@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('permission_group_permissions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('permission_group_id')->constrained()->onDelete('cascade');
+            $table->foreignId('permission_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+            
+            // Unique constraint
+            $table->unique(['permission_group_id', 'permission_id']);
             $table->timestamps();
         });
     }

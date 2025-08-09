@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('permission_groups', function (Blueprint $table) {
             $table->id();
+              $table->string('name'); // Ex: 'Usuário Ordens', 'Usuário Faturação', 'Usuário Avaliador'
+            $table->string('description');
+            $table->string('color')->default('#6B7280'); // Cor para identificação visual
+            $table->boolean('is_system')->default(false); // Grupos padrão do sistema
+            $table->boolean('is_active')->default(true);
+            $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
     }
