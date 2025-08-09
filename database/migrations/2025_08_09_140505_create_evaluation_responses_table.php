@@ -21,8 +21,8 @@ return new class extends Migration
             $table->text('comments')->nullable(); // Comentários opcionais
             $table->timestamps();
 
-            $table->index(['evaluation_id', 'metric_id']);
-            $table->unique(['evaluation_id', 'metric_id']); // Uma resposta por métrica
+            $table->index(['evaluation_id', 'metric_id'],'evl_metric_index');
+            $table->unique(['evaluation_id', 'metric_id'],'eval_metric_unique'); // Uma resposta por métrica
         });
     }
 

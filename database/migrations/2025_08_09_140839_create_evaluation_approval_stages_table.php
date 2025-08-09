@@ -23,8 +23,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->index(['company_id', 'stage_number', 'is_active']);
-            $table->unique(['company_id', 'stage_number']);
+            $table->index(['company_id', 'stage_number', 'is_active'],'comp_stage_act_index');
+            $table->unique(['company_id', 'stage_number'],'comp_stage_unique');
         });
     }
 

@@ -29,9 +29,9 @@ return new class extends Migration
             $table->boolean('notifications_sent')->default(false); // Controle de notificações
             $table->timestamps();
 
-            $table->index(['company_id', 'employee_id', 'evaluation_period']);
-            $table->index(['status', 'current_approval_stage']);
-            $table->unique(['company_id', 'employee_id', 'evaluation_period']); // Uma avaliação por mês
+            $table->index(['company_id', 'employee_id', 'evaluation_period'],'comp_emp_eval_index');
+            $table->index(['status', 'current_approval_stage'],'sta_cur_stage_index');
+            $table->unique(['company_id', 'employee_id', 'evaluation_period'],'comp_emp_eval_unique'); // Uma avaliação por mês
         });
     }
 

@@ -25,8 +25,8 @@ return new class extends Migration
             $table->integer('retry_count')->default(0);
             $table->timestamps();
 
-            $table->index(['company_id', 'type', 'status']);
-            $table->index(['evaluation_id', 'type']);
+            $table->index(['company_id', 'type', 'status'],'compa_typ_status_index');
+            $table->index(['evaluation_id', 'type'],'eval_type_index');
         });
     }
 

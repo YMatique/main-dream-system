@@ -16,6 +16,7 @@ use App\Livewire\Company\EmployeeManagement;
 use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\Company\MaintenanceTypeManagement;
 use App\Livewire\Company\MaterialManagement;
+use App\Livewire\Company\Perfomance\MetricsManagement;
 use App\Livewire\Company\RequesterManagement;
 use App\Livewire\Company\StatusLocationManagement;
 use App\Livewire\Company\UserPermissionManagement;
@@ -455,14 +456,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             ->group(function () {
                 
                 // Gestão de Métricas
-                Route::get('/metrics', function () {
-                    return view('company.performance.metrics', [
-                        'title' => 'Métricas de Desempenho',
-                        'company' => auth()->user()->company,
-                        'departments' => \App\Models\Company\Department::where('company_id', auth()->user()->company_id)->active()->get(),
-                        'metrics_count' => 0 // TODO: implementar PerformanceMetric model
-                    ]);
-                })->name('metrics');
+                Route::get('/metrics', MetricsManagement::class)->name('metrics');
                 
                 // Avaliações
                 Route::get('/evaluations', function () {

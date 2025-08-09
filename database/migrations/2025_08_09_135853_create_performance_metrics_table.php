@@ -26,8 +26,8 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->timestamps();
             
-            $table->index(['company_id', 'department_id', 'is_active']);
-            $table->unique(['company_id', 'department_id', 'name']);
+            $table->index(['company_id', 'department_id', 'is_active'], 'comp_dep_active_index');
+            $table->unique(['company_id', 'department_id', 'name'],'comp_dept_name_unique');
         });
     }
 

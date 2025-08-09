@@ -22,9 +22,9 @@ return new class extends Migration
             $table->timestamp('reviewed_at')->nullable();
             $table->timestamps();
 
-            $table->index(['evaluation_id', 'stage_number']);
-            $table->index(['approver_id', 'status']);
-            $table->unique(['evaluation_id', 'stage_number']); // Um registro por estágio
+            $table->index(['evaluation_id', 'stage_number'],'eval_stage_index');
+            $table->index(['approver_id', 'status'],'approver_status_index');
+            $table->unique(['evaluation_id', 'stage_number'],'eval_stage_unique'); // Um registro por estágio
         });
     }
 
