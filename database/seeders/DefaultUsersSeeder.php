@@ -27,7 +27,7 @@ class DefaultUsersSeeder extends Seeder
         ]);
 
         $this->command->info("✓ Super Admin criado: {$superAdmin->email}");
-
+/*
         // Criar usuários de exemplo para cada empresa
         $companies = Company::take(2)->get(); // Pega as primeiras 2 empresas
 
@@ -48,6 +48,15 @@ class DefaultUsersSeeder extends Seeder
             // Usuários de exemplo com diferentes grupos
             $this->createExampleUsers($company);
         }
+            */
+        // Para a empresa exestente
+        $company = Company::first(); // Pega as primeiras 2 empresas
+        if ($company) {
+            $this->createExampleUsers($company);
+        } else {
+            $this->command->warn('Nenhuma empresa encontrada para criar usuários de exemplo.');
+        }
+
     }
      private function createExampleUsers(Company $company): void
     {
