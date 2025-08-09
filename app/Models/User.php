@@ -90,6 +90,21 @@ class User extends Authenticatable
             ->implode('');
     }
 
+        
+    // public function isSuperAdmin(): bool
+    // {
+    //     return $this->user_type === 'super_admin';
+    // }
+    
+    // public function isCompanyAdmin(): bool
+    // {
+    //     return $this->user_type === 'company_admin';
+    // }
+    
+    public function isCompanyUser(): bool
+    {
+        return $this->user_type === 'company_user';
+    }
     public function company()
     {
         return $this->belongsTo(\App\Models\System\Company::class);

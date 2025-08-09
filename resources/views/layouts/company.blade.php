@@ -382,6 +382,21 @@
                                     </svg>
                                     <span class="flex-1">Estados & Localização</span>
                                 </a>
+
+                                 <a href="{{ route('company.manage.users-permissions') }}" 
+                                   class="group flex items-center px-4 py-2.5 text-sm rounded-lg transition-all duration-200
+                                          {{ request()->routeIs('company.manage.users-permissions') 
+                                             ? 'bg-blue-50 text-blue-700 border-l-2 border-blue-500 dark:bg-blue-900/20' 
+                                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700' }}">
+                                    <div class="w-2 h-2 rounded-full mr-3 {{ request()->routeIs('company.manage.users-permissions') ? 'bg-blue-500' : 'bg-gray-300 group-hover:bg-blue-500' }}"></div>
+                                    <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    <span class="flex-1">Usuários e Permissões</span>
+                                </a>
+
+                                
                             </div>
                         </div>
 
@@ -657,6 +672,7 @@
                                     'company.manage.machine-numbers' => [['Gestão', null], ['Números de Máquina', null]],
                                     'company.manage.requesters' => [['Gestão', null], ['Solicitantes', null]],
                                     'company.manage.statuses' => [['Gestão', null], ['Estados & Localização', null]],
+                                    'company.manage.users-permissions'=> [['Gestão', null], ['Utilizadores & Permissões', null]],
                                     'company.repair-orders.form1' => [['Ordens', null], ['Formulário 1', null]],
                                     'company.repair-orders.form2' => [['Ordens', null], ['Formulário 2', null]],
                                     'company.repair-orders.form3' => [['Ordens', null], ['Formulário 3', null]],

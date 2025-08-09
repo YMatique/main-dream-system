@@ -18,6 +18,7 @@ use App\Livewire\Company\MaintenanceTypeManagement;
 use App\Livewire\Company\MaterialManagement;
 use App\Livewire\Company\RequesterManagement;
 use App\Livewire\Company\StatusLocationManagement;
+use App\Livewire\Company\UserPermissionManagement;
 use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
@@ -273,6 +274,9 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             
             // Custos por Cliente
             Route::get('/client-costs', ClientCostManagement::class)->name('client-costs');
+
+            // Usuários e Permissões
+            Route::get('/users-permissions',UserPermissionManagement::class)->name('users-permissions');
         });
 
         // ===== FORMULÁRIOS DE ORDENS DE REPARAÇÃO =====
@@ -290,7 +294,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                     'requesters' => \App\Models\Company\Requester::where('company_id', auth()->user()->company_id)->active()->get(),
                     'machine_numbers' => \App\Models\Company\MachineNumber::where('company_id', auth()->user()->company_id)->active()->get()
                 ]);
-            })->name('form1');
+            })->name('form1')->middleware('form.access:1');
             
             // Formulário 2 - Técnicos + Materiais  
             Route::get('/form2/{order?}', function ($order = null) {
@@ -303,7 +307,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                     'statuses' => \App\Models\Company\Status::where('company_id', auth()->user()->company_id)->forForm('form2')->get(),
                     'locations' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->forForm('form2')->get()
                 ]);
-            })->name('form2');
+            })->name('form2')->middleware('form.access:2');
             
             // Formulário 3 - Faturação Real
             Route::get('/form3/{order?}', function ($order = null) {
@@ -408,7 +412,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
         });
         
         // ===== SISTEMA DE FATURAÇÃO =====
-        Route::prefix('billing')->name('billing.')->group(function () {
+        Route::prefix('billing')->name('billing.')->middleware('permission:billing.view_all')->group(function () {
             
             // Faturação Real
             Route::get('/real', function () {
@@ -419,7 +423,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                     'total_amount_mzn' => 0,
                     'total_amount_usd' => 0
                 ]);
-            })->name('real');
+            })->name('real')->middleware('permission:billing.real.manage');
             
             // Faturação Estimada
             Route::get('/estimated', function () {
