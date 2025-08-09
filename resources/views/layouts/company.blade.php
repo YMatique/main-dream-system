@@ -656,7 +656,7 @@
                                     'company.manage.client-costs' => [['Gestão', null], ['Custos de Clientes', null]],
                                     'company.manage.machine-numbers' => [['Gestão', null], ['Números de Máquina', null]],
                                     'company.manage.requesters' => [['Gestão', null], ['Solicitantes', null]],
-                                    'company.manage.status-locations' => [['Gestão', null], ['Estados & Localização', null]],
+                                    'company.manage.statuses' => [['Gestão', null], ['Estados & Localização', null]],
                                     'company.repair-orders.form1' => [['Ordens', null], ['Formulário 1', null]],
                                     'company.repair-orders.form2' => [['Ordens', null], ['Formulário 2', null]],
                                     'company.repair-orders.form3' => [['Ordens', null], ['Formulário 3', null]],
