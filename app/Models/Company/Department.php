@@ -2,6 +2,7 @@
 
 namespace App\Models\Company;
 
+use App\Models\Company\Evaluation\PerformanceMetric;
 use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
@@ -26,5 +27,9 @@ class Department extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+    public function performanceMetrics()
+    {
+        return $this->hasMany(PerformanceMetric::class);
     }
 }
