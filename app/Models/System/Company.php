@@ -62,6 +62,10 @@ class Company extends Model
     {
         return $this->hasMany(\App\Models\Company\Employee::class);
     }
+    public function departments()
+    {
+        return $this->hasMany(\App\Models\Company\Department::class);
+    }
 
     public function clients()
     {
