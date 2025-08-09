@@ -24,7 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'setlocale' => \App\Http\Middleware\SetLocale::class,
 
             // 'system.auth' => \App\Http\Middleware\SystemAuth::class,
-             'auth.unified' => \App\Http\Middleware\AuthenticatedMiddleware::class,
+            'auth.unified' => \App\Http\Middleware\AuthenticatedMiddleware::class,
             'user.type' => \App\Http\Middleware\UserTypeMiddleware::class,
         ]);
         $middleware->append(\App\Http\Middleware\LogActivity::class,);
