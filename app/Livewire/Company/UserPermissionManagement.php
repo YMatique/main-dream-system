@@ -9,6 +9,7 @@ use App\Models\PermissionGroup;
 use App\Models\User;
 use App\Services\PermissionService;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 

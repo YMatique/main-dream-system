@@ -413,10 +413,11 @@
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <!-- Background overlay -->
-                <div class="fixed inset-0 bg-zinc-900 bg-opacity-50 backdrop-blur-sm transition-opacity" wire:click="closeUserModal"></div>
-
+                <div class="fixed inset-0 bg-zinc-900 opacity-75 backdrop-blur-sm transition-opacity" wire:click="closeUserModal"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                
                 <!-- Modal panel -->
-                <div class="inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="relative inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                     <form wire:submit.prevent="saveUser">
                         <div class="bg-white dark:bg-zinc-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div class="sm:flex sm:items-start">
@@ -519,10 +520,11 @@
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <!-- Background overlay -->
-                <div class="fixed inset-0 bg-zinc-900 bg-opacity-50 backdrop-blur-sm transition-opacity" wire:click="closePermissionsModal"></div>
-
+                <div class="fixed inset-0 bg-zinc-900 opacity-75 backdrop-blur-sm transition-opacity" wire:click="closePermissionsModal"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                
                 <!-- Modal panel -->
-                <div class="inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                <div class="relative inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
                     <form wire:submit.prevent="savePermissions">
                         <div class="bg-white dark:bg-zinc-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div class="sm:flex sm:items-start">
@@ -602,10 +604,11 @@
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <!-- Background overlay -->
-                <div class="fixed inset-0 bg-zinc-900 bg-opacity-50 backdrop-blur-sm transition-opacity" wire:click="closeDepartmentModal"></div>
-
+                <div class="fixed inset-0 bg-zinc-900 opacity-75 backdrop-blur-sm transition-opacity" wire:click="closeDepartmentModal"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                
                 <!-- Modal panel -->
-                <div class="inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                <div class="relative inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
                     <form wire:submit.prevent="saveDepartments">
                         <div class="bg-white dark:bg-zinc-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div class="sm:flex sm:items-start">
@@ -661,10 +664,11 @@
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <!-- Background overlay -->
-                <div class="fixed inset-0 bg-zinc-900 bg-opacity-50 backdrop-blur-sm transition-opacity"></div>
-
+                <div class="fixed inset-0 bg-zinc-900 opacity-75 backdrop-blur-sm transition-opacity"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                
                 <!-- Modal panel -->
-                <div class="inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="relative inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                     <div class="bg-white dark:bg-zinc-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
                             <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 sm:mx-0 sm:h-10 sm:w-10">
@@ -701,7 +705,7 @@
 </div>
 
 <!-- Loading State -->
-<div wire:loading class="fixed inset-0 z-50 bg-zinc-900 bg-opacity-50 flex items-center justify-center">
+{{-- <div wire:loading.flex class="fixed inset-0 z-50 bg-zinc-900 bg-opacity-50 flex items-center justify-center">
     <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 shadow-xl">
         <div class="flex items-center space-x-3">
             <svg class="animate-spin h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -710,6 +714,12 @@
             <span class="text-zinc-900 dark:text-white font-medium">Processando...</span>
         </div>
     </div>
+</div> --}}
+<div wire:loading.flex class="fixed inset-0 z-50 items-center justify-center bg-zinc-500 opacity-75">
+        <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 flex items-center space-x-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div class="text-zinc-900 dark:text-white font-medium">A processar...</div>
+        </div>
 </div>
 
 <!-- Toast Notifications -->
