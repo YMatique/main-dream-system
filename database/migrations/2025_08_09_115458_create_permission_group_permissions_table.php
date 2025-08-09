@@ -12,14 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permission_group_permissions', function (Blueprint $table) {
-            $table->id();
+             $table->id();
             $table->foreignId('permission_group_id')->constrained()->onDelete('cascade');
             $table->foreignId('permission_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             
-            // Unique constraint
-            $table->unique(['permission_group_id', 'permission_id']);
-            $table->timestamps();
+            // Unique constraint com nome curto
+            $table->unique(['permission_group_id', 'permission_id'], 'perm_group_perm_unique');
         });
     }
 

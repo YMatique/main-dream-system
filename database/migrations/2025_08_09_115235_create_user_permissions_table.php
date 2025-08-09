@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_permissions', function (Blueprint $table) {
-            $table->id();
+         $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('permission_id')->constrained()->onDelete('cascade');
-            $table->foreignId('department_id')->nullable()->constrained()->onDelete('cascade'); // Para permissões específicas de departamento
-            $table->json('metadata')->nullable(); // Para dados adicionais (ex: limitações específicas)
+            $table->foreignId('department_id')->nullable()->constrained()->onDelete('cascade');
+            $table->json('metadata')->nullable();
             $table->timestamp('granted_at')->useCurrent();
-            $table->foreignId('granted_by')->nullable()->constrained('users')->onDelete('set null'); // Quem concedeu a permissão
+            $table->foreignId('granted_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
             
-            // Unique constraint - usuário não pode ter a mesma permissão duplicada para o mesmo departamento
-            $table->unique(['user_id', 'permission_id', 'department_id'], 'user_permission_department_unique');
+            // Unique constraint com nome curto
+            $table->unique(['user_id', 'permission_id', 'department_id'], 'user_perm_dept_unique');
             
             // Indexes
             $table->index(['user_id', 'permission_id']);

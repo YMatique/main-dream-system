@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('department_evaluators', function (Blueprint $table) {
              $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Avaliador
-            $table->foreignId('department_id')->constrained()->onDelete('cascade'); // Departamento que pode avaliar
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('department_id')->constrained()->onDelete('cascade');
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->boolean('is_active')->default(true);
             $table->timestamp('assigned_at')->useCurrent();
             $table->foreignId('assigned_by')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
             
-            // Unique constraint
-            $table->unique(['user_id', 'department_id'], 'user_department_evaluator_unique');
+            // Unique constraint com nome curto
+            $table->unique(['user_id', 'department_id'], 'user_dept_eval_unique');
             
             // Indexes
             $table->index(['department_id', 'is_active']);
