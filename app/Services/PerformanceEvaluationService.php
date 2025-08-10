@@ -57,13 +57,31 @@ class PerformanceEvaluationService
      */
     public function canEvaluateEmployee(User $evaluator, Employee $employee)
     {
+        // // Admin master pode avaliar qualquer um da empresa
+        // if ($evaluator->user_type === 'company_admin' && $evaluator->company_id === $employee->company_id) {
+        //     return true;
+        // }
+
+        // // Verificar se tem permissão específica para o departamento
+        // return $evaluator->hasPermission("evaluation.department.{$employee->department_id}");
         // Admin master pode avaliar qualquer um da empresa
         if ($evaluator->user_type === 'company_admin' && $evaluator->company_id === $employee->company_id) {
             return true;
         }
 
-        // Verificar se tem permissão específica para o departamento
-        return $evaluator->hasPermission("evaluation.department.{$employee->department_id}");
+        // ✅ CORREÇÃO: Verificar permissão geral + departamentos atribuídos
+        if (!$evaluator->hasPermission('evaluation.create')) {
+            return false;
+        }
+
+        // Verificar se tem acesso ao departamento do funcionário via DepartmentEvaluator
+        $hasAccessToDepartment = \App\Models\DepartmentEvaluator::where('user_id', $evaluator->id)
+            ->where('company_id', $evaluator->company_id)
+            ->where('department_id', $employee->department_id)
+            ->where('is_active', true)
+            ->exists();
+
+        return $hasAccessToDepartment && $employee->company_id === $evaluator->company_id;
     }
 
     /**
@@ -337,6 +355,7 @@ class PerformanceEvaluationService
      */
     protected function getAccessibleDepartments(User $user)
     {
+        /*
         if ($user->user_type === 'company_admin') {
             // Admin pode ver todos os departamentos da empresa
             return \App\Models\Company\Department::where('company_id', $user->company_id)
@@ -359,6 +378,26 @@ class PerformanceEvaluationService
         }
 
         return $departmentIds;
+        */
+
+         if ($user->user_type === 'company_admin') {
+            // Admin pode ver todos os departamentos da empresa
+            return \App\Models\Company\Department::where('company_id', $user->company_id)
+                ->where('is_active', true)
+                ->pluck('id')
+                ->toArray();
+        }
+
+        // ✅ CORREÇÃO: Usar tabela department_evaluators ao invés de permissões específicas
+        if (!$user->hasPermission('evaluation.create')) {
+            return [];
+        }
+
+        return \App\Models\DepartmentEvaluator::where('user_id', $user->id)
+            ->where('company_id', $user->company_id)
+            ->where('is_active', true)
+            ->pluck('department_id')
+            ->toArray();
     }
 
     /**

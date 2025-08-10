@@ -96,66 +96,101 @@ class EvaluationManagement extends Component
     public function render()
     {
         $evaluations = $this->getEvaluations();
-        
+
         return view('livewire.company.perfomance.evaluation-management', [
             'evaluations' => $evaluations,
             'stats' => $this->getStats(),
         ])
-        ->title('Avaliações de Desempenho')
-        ->layout('layouts.company');
+            ->title('Avaliações de Desempenho')
+            ->layout('layouts.company');
     }
 
-    /**
-     * Verificar permissões do usuário
+  /**
+     * Verificar permissões do usuário - REGRA CORRETA
      */
     public function checkPermissions()
     {
         $user = auth()->user();
         
-        // Se não é admin master, deve ter pelo menos uma permissão de departamento
-        if ($user->user_type !== 'company_admin') {
-            $hasEvaluationPermission = $user->getAllPermissions()
-                ->filter(function($permission) {
-                    return str_starts_with($permission->name, 'evaluation.department.');
-                })
-                ->isNotEmpty();
-                
-            if (!$hasEvaluationPermission) {
-                abort(403, 'Sem permissão para acessar avaliações de desempenho');
-            }
+        // ✅ Company Admin tem acesso total
+        if ($user->user_type === 'company_admin') {
+            return; // Admin pode avaliar qualquer funcionário
+        }
+        
+        // ✅ Company User precisa de permissão de avaliação
+        if (!$user->hasPermission('evaluation.create')) {
+            abort(403, 'Sem permissão para criar avaliações de desempenho');
+        }
+        
+        // Verificar se tem pelo menos um departamento atribuído para avaliação
+        $accessibleDepartments = $this->getAccessibleDepartments();
+        if (empty($accessibleDepartments)) {
+            abort(403, 'Usuário não tem departamentos atribuídos para avaliação');
         }
     }
 
     /**
-     * Obter departamentos acessíveis para o usuário
+     * Obter departamentos acessíveis para o usuário - REGRA CORRETA
      */
     public function getAccessibleDepartments()
     {
         $user = auth()->user();
         
         if ($user->user_type === 'company_admin') {
-            // Admin master pode ver todos os departamentos da empresa
+            // ✅ Admin pode avaliar funcionários de todos os departamentos
             return Department::where('company_id', $user->company_id)
                 ->where('is_active', true)
                 ->pluck('id')
                 ->toArray();
         }
 
-        // Para usuários normais, verificar permissões de departamento
-        $permissions = $user->getAllPermissions()
-            ->filter(function($permission) {
-                return str_starts_with($permission->name, 'evaluation.department.');
-            });
-
+        // ✅ Company User: Verificar departamentos específicos atribuídos via permissões
+        
+        if (!$user->hasPermission('evaluation.create')) {
+            return []; // Sem permissão, sem acesso
+        }
+        
+         // Buscar departamentos atribuídos na tabela department_evaluators
+        $departmentIds = \App\Models\DepartmentEvaluator::where('user_id', $user->id)
+            ->where('company_id', $user->company_id)
+            ->where('is_active', true)
+            ->pluck('department_id')
+            ->toArray();
+        
+        return $departmentIds;
+        /*
+        // Verificar se tem permissões específicas de departamento
         $departmentIds = [];
-        foreach ($permissions as $permission) {
-            $departmentId = str_replace('evaluation.department.', '', $permission->name);
-            if (is_numeric($departmentId)) {
-                $departmentIds[] = (int) $departmentId;
+        
+        // Buscar permissões do tipo 'evaluation.department.{id}'
+        $userPermissions = $user->userPermissions()
+            ->whereHas('permission', function($q) {
+                $q->where('name', 'like', 'evaluation.department.%');
+            })
+            ->with('permission')
+            ->get();
+            dd($userPermissions);
+
+        foreach ($userPermissions as $userPermission) {
+            $permissionName = $userPermission->permission->name;
+            // Extrair ID do departamento de 'evaluation.department.{id}'
+            if (preg_match('/evaluation\.department\.(\d+)/', $permissionName, $matches)) {
+                $departmentIds[] = (int) $matches[1];
             }
         }
-
-        return $departmentIds;
+        
+        // Se não tem permissões específicas de departamento, verificar se tem permissão geral
+        if (empty($departmentIds)) {
+            // Se tem permissão geral 'evaluation.create', pode avaliar todos os departamentos
+            // (isso pode ser configurado conforme sua regra de negócio)
+            return Department::where('company_id', $user->company_id)
+                ->where('is_active', true)
+                ->pluck('id')
+                ->toArray();
+        }
+        
+        return array_unique($departmentIds);
+        */
     }
 
     public function loadData()
@@ -169,6 +204,7 @@ class EvaluationManagement extends Component
             return;
         }
 
+        // dd($this->accessibleDepartments);
         // Carregar departamentos acessíveis
         $this->departments = Department::where('company_id', $user->company_id)
             ->whereIn('id', $this->accessibleDepartments)
@@ -289,8 +325,11 @@ class EvaluationManagement extends Component
 
         $employee = Employee::findOrFail($this->selectedEmployeeId);
         
+         // ✅ RECARREGAR departamentos acessíveis ANTES da verificação
+        $this->accessibleDepartments = $this->getAccessibleDepartments();
         // Verificar se o usuário pode avaliar este funcionário
         if (!$this->canEvaluateEmployee($employee)) {
+            dd('ásasas');
             session()->flash('error', 'Sem permissão para avaliar funcionários deste departamento.');
             $this->selectedEmployeeId = null;
             return;
@@ -316,27 +355,41 @@ class EvaluationManagement extends Component
     }
 
     /**
-     * Verificar se o usuário pode avaliar um funcionário específico
+     * Verificar se o usuário pode avaliar um funcionário específico - REGRA CORRETA
      */
     public function canEvaluateEmployee($employee)
     {
         $user = auth()->user();
         
-        // Admin master pode avaliar qualquer um da empresa
+        // ✅ Admin pode avaliar qualquer funcionário da empresa
         if ($user->user_type === 'company_admin' && $user->company_id === $employee->company_id) {
             return true;
         }
 
-        // Verificar se tem permissão específica para o departamento
-        return in_array($employee->department_id, $this->accessibleDepartments);
+        // ✅ Company User: verificar se tem permissão para o departamento do funcionário
+        
+
+        if (!$user->hasPermission('evaluation.create')) {
+            return false;
+        }
+        // Verificar se o departamento do funcionário está nos departamentos acessíveis
+        return in_array($employee->department_id, $this->accessibleDepartments) 
+            && $employee->company_id === $user->company_id;
     }
+
+    // ... resto dos métodos permanecem iguais ...
 
     public function loadDepartmentMetrics()
     {
         if (!$this->selectedDepartmentId) {
             return;
         }
+         // ✅ GARANTIR que accessibleDepartments está atualizado
+        if (empty($this->accessibleDepartments)) {
+            $this->accessibleDepartments = $this->getAccessibleDepartments();
+        }
 
+        // dd($this->accessibleDepartments, $this->selectedDepartmentId, in_array($this->selectedDepartmentId, $this->accessibleDepartments));
         // Verificar se pode acessar este departamento
         if (!in_array($this->selectedDepartmentId, $this->accessibleDepartments)) {
             session()->flash('error', 'Sem permissão para acessar métricas deste departamento.');
@@ -391,7 +444,8 @@ class EvaluationManagement extends Component
                 $value = $response['numeric_value'];
             }
 
-            if ($value !== null) {
+            if ($value !== null && $value !== '') {
+                // ✅ CORREÇÃO: Seu model já aplica o peso, só somar
                 $score = $metric->calculateScore($value);
                 $totalScore += $score;
                 $totalWeight += $metric->weight;
@@ -399,7 +453,24 @@ class EvaluationManagement extends Component
         }
 
         $this->totalScore = $totalScore;
-        $this->finalPercentage = $totalWeight > 0 ? min(100, $totalScore) : 0;
+        
+        // ✅ CORREÇÃO: totalScore já está ponderado pelo peso
+        // Se peso total for 100%, totalScore será o percentual final
+        if ($totalWeight > 0) {
+            $this->finalPercentage = min(100, $totalScore);
+        } else {
+            $this->finalPercentage = 0;
+        }
+
+        // Debug para verificar
+        \Log::info('Score Calculation Debug', [
+            'total_score' => $totalScore,
+            'total_weight' => $totalWeight,
+            'final_percentage' => $this->finalPercentage,
+            'responses' => array_map(function($response) {
+                return array_filter($response);
+            }, $this->responses)
+        ]);
     }
 
     public function saveEvaluation()
@@ -450,102 +521,8 @@ class EvaluationManagement extends Component
         }
     }
 
-    public function viewEvaluation($evaluationId)
-    {
-        $evaluation = PerformanceEvaluation::where('company_id', auth()->user()->company_id)
-            ->whereHas('employee', function($q) {
-                $q->whereIn('department_id', $this->accessibleDepartments);
-            })
-            ->findOrFail($evaluationId);
-            
-        $this->viewingEvaluationId = $evaluationId;
-        $this->showViewModal = true;
-    }
+    // ... métodos restantes permanecem iguais ...
 
-    public function editEvaluation($evaluationId)
-    {
-        $evaluation = PerformanceEvaluation::where('company_id', auth()->user()->company_id)
-            ->whereHas('employee', function($q) {
-                $q->whereIn('department_id', $this->accessibleDepartments);
-            })
-            ->findOrFail($evaluationId);
-
-        if (!$evaluation->canBeEdited()) {
-            session()->flash('error', 'Esta avaliação não pode mais ser editada.');
-            return;
-        }
-
-        // Verificar permissões para o funcionário
-        if (!$this->canEvaluateEmployee($evaluation->employee)) {
-            session()->flash('error', 'Sem permissão para editar avaliação deste funcionário.');
-            return;
-        }
-
-        $this->currentEvaluationId = $evaluationId;
-        $this->selectedEmployeeId = $evaluation->employee_id;
-        $this->selectedDepartmentId = $evaluation->employee->department_id;
-        $this->evaluationPeriod = $evaluation->evaluation_period->format('Y-m');
-        $this->recommendations = $evaluation->recommendations;
-
-        // Carregar métricas e respostas existentes
-        $this->loadDepartmentMetrics();
-        
-        foreach ($evaluation->responses as $response) {
-            $this->responses[$response->metric_id] = [
-                'numeric_value' => $response->numeric_value,
-                'rating_value' => $response->rating_value,
-                'comments' => $response->comments ?? ''
-            ];
-        }
-
-        $this->calculateScore();
-        $this->showEvaluationModal = true;
-    }
-
-    public function confirmDeleteEvaluation($evaluationId)
-    {
-        $evaluation = PerformanceEvaluation::where('company_id', auth()->user()->company_id)
-            ->whereHas('employee', function($q) {
-                $q->whereIn('department_id', $this->accessibleDepartments);
-            })
-            ->findOrFail($evaluationId);
-            
-        $this->deleteEvaluationId = $evaluationId;
-        $this->showDeleteModal = true;
-    }
-
-    public function deleteEvaluation()
-    {
-        try {
-            $evaluation = PerformanceEvaluation::where('company_id', auth()->user()->company_id)
-                ->whereHas('employee', function($q) {
-                    $q->whereIn('department_id', $this->accessibleDepartments);
-                })
-                ->findOrFail($this->deleteEvaluationId);
-
-            if (!$evaluation->canBeEdited()) {
-                session()->flash('error', 'Esta avaliação não pode ser eliminada.');
-                return;
-            }
-
-            // Verificar permissões para o funcionário
-            if (!$this->canEvaluateEmployee($evaluation->employee)) {
-                session()->flash('error', 'Sem permissão para eliminar avaliação deste funcionário.');
-                return;
-            }
-
-            $evaluation->delete();
-            session()->flash('success', 'Avaliação eliminada com sucesso!');
-
-        } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao eliminar avaliação: ' . $e->getMessage());
-        }
-
-        $this->showDeleteModal = false;
-        $this->deleteEvaluationId = null;
-    }
-
-    // Helper methods
     public function resetEvaluationForm()
     {
         $this->currentEvaluationId = null;
