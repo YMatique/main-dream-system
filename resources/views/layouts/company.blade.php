@@ -682,8 +682,8 @@
                                     'company.billing.estimated' => [['Faturação', null], ['Estimada', null]],
                                     'company.billing.hh' => [['Faturação', null], ['HH', null]],
                                     'company.orders.advanced-list' => [['Ordens', null], ['Listagem Avançada', null]],
-                                    'company.evaluation.metrics' => [['Avaliação', null], ['Gestão de Métricas', null]],
-                                    'company.evaluation.perform' => [['Avaliação', null], ['Avaliar Funcionários', null]],
+                                    'company.performance.metrics' => [['Avaliação', null], ['Gestão de Métricas', null]],
+                                    'company.performance.perform' => [['Avaliação', null], ['Avaliar Funcionários', null]],
                                     'company.evaluation.reports' => [['Avaliação', null], ['Relatórios', null]],
                                     'employee.portal' => [['Portal do Funcionário', null]],
                                 ];

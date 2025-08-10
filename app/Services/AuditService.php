@@ -52,6 +52,25 @@ class AuditService
         $user->update(['last_login_at' => now()]);
     }
 
+    public function logFailedLogin()
+    {
+        AuditLog::create([
+            'user_id' => null,
+            'auditable_type' => 'System',
+            'auditable_id' => 0,
+            'action' => 'failed_login',
+            'old_values' => null,
+            'new_values' => [
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ],
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'url' => request()->fullUrl(),
+            'company_id' => null,
+        ]);
+    }
+
     /**
      * Log user logout
      */

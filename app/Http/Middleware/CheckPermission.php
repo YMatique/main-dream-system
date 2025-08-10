@@ -16,8 +16,10 @@ class CheckPermission
      */
     public function handle(Request $request, Closure $next,  string $permission): Response
     {
-         if (!Auth::check()) {
-            return redirect()->route('system.login');
+       
+      
+        if (!Auth::check()) {
+            return $this->redirectToLogin($request);
         }
 
         $user = Auth::user();
@@ -25,20 +27,57 @@ class CheckPermission
         // Check if user is active
         if ($user->status !== 'active') {
             Auth::logout();
-            return redirect()->route('system.login')->with('error', 'Sua conta está inativa. Entre em contato com o administrador.');
+            return $this->redirectToLogin($request, 'Sua conta está inativa.');
         }
 
-        // Check if user has the required permission
-        if (!$user->hasPermissionTo($permission)) {
+        // Super Admin e Company Admin têm todas as permissões
+        if ($user->isSuperAdmin() || $user->isCompanyAdmin()) {
+            return $next($request);
+        }
+
+        // Check if user has the required permission usando o trait HasPermissions
+        if (!$user->hasPermission($permission)) {
+            // Log da negação de permissão
+            if (class_exists('\App\Services\ActivityLoggerService')) {
+                $logger = app(\App\Services\ActivityLoggerService::class);
+                $logger->log(
+                    'permission_denied',
+                    "Usuário {$user->name} tentou acessar {$request->route()->getName()} sem permissão: {$permission}",
+                    'security',
+                    'warning'
+                );
+            }
+
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Você não tem permissão para realizar esta ação.',
-                    'permission' => $permission
+                    'permission' => $permission,
+                    'route' => $request->route()->getName(),
+                    'user_permissions' => $user->permissions,
                 ], 403);
             }
 
-            abort(403, 'Você não tem permissão para realizar esta ação.');
+            // dd($user->permissions);
+            abort(403, "Você não tem permissão para realizar esta ação. Permissão necessária: {$permission}");
         }
+
         return $next($request);
+    }
+
+     private function redirectToLogin(Request $request, string $message = null)
+    {
+        $loginRoute = match (true) {
+            $request->routeIs('system.*') => 'system.login',
+            $request->routeIs('company.*') => 'company.login',
+            default => 'login'
+        };
+
+        $redirect = redirect()->route($loginRoute);
+       
+        if ($message) {
+            $redirect->with('error', $message);
+        }
+
+        return $redirect;
     }
 }

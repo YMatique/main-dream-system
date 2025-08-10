@@ -15,7 +15,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-     use HasPermissions;
+    use HasPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -35,6 +35,7 @@ class User extends Authenticatable
         'password_reset_required',
         'created_by',
         'created_by_super_admin',
+        'permissions'
     ];
 
 
@@ -62,6 +63,7 @@ class User extends Authenticatable
             'permissions' => 'array',
             'password_reset_required' => 'boolean',
             'created_by_super_admin' => 'boolean',
+            'permissions' => 'array',
             'is_super_admin' => 'boolean', // Manter compatibilidade
         ];
     }
@@ -90,17 +92,17 @@ class User extends Authenticatable
             ->implode('');
     }
 
-        
+
     // public function isSuperAdmin(): bool
     // {
     //     return $this->user_type === 'super_admin';
     // }
-    
+
     // public function isCompanyAdmin(): bool
     // {
     //     return $this->user_type === 'company_admin';
     // }
-    
+
     public function isCompanyUser(): bool
     {
         return $this->user_type === 'company_user';
@@ -268,6 +270,37 @@ class User extends Authenticatable
         // Company admin tem todas as permissões da empresa
         if ($this->isCompanyAdmin()) {
             return true;
+        }
+
+
+        // ===== PRIORIDADE 1: Verificar no sistema relacional (trait HasPermissions) =====
+        if (method_exists($this, 'getPermissionCache')) {
+            try {
+                $cache = $this->getPermissionCache();
+                if ($cache && $cache->hasPermission($permission)) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                // Log do erro mas continue para verificação simples
+                \Log::warning("Erro ao verificar cache de permissões: " . $e->getMessage());
+            }
+        }
+
+        // ===== PRIORIDADE 2: Verificar nas tabelas relacionais diretamente =====
+        if (method_exists($this, 'userPermissions')) {
+            try {
+                $hasRelationalPermission = $this->userPermissions()
+                    ->whereHas('permission', function ($q) use ($permission) {
+                        $q->where('name', $permission);
+                    })
+                    ->exists();
+
+                if ($hasRelationalPermission) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                \Log::warning("Erro ao verificar permissões relacionais: " . $e->getMessage());
+            }
         }
 
         // Verificar permissões específicas

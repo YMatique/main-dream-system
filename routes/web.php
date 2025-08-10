@@ -16,6 +16,7 @@ use App\Livewire\Company\EmployeeManagement;
 use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\Company\MaintenanceTypeManagement;
 use App\Livewire\Company\MaterialManagement;
+use App\Livewire\Company\Perfomance\EvaluationManagement;
 use App\Livewire\Company\Perfomance\MetricsManagement;
 use App\Livewire\Company\RequesterManagement;
 use App\Livewire\Company\StatusLocationManagement;
@@ -451,7 +452,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
         
         // ===== AVALIAÇÃO DE DESEMPENHO (apenas Company Admin) =====
         Route::prefix('performance')
-            ->middleware('user.type:company_admin')
+            // ->middleware('user.type:company_admin')
             ->name('performance.')
             ->group(function () {
                 
@@ -459,14 +460,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                 Route::get('/metrics', MetricsManagement::class)->name('metrics');
                 
                 // Avaliações
-                Route::get('/evaluations', function () {
-                    return view('company.performance.evaluations', [
-                        'title' => 'Avaliações de Desempenho',
-                        'company' => auth()->user()->company,
-                        'employees' => \App\Models\Company\Employee::where('company_id', auth()->user()->company_id)->active()->get(),
-                        'evaluations_count' => 0 // TODO: implementar
-                    ]);
-                })->name('evaluations');
+                Route::get('/evaluations', EvaluationManagement::class)->name('evaluations')->middleware('permission:evaluation.create');
                 
                 // Relatórios de Desempenho
                 Route::get('/reports', function () {
