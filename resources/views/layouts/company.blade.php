@@ -15,6 +15,21 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    @yield('styles')
+    <style>
+        .select2-container--default .select2-selection--single .select2-selection__rendered
+        {
+            padding: 10px;
+        }
+        .select2-container .select2-selection--single 
+        {
+            height: unset;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__placeholder
+        {
+            padding-left: 28px;
+        }
+    </style>
 </head>
 <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900">
     <div class="min-h-screen flex">
@@ -771,5 +786,6 @@
 
     @livewireScripts
     <script src="//unpkg.com/alpinejs" defer></script>
+    @yield('scripts')
 </body>
 </html>

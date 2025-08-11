@@ -13,6 +13,7 @@ use App\Livewire\Company\CompanyLogin;
 use App\Livewire\Company\Dashboard;
 use App\Livewire\Company\DepartmentManagement;
 use App\Livewire\Company\EmployeeManagement;
+use App\Livewire\Company\Forms\RepairOrderForm1;
 use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\Company\MaintenanceTypeManagement;
 use App\Livewire\Company\MaterialManagement;
@@ -285,18 +286,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
         Route::prefix('repair-orders')->name('repair-orders.')->group(function () {
             
             // Formulário 1 - Inicial
-            Route::get('/form1', function () {
-                return view('company.repair-orders.form1', [
-                    'title' => 'Formulário 1 - Ordem Inicial',
-                    'company' => auth()->user()->company,
-                    'clients' => \App\Models\Company\Client::where('company_id', auth()->user()->company_id)->active()->get(),
-                    'maintenance_types' => \App\Models\Company\MaintenanceType::where('company_id', auth()->user()->company_id)->active()->get(),
-                    'statuses' => \App\Models\Company\Status::where('company_id', auth()->user()->company_id)->forForm('form1')->get(),
-                    'locations' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->forForm('form1')->get(),
-                    'requesters' => \App\Models\Company\Requester::where('company_id', auth()->user()->company_id)->active()->get(),
-                    'machine_numbers' => \App\Models\Company\MachineNumber::where('company_id', auth()->user()->company_id)->active()->get()
-                ]);
-            })->name('form1')->middleware('form.access:1');
+            Route::get('/form1', RepairOrderForm1::class)->name('form1')->middleware('form.access:1');
             
             // Formulário 2 - Técnicos + Materiais  
             Route::get('/form2/{order?}', function ($order = null) {
