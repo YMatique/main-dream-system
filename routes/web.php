@@ -14,6 +14,7 @@ use App\Livewire\Company\Dashboard;
 use App\Livewire\Company\DepartmentManagement;
 use App\Livewire\Company\EmployeeManagement;
 use App\Livewire\Company\Forms\RepairOrderForm1;
+use App\Livewire\Company\Forms\RepairOrderForm2;
 use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\Company\MaintenanceTypeManagement;
 use App\Livewire\Company\MaterialManagement;
@@ -57,7 +58,7 @@ Route::group([
     // Home
     Route::get('/', Home::class)->name('home');
     
-    // Sobre
+    // Sobre3
     Route::get('/sobre', function () {
         return view('website.about');
     })->name('about');
@@ -289,17 +290,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             Route::get('/form1', RepairOrderForm1::class)->name('form1')->middleware('form.access:1');
             
             // Formulário 2 - Técnicos + Materiais  
-            Route::get('/form2/{order?}', function ($order = null) {
-                return view('company.repair-orders.form2', [
-                    'title' => 'Formulário 2 - Técnicos e Materiais',
-                    'company' => auth()->user()->company,
-                    'order' => $order,
-                    'employees' => \App\Models\Company\Employee::where('company_id', auth()->user()->company_id)->active()->get(),
-                    'materials' => \App\Models\Company\Material::where('company_id', auth()->user()->company_id)->active()->get(),
-                    'statuses' => \App\Models\Company\Status::where('company_id', auth()->user()->company_id)->forForm('form2')->get(),
-                    'locations' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->forForm('form2')->get()
-                ]);
-            })->name('form2')->middleware('form.access:2');
+            Route::get('/form2/{order?}', RepairOrderForm2::class)->name('form2')->middleware('form.access:2');
             
             // Formulário 3 - Faturação Real
             Route::get('/form3/{order?}', function ($order = null) {
