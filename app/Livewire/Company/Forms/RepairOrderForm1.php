@@ -154,6 +154,9 @@ class RepairOrderForm1 extends Component
     {
         $companyId = auth()->user()->company_id;
         $this->order_number = RepairOrder::generateOrderNumber($companyId);
+        // dd($this->order_number);
+        // Disparar evento para atualizar a interface
+            $this->dispatch('orderNumberGenerated', $this->order_number);
     }
 
     public function save()

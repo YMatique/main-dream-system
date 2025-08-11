@@ -743,6 +743,74 @@
             }
         });
 
+
+        
+
+// Listener para quando um número de ordem é gerado
+window.addEventListener('orderNumberGenerated', function(event) {
+
+    const orderNumber = event.detail;
+    console.log(orderNumber);
+    
+    // Adicionar feedback visual temporário
+    const input = document.querySelector('input[wire\\:model="order_number"]');
+    if (input) {
+        // Destacar o campo brevemente
+        input.style.transition = 'all 0.3s ease';
+        input.style.backgroundColor = '#dcfce7'; // verde claro
+        input.style.borderColor = '#16a34a'; // verde
+        
+        // Remover o destaque após 2 segundos
+        setTimeout(() => {
+            input.style.backgroundColor = '';
+            input.style.borderColor = '';
+        }, 2000);
+    }
+    
+    // Mostrar notificação toast
+    showToast(`Número gerado: ${orderNumber}`, 'success');
+});
+
+// Função para mostrar toast notifications
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg text-white transform transition-all duration-300 translate-y-full opacity-0`;
+    
+    switch(type) {
+        case 'success':
+            toast.className += ' bg-green-500';
+            break;
+        case 'error':
+            toast.className += ' bg-red-500';
+            break;
+        default:
+            toast.className += ' bg-blue-500';
+    }
+    
+    toast.innerHTML = `
+        <div class="flex items-center">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 hover:opacity-75">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animar entrada
+    setTimeout(() => {
+        toast.classList.remove('translate-y-full', 'opacity-0');
+    }, 100);
+    
+    // Auto remover após 3 segundos
+    setTimeout(() => {
+        toast.classList.add('translate-y-full', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
         // Validação em tempo real
         document.addEventListener('livewire:validation-error', function(event) {
             // Adicionar classes de erro aos campos Select2
