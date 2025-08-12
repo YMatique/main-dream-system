@@ -21,6 +21,7 @@ use App\Livewire\Company\Forms\RepairOrderForm5;
 use App\Livewire\Company\Listings\AdvancedListing;
 use App\Livewire\Company\Listings\RepairOrdersForm1List;
 use App\Livewire\Company\Listings\RepairOrdersForm2List;
+use App\Livewire\Company\Listings\RepairOrdersForm3List;
 use App\Livewire\Company\Listings\RepairOrdersList;
 use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\Company\MaintenanceTypeManagement;
@@ -318,14 +319,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             
             Route::get('/form2-list', RepairOrdersForm2List::class)->name('form2-list');
             
-            Route::get('/form3-list', function () {
-                return view('company.orders.list', [
-                    'title' => 'Listagem - Formulário 3',
-                    'form_type' => 'form3', 
-                    'company' => auth()->user()->company,
-                    'orders_count' => 0
-                ]);
-            })->name('form3-list');
+            Route::get('/form3-list', RepairOrdersForm3List::class)->name('form3-list');
             
             Route::get('/form4-list', function () {
                 return view('company.orders.list', [
