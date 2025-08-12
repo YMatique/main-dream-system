@@ -339,10 +339,13 @@
             {{ session('error') }}
         </div>
     @endif
+</div>
 
-    @push('scripts')
+    @section('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                console.log('funcionando');
+                
                 // Refresh automático a cada 5 minutos
                 setInterval(function() {
                     @this.call('refreshData');
@@ -371,7 +374,9 @@
 
                 // Modal de detalhes
                 window.addEventListener('show-order-details', function(event) {
-                    const data = event.detail.form2Data;
+                    const data = event.detail[0].form2Data;
+                    console.log('Detalhes da Ordem:', event.detail[0].form2Data);
+                    
                     const modal = document.createElement('div');
                     modal.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center';
                     modal.innerHTML = `
@@ -384,8 +389,8 @@
                                 <p><strong>Status:</strong> ${data.status?.name || '-'}</p>
                                 <p><strong>Total Horas:</strong> ${data.tempo_total_horas ? Number(data.tempo_total_horas).toFixed(2) + 'h' : '-'}</p>
                                 <p><strong>Funcionários:</strong> ${data.employees?.length ? data.employees.map(e => e.employee?.name || '-').join(', ') : '-'}</p>
-                                <p><strong>Materiais:</strong> ${data.materials?.length ? data.materials.map(m => m.material?.name + ' (' + m.quantity + ')').join(', ') : '-'}</p>
-                                <p><strong>Materiais Adicionais:</strong> ${data.additional_materials?.length ? data.additional_materials.map(m => m.name + ' (' + m.quantity + ', ' + m.unit_cost + ')').join(', ') : '-'}</p>
+                                <p><strong>Materiais:</strong> ${data.materials?.length ? data.materials.map(m => m.material?.name + ' (' + m.quantidade + ')').join(', ') : '-'}</p>
+                                <p><strong>Materiais Adicionais:</strong> ${data.additional_materials?.length ? data.additional_materials.map(m => m.nome_material + ' (' + m.quantidade + ', ' + m.custo_unitario + ')').join(', ') : '-'}</p>
                                 <p><strong>Atividade Realizada:</strong> ${data.actividade_realizada || '-'}</p>
                             </div>
                             <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300" onclick="this.closest('.fixed').remove()">Fechar</button>
@@ -395,5 +400,4 @@
                 });
             });
         </script>
-    @endpush
-</div>
+    @endsection
