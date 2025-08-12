@@ -81,14 +81,14 @@
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white">Filtros</h3>
-            {{-- @if ($activeFiltersCount > 0) --}}
+            @if ($activeFiltersCount > 0)
                 <button wire:click="clearFilters" class="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
-                    Limpar 
+                    Limpar ({{ $activeFiltersCount }}) 
                 </button>
-            {{-- @endif --}}
+            @endif
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
@@ -163,7 +163,7 @@
                         <option value="50">50</option>
                     </select>
                 </div>
-                {{-- @if ($hasPermissionToExport) --}}
+                @if ($hasPermissionToExport)
                     <div class="flex gap-2">
                         <button wire:click="exportOrders('excel')" class="px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 shadow-sm flex items-center">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,7 +184,7 @@
                             Exportar PDF
                         </button>
                     </div>
-                {{-- @endif --}}
+                @endif
             </div>
             @if ($viewMode === 'table')
                 <div class="overflow-x-auto">

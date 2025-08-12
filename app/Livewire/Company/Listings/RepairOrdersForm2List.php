@@ -398,8 +398,11 @@ use WithPagination;
     public function render()
     {
         return view('livewire.company.listings.repair-orders-form2-list',[
-            'form2s' => $this->form2s,
+             'form2s' => $this->form2s,
             'metrics' => $this->metrics,
+            'activeFiltersCount' => $this->activeFiltersCount,
+            'hasPermissionToCreate' => $this->hasPermissionToCreate,
+            'hasPermissionToExport' => $this->hasPermissionToExport,
         ])->layout('layouts.company', [
                 'title' => 'Formulário 2 - Técnicos e Materiais'
         ]);
