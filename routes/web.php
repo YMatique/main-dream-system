@@ -16,6 +16,7 @@ use App\Livewire\Company\EmployeeManagement;
 use App\Livewire\Company\Forms\RepairOrderForm1;
 use App\Livewire\Company\Forms\RepairOrderForm2;
 use App\Livewire\Company\Forms\RepairOrderForm3;
+use App\Livewire\Company\Forms\RepairOrderForm4;
 use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\Company\MaintenanceTypeManagement;
 use App\Livewire\Company\MaterialManagement;
@@ -297,16 +298,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             Route::get('/form3/{order?}', RepairOrderForm3::class)->name('form3');
             
             // Formulário 4 - Número de Máquina
-            Route::get('/form4/{order?}', function ($order = null) {
-                return view('company.repair-orders.form4', [
-                    'title' => 'Formulário 4 - Número de Máquina',
-                    'company' => auth()->user()->company,
-                    'order' => $order,
-                    'statuses' => \App\Models\Company\Status::where('company_id', auth()->user()->company_id)->forForm('form4')->get(),
-                    'locations' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->forForm('form4')->get(),
-                    'machine_numbers' => \App\Models\Company\MachineNumber::where('company_id', auth()->user()->company_id)->active()->get()
-                ]);
-            })->name('form4');
+            Route::get('/form4/{order?}', RepairOrderForm4::class)->name('form4');
             
             // Formulário 5 - Equipamento + Validação
             Route::get('/form5/{order?}', function ($order = null) {
