@@ -13,14 +13,14 @@
                     </svg>
                     Atualizar
                 </button>
-                {{-- @if ($hasPermissionToCreate) --}}
-                    <a href="{{ route('company.repair-orders.form2') }}" class="px-5 py-2.5 bg-white text-blue-700 rounded-lg hover:bg-blue-50 transition-all duration-300 flex items-center shadow-sm">
+                @if ($hasPermissionToCreate)
+                    <a href="{{ route('company.orders.form2') }}" class="px-5 py-2.5 bg-white text-blue-700 rounded-lg hover:bg-blue-50 transition-all duration-300 flex items-center shadow-sm">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         Nova Ordem
                     </a>
-                {{-- @endif --}}
+                @endif
             </div>
         </div>
         @if ($showMetrics)
@@ -86,7 +86,7 @@
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
-                    Limpar ({{ $activeFiltersCount }}) 
+                    Limpar ({{ $activeFiltersCount }})
                 </button>
             @endif
         </div>
@@ -393,39 +393,6 @@
                     `;
                     document.body.appendChild(modal);
                 });
-
-                // Persistência de filtros
-                function saveFiltersState() {
-                    const filters = {
-                        search: @this.search,
-                        filterByEmployee: @this.filterByEmployee,
-                        filterByStatus: @this.filterByStatus,
-                        filterByLocation: @this.filterByLocation,
-                        filterByMonthYear: @this.filterByMonthYear,
-                        filterStartDate: @this.filterStartDate,
-                        filterEndDate: @this.filterEndDate,
-                        viewMode: @this.viewMode,
-                        perPage: @this.perPage
-                    };
-                    localStorage.setItem('form2_orders_filters', JSON.stringify(filters));
-                }
-
-                window.addEventListener('livewire:updated', saveFiltersState);
-
-                // Carregar filtros salvos
-                const savedFilters = localStorage.getItem('form2_orders_filters');
-                if (savedFilters) {
-                    const filters = JSON.parse(savedFilters);
-                    @this.set('search', filters.search || '');
-                    @this.set('filterByEmployee', filters.filterByEmployee || '');
-                    @this.set('filterByStatus', filters.filterByStatus || '');
-                    @this.set('filterByLocation', filters.filterByLocation || '');
-                    @this.set('filterByMonthYear', filters.filterByMonthYear || '');
-                    @this.set('filterStartDate', filters.filterStartDate || '');
-                    @this.set('filterEndDate', filters.filterEndDate || '');
-                    @this.set('viewMode', filters.viewMode || 'table');
-                    @this.set('perPage', filters.perPage || 15);
-                }
             });
         </script>
     @endpush
