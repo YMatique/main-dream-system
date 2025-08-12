@@ -13,6 +13,8 @@ use Livewire\WithPagination;
 
 class RepairOrdersForm2List extends Component
 {
+use WithPagination;
+
     public $search = '';
     public $filterByEmployee = '';
     public $filterByStatus = '';
@@ -23,20 +25,31 @@ class RepairOrdersForm2List extends Component
     public $perPage = 15;
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
-    public $viewMode = 'table'; // table ou cards
+    public $viewMode = 'table';
 
-    // Dados para Dropdowns
     public $employees = [];
     public $statuses = [];
     public $locations = [];
 
-    // Métricas
     public $metrics = [];
     public $showMetrics = true;
 
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'filterByEmployee' => ['except' => ''],
+        'filterByStatus' => ['except' => ''],
+        'filterByLocation' => ['except' => ''],
+        'filterByMonthYear' => ['except' => ''],
+        'filterStartDate' => ['except' => ''],
+        'filterEndDate' => ['except' => ''],
+        'sortField' => ['except' => 'created_at'],
+        'sortDirection' => ['except' => 'desc'],
+        'perPage' => ['except' => 15],
+        'viewMode' => ['except' => 'table'],
+    ];
+
     public function mount()
     {
-        // Verificar permissões
         if (!auth()->user()->can('repair_orders.form2.view') && !auth()->user()->isCompanyAdmin()) {
             abort(403, 'Sem permissão para visualizar ordens do Formulário 2.');
         }
@@ -44,52 +57,26 @@ class RepairOrdersForm2List extends Component
         $this->loadFilterData();
         $this->calculateMetrics();
 
-        // Configurar período padrão
         if (!$this->filterStartDate && !$this->filterEndDate) {
             $this->filterStartDate = Carbon::now()->subDays(30)->format('Y-m-d');
             $this->filterEndDate = Carbon::now()->format('Y-m-d');
         }
     }
 
-    // Listeners de Filtros
-    public function updatedSearch()
+    public function updated($propertyName)
     {
         $this->resetPage();
+        if (in_array($propertyName, ['filterStartDate', 'filterEndDate'])) {
+            $this->calculateMetrics();
+        }
+        if ($propertyName === 'filterByMonthYear' && $this->filterByMonthYear) {
+            if (!preg_match('/^\d{2}\/\d{4}$/', $this->filterByMonthYear)) {
+                $this->filterByMonthYear = '';
+                session()->flash('error', 'Formato de Mês/Ano inválido. Use MM/YYYY.');
+            }
+        }
     }
 
-    public function updatedFilterByEmployee()
-    {
-        $this->resetPage();
-    }
-
-    public function updatedFilterByStatus()
-    {
-        $this->resetPage();
-    }
-
-    public function updatedFilterByLocation()
-    {
-        $this->resetPage();
-    }
-
-    public function updatedFilterByMonthYear()
-    {
-        $this->resetPage();
-    }
-
-    public function updatedFilterStartDate()
-    {
-        $this->resetPage();
-        $this->calculateMetrics();
-    }
-
-    public function updatedFilterEndDate()
-    {
-        $this->resetPage();
-        $this->calculateMetrics();
-    }
-
-    // Carregar dados para filtros
     private function loadFilterData()
     {
         $companyId = auth()->user()->company_id;
@@ -108,7 +95,6 @@ class RepairOrdersForm2List extends Component
             ->get(['id', 'name']);
     }
 
-    // Calcular métricas
     public function calculateMetrics()
     {
         $query = $this->getBaseQuery();
@@ -125,15 +111,13 @@ class RepairOrdersForm2List extends Component
         ];
     }
 
-    // Query base
     private function getBaseQuery()
     {
         $companyId = auth()->user()->company_id;
         $user = auth()->user();
 
-        $query = RepairOrderForm2::with(['repairOrder', 'location', 'status', 'employees', 'materials', 'additionalMaterials']);
+        $query = RepairOrderForm2::with(['repairOrder', 'location', 'status', 'employees.employee', 'materials.material', 'additionalMaterials']);
 
-        // Aplicar permissões (adaptado para form2)
         if (!$user->can('repair_orders.view_all')) {
             if ($user->can('repair_orders.view_own')) {
                 $query->whereHas('employees', function ($q) use ($user) {
@@ -148,18 +132,16 @@ class RepairOrdersForm2List extends Component
             }
         }
 
-        // Filtro de período
         if ($this->filterStartDate && $this->filterEndDate) {
             $query->whereBetween('carimbo', [
                 Carbon::parse($this->filterStartDate)->startOfDay(),
-                Carbon::parse($this->filterEndDate)->endOfDay()
+                Carbon::parse($this->filterEndDate)->endOfDay(),
             ]);
         }
 
         return $query;
     }
 
-    // Ordenação
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
@@ -171,14 +153,17 @@ class RepairOrdersForm2List extends Component
         $this->resetPage();
     }
 
-    // Ações
     public function clearFilters()
     {
-        $this->search = '';
-        $this->filterByEmployee = '';
-        $this->filterByStatus = '';
-        $this->filterByLocation = '';
-        $this->filterByMonthYear = '';
+        $this->reset([
+            'search',
+            'filterByEmployee',
+            'filterByStatus',
+            'filterByLocation',
+            'filterByMonthYear',
+            'filterStartDate',
+            'filterEndDate',
+        ]);
         $this->filterStartDate = Carbon::now()->subDays(30)->format('Y-m-d');
         $this->filterEndDate = Carbon::now()->format('Y-m-d');
         $this->resetPage();
@@ -208,7 +193,7 @@ class RepairOrdersForm2List extends Component
         $form2 = RepairOrderForm2::with(['repairOrder', 'location', 'status', 'employees.employee', 'materials.material', 'additionalMaterials'])->findOrFail($form2Id);
         $this->dispatch('show-order-details', [
             'form2Id' => $form2Id,
-            'form2Data' => $form2->toArray()
+            'form2Data' => $form2->toArray(),
         ]);
     }
 
@@ -252,20 +237,23 @@ class RepairOrdersForm2List extends Component
             }
 
             if ($this->filterByMonthYear) {
+                if (!preg_match('/^\d{2}\/\d{4}$/', $this->filterByMonthYear)) {
+                    throw new \Exception('Formato de Mês/Ano inválido. Use MM/YYYY.');
+                }
                 [$month, $year] = explode('/', $this->filterByMonthYear);
                 $query->whereMonth('carimbo', $month)->whereYear('carimbo', $year);
             }
 
-            $form2s = $query->orderBy($this->sortField, $this->sortDirection)->get();
+            $form2s = $query->get();
 
             $exportData = $form2s->map(function ($form2) {
                 return [
                     'Ordem' => $form2->repairOrder?->order_number ?? '',
-                    'Data' => $form2->carimbo->format('d/m/Y H:i') ?? '',
+                    'Data' => $form2->carimbo?->format('d/m/Y H:i') ?? '',
                     'Localização' => $form2->location?->name ?? '',
                     'Status' => $form2->status?->name ?? '',
-                    'Tempo Total' => number_format($form2->tempo_total_horas, 2) . ' h',
-                    'Funcionários' => $form2->employees->pluck('employee.name')->implode(', ') ?? '',
+                    'Tempo Total' => number_format($form2->tempo_total_horas ?? 0, 2) . ' h',
+                    'Funcionários' => $form2->employees->isNotEmpty() ? $form2->employees->pluck('employee.name')->implode(', ') : '',
                     'Atividade Realizada' => $form2->actividade_realizada ?? '',
                 ];
             })->toArray();
@@ -323,7 +311,6 @@ class RepairOrdersForm2List extends Component
         }
     }
 
-    // Query principal
     public function getForm2sProperty()
     {
         $query = $this->getBaseQuery();
@@ -358,24 +345,43 @@ class RepairOrdersForm2List extends Component
         }
 
         if ($this->filterByMonthYear) {
-            [$month, $year] = explode('/', $this->filterByMonthYear);
-            $query->whereMonth('carimbo', $month)->whereYear('carimbo', $year);
+            if (!preg_match('/^\d{2}\/\d{4}$/', $this->filterByMonthYear)) {
+                $this->filterByMonthYear = '';
+                session()->flash('error', 'Formato de Mês/Ano inválido. Use MM/YYYY.');
+            } else {
+                [$month, $year] = explode('/', $this->filterByMonthYear);
+                $query->whereMonth('carimbo', $month)->whereYear('carimbo', $year);
+            }
         }
 
-        return $query->orderBy($this->sortField, $this->sortDirection)
-                    ->paginate($this->perPage);
+        // Ajuste para ordenação por colunas de relações
+        if ($this->sortField === 'repairOrder.order_number') {
+            $query->join('repair_orders', 'repair_order_form2.repair_order_id', '=', 'repair_orders.id')
+                  ->orderBy('repair_orders.order_number', $this->sortDirection);
+        } elseif ($this->sortField === 'location.name') {
+            $query->join('locations', 'repair_order_form2.location_id', '=', 'locations.id')
+                  ->orderBy('locations.name', $this->sortDirection);
+        } elseif ($this->sortField === 'status.name') {
+            $query->join('statuses', 'repair_order_form2.status_id', '=', 'statuses.id')
+                  ->orderBy('statuses.name', $this->sortDirection);
+        } else {
+            $query->orderBy('repair_order_form2.' . $this->sortField, $this->sortDirection);
+        }
+
+        return $query->select('repair_order_form2.*')->paginate($this->perPage);
     }
 
-    // Contagem de filtros ativos
     public function getActiveFiltersCountProperty()
     {
-        $count = 0;
-        if ($this->search) $count++;
-        if ($this->filterByEmployee) $count++;
-        if ($this->filterByStatus) $count++;
-        if ($this->filterByLocation) $count++;
-        if ($this->filterByMonthYear) $count++;
-        return $count;
+        return collect([
+            'search' => $this->search,
+            'filterByEmployee' => $this->filterByEmployee,
+            'filterByStatus' => $this->filterByStatus,
+            'filterByLocation' => $this->filterByLocation,
+            'filterByMonthYear' => $this->filterByMonthYear,
+            'filterStartDate' => $this->filterStartDate,
+            'filterEndDate' => $this->filterEndDate,
+        ])->filter()->count();
     }
 
     public function getHasPermissionToExportProperty()
@@ -387,6 +393,7 @@ class RepairOrdersForm2List extends Component
     {
         return auth()->user()->can('repair_orders.create');
     }
+
 
     public function render()
     {

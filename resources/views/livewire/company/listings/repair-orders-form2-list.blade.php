@@ -14,7 +14,7 @@
                     Atualizar
                 </button>
                 {{-- @if ($hasPermissionToCreate) --}}
-                    <a href="{{ route('company.orders.form2-list') }}" class="px-5 py-2.5 bg-white text-blue-700 rounded-lg hover:bg-blue-50 transition-all duration-300 flex items-center shadow-sm">
+                    <a href="{{ route('company.repair-orders.form2') }}" class="px-5 py-2.5 bg-white text-blue-700 rounded-lg hover:bg-blue-50 transition-all duration-300 flex items-center shadow-sm">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
@@ -23,20 +23,19 @@
                 {{-- @endif --}}
             </div>
         </div>
-        {{-- Métricas dentro do Gradiente --}}
         @if ($showMetrics)
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-white">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-white/80">Total de Ordens</p>
-                            <p class="text-2xl font-bold">{{ number_format($metrics['total_orders']) }}</p>
+                            <p class="text-2xl font-bold">{{ number_format($metrics['total_orders'] ?? 0) }}</p>
                         </div>
                         <svg class="w-8 h-8 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
-                    <p class="mt-2 text-xs text-white/60">{{ $metrics['period_start'] }} - {{ $metrics['period_end'] }}</p>
+                    <p class="mt-2 text-xs text-white/60">{{ $metrics['period_start'] ?? '-' }} - {{ $metrics['period_end'] ?? '-' }}</p>
                 </div>
                 <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-white">
                     <div class="flex items-center justify-between">
@@ -87,7 +86,7 @@
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
-                    {{-- Limpar ({{ $activeFiltersCount }}) --}}
+                    Limpar 
                 </button>
             {{-- @endif --}}
         </div>
@@ -199,7 +198,7 @@
                                     Data @if ($sortField === 'carimbo') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
                                 </th>
                                 <th wire:click="sortBy('location.name')" class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200">
-                                    Localização @if ($sortField === 'location.name') {{ $sortDirection === 'asc' ? '↓' : '↑' }} @endif
+                                    Localização @if ($sortField === 'location.name') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
                                 </th>
                                 <th wire:click="sortBy('status.name')" class="px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-all duration-200">
                                     Status @if ($sortField === 'status.name') {{ $sortDirection === 'asc' ? '↑' : '↓' }} @endif
@@ -220,8 +219,8 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ $form2->location?->name ?? '-' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ $form2->status?->name ?? '-' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ number_format($form2->tempo_total_horas ?? 0, 2) }}h</td>
-                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ $form2->employees->pluck('employee.name')->implode(', ') ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ Str::limit($form2->actividade_realizada ?? '-', 50) }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ $form2->employees->isNotEmpty() ? $form2->employees->pluck('employee.name')->implode(', ') : '-' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ \Illuminate\Support\Str::limit($form2->actividade_realizada ?? '-', 50) }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <button wire:click="viewOrder({{ $form2->id }})" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-4 transition-colors duration-200 flex items-center">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -265,11 +264,11 @@
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-sm text-gray-600 dark:text-gray-400">Funcionários:</span>
-                                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $form2->employees->pluck('employee.name')->implode(', ') ?? '-' }}</span>
+                                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $form2->employees->isNotEmpty() ? $form2->employees->pluck('employee.name')->implode(', ') : '-' }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-sm text-gray-600 dark:text-gray-400">Atividade:</span>
-                                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{ Str::limit($form2->actividade_realizada ?? '-', 30) }}</span>
+                                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{ \Illuminate\Support\Str::limit($form2->actividade_realizada ?? '-', 30) }}</span>
                                 </div>
                             </div>
                             <div class="flex justify-between items-center">
@@ -303,7 +302,7 @@
             <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Nenhuma ordem encontrada</h3>
             <p class="text-gray-600 dark:text-gray-400 mb-4">
                 @if ($activeFiltersCount > 0)
-                    Ajuste os filtros para encontrar mais resultados.
+                    Ajuste os filtros para encontrar ordens no Formulário 2.
                 @else
                     Nenhuma ordem avançou para o Formulário 2. Crie ou continue uma ordem.
                 @endif
@@ -313,7 +312,7 @@
                     <button wire:click="clearFilters" class="px-5 py-2.5 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm">Limpar Filtros</button>
                 @endif
                 @if ($hasPermissionToCreate)
-                    <a href="{{ route('company.orders.form2-list') }}" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 flex items-center shadow-sm">
+                    <a href="{{ route('company.orders.form2') }}" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 flex items-center shadow-sm">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
@@ -340,91 +339,94 @@
             {{ session('error') }}
         </div>
     @endif
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Refresh automático a cada 5 minutos
+                setInterval(function() {
+                    @this.call('refreshData');
+                }, 300000);
+
+                // Atalhos de teclado
+                document.addEventListener('keydown', function(e) {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        const searchInput = document.querySelector('input[wire\\:model\\.live\\.debounce\\.300ms="search"]');
+                        if (searchInput) searchInput.focus();
+                    }
+                    if (e.key === 'Escape') {
+                        @this.call('clearFilters');
+                    }
+                });
+
+                // Notificação de refresh
+                window.addEventListener('refresh-complete', function() {
+                    const toast = document.createElement('div');
+                    toast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg';
+                    toast.textContent = 'Dados atualizados com sucesso!';
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                });
+
+                // Modal de detalhes
+                window.addEventListener('show-order-details', function(event) {
+                    const data = event.detail.form2Data;
+                    const modal = document.createElement('div');
+                    modal.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center';
+                    modal.innerHTML = `
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-lg w-full shadow-xl max-h-[80vh] overflow-y-auto">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Detalhes da Ordem #${data.order_number || data.id}</h3>
+                            <div class="space-y-4 text-sm text-gray-700 dark:text-gray-300">
+                                <p><strong>Ordem:</strong> ${data.repair_order?.order_number || '-'}</p>
+                                <p><strong>Data:</strong> ${data.carimbo ? new Date(data.carimbo).toLocaleString('pt-BR') : '-'}</p>
+                                <p><strong>Localização:</strong> ${data.location?.name || '-'}</p>
+                                <p><strong>Status:</strong> ${data.status?.name || '-'}</p>
+                                <p><strong>Total Horas:</strong> ${data.tempo_total_horas ? Number(data.tempo_total_horas).toFixed(2) + 'h' : '-'}</p>
+                                <p><strong>Funcionários:</strong> ${data.employees?.length ? data.employees.map(e => e.employee?.name || '-').join(', ') : '-'}</p>
+                                <p><strong>Materiais:</strong> ${data.materials?.length ? data.materials.map(m => m.material?.name + ' (' + m.quantity + ')').join(', ') : '-'}</p>
+                                <p><strong>Materiais Adicionais:</strong> ${data.additional_materials?.length ? data.additional_materials.map(m => m.name + ' (' + m.quantity + ', ' + m.unit_cost + ')').join(', ') : '-'}</p>
+                                <p><strong>Atividade Realizada:</strong> ${data.actividade_realizada || '-'}</p>
+                            </div>
+                            <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300" onclick="this.closest('.fixed').remove()">Fechar</button>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                });
+
+                // Persistência de filtros
+                function saveFiltersState() {
+                    const filters = {
+                        search: @this.search,
+                        filterByEmployee: @this.filterByEmployee,
+                        filterByStatus: @this.filterByStatus,
+                        filterByLocation: @this.filterByLocation,
+                        filterByMonthYear: @this.filterByMonthYear,
+                        filterStartDate: @this.filterStartDate,
+                        filterEndDate: @this.filterEndDate,
+                        viewMode: @this.viewMode,
+                        perPage: @this.perPage
+                    };
+                    localStorage.setItem('form2_orders_filters', JSON.stringify(filters));
+                }
+
+                window.addEventListener('livewire:updated', saveFiltersState);
+
+                // Carregar filtros salvos
+                const savedFilters = localStorage.getItem('form2_orders_filters');
+                if (savedFilters) {
+                    const filters = JSON.parse(savedFilters);
+                    @this.set('search', filters.search || '');
+                    @this.set('filterByEmployee', filters.filterByEmployee || '');
+                    @this.set('filterByStatus', filters.filterByStatus || '');
+                    @this.set('filterByLocation', filters.filterByLocation || '');
+                    @this.set('filterByMonthYear', filters.filterByMonthYear || '');
+                    @this.set('filterStartDate', filters.filterStartDate || '');
+                    @this.set('filterEndDate', filters.filterEndDate || '');
+                    @this.set('viewMode', filters.viewMode || 'table');
+                    @this.set('perPage', filters.perPage || 15);
+                }
+            });
+        </script>
+    @endpush
 </div>
-
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Refresh automático a cada 5 minutos
-            setInterval(function() {
-                @this.call('refreshData');
-            }, 300000);
-
-            // Atalhos de teclado
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                    e.preventDefault();
-                    const searchInput = document.querySelector('input[wire\\:model\\.live\\.debounce\\.300ms="search"]');
-                    if (searchInput) searchInput.focus();
-                }
-                if (e.key === 'Escape') {
-                    @this.call('clearFilters');
-                }
-            });
-
-            // Notificação de refresh
-            window.addEventListener('refresh-complete', function() {
-                const toast = document.createElement('div');
-                toast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg';
-                toast.textContent = 'Dados atualizados com sucesso!';
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 3000);
-            });
-
-            // Modal de detalhes
-            window.addEventListener('show-order-details', function(event) {
-                const modal = document.createElement('div');
-                modal.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center';
-                modal.innerHTML = `
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-lg w-full shadow-xl">
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Detalhes da Ordem #${event.detail.form2Id}</h3>
-                        <pre class="text-sm text-gray-700 dark:text-gray-300">${JSON.stringify(event.detail.form2Data, null, 2)}</pre>
-                        <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" onclick="this.closest('.fixed').remove()">Fechar</button>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-            });
-
-            // Scroll suave para resultados
-            window.addEventListener('livewire:updated', function() {
-                const resultsSection = document.querySelector('[class*="bg-white"][class*="rounded-xl"]:has(table, .grid)');
-                if (resultsSection && window.pageYOffset > resultsSection.offsetTop) {
-                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-
-            // Persistência de filtros
-            function saveFiltersState() {
-                const filters = {
-                    search: @this.search,
-                    filterByEmployee: @this.filterByEmployee,
-                    filterByStatus: @this.filterByStatus,
-                    filterByLocation: @this.filterByLocation,
-                    filterByMonthYear: @this.filterByMonthYear,
-                    filterStartDate: @this.filterStartDate,
-                    filterEndDate: @this.filterEndDate,
-                    viewMode: @this.viewMode,
-                    perPage: @this.perPage
-                };
-                localStorage.setItem('form2_orders_filters', JSON.stringify(filters));
-            }
-
-            window.addEventListener('livewire:updated', saveFiltersState);
-
-            // Carregar filtros salvos
-            const savedFilters = localStorage.getItem('form2_orders_filters');
-            if (savedFilters) {
-                const filters = JSON.parse(savedFilters);
-                @this.set('search', filters.search || '');
-                @this.set('filterByEmployee', filters.filterByEmployee || '');
-                @this.set('filterByStatus', filters.filterByStatus || '');
-                @this.set('filterByLocation', filters.filterByLocation || '');
-                @this.set('filterByMonthYear', filters.filterByMonthYear || '');
-                @this.set('filterStartDate', filters.filterStartDate || '');
-                @this.set('filterEndDate', filters.filterEndDate || '');
-                @this.set('viewMode', filters.viewMode || 'table');
-                @this.set('perPage', filters.perPage || 15);
-            }
-        });
-    </script>
-@endpush
