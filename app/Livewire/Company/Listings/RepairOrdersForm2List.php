@@ -5,6 +5,7 @@ namespace App\Livewire\Company\Listings;
 use App\Models\Company\Employee;
 use App\Models\Company\Location;
 use App\Models\Company\RepairOrder\RepairOrder;
+use App\Models\Company\RepairOrder\RepairOrderForm2;
 use App\Models\Company\Status;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -12,57 +13,153 @@ use Livewire\WithPagination;
 
 class RepairOrdersForm2List extends Component
 {
-    use WithPagination;
-
     public $search = '';
-    public $filterByTechnician = '';
-    public $filterByState = '';
+    public $filterByEmployee = '';
+    public $filterByStatus = '';
     public $filterByLocation = '';
     public $filterByMonthYear = '';
     public $filterStartDate = '';
     public $filterEndDate = '';
-    public $sortField = 'order_number';
-    public $sortDirection = 'asc';
     public $perPage = 15;
-    public $viewMode = 'table';
-    public $showMetrics = true;
-    public $metrics = [];
-    public $activeFiltersCount = 0;
+    public $sortField = 'created_at';
+    public $sortDirection = 'desc';
+    public $viewMode = 'table'; // table ou cards
 
-    protected $queryString = [
-        'search' => ['except' => ''],
-        'filterByTechnician' => ['except' => ''],
-        'filterByState' => ['except' => ''],
-        'filterByLocation' => ['except' => ''],
-        'filterByMonthYear' => ['except' => ''],
-        'filterStartDate' => ['except' => ''],
-        'filterEndDate' => ['except' => ''],
-        'sortField' => ['except' => 'order_number'],
-        'sortDirection' => ['except' => 'asc'],
-        'perPage' => ['except' => 15],
-        'viewMode' => ['except' => 'table'],
-    ];
+    // Dados para Dropdowns
+    public $employees = [];
+    public $statuses = [];
+    public $locations = [];
+
+    // Métricas
+    public $metrics = [];
+    public $showMetrics = true;
 
     public function mount()
     {
+        // Verificar permissões
+        if (!auth()->user()->can('repair_orders.form2.view') && !auth()->user()->isCompanyAdmin()) {
+            abort(403, 'Sem permissão para visualizar ordens do Formulário 2.');
+        }
+
+        $this->loadFilterData();
         $this->calculateMetrics();
+
+        // Configurar período padrão
+        if (!$this->filterStartDate && !$this->filterEndDate) {
+            $this->filterStartDate = Carbon::now()->subDays(30)->format('Y-m-d');
+            $this->filterEndDate = Carbon::now()->format('Y-m-d');
+        }
     }
 
-    public function updated($propertyName)
+    // Listeners de Filtros
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterByEmployee()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterByStatus()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterByLocation()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterByMonthYear()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterStartDate()
     {
         $this->resetPage();
         $this->calculateMetrics();
-        $this->activeFiltersCount = collect([
-            'search' => $this->search,
-            'filterByTechnician' => $this->filterByTechnician,
-            'filterByState' => $this->filterByState,
-            'filterByLocation' => $this->filterByLocation,
-            'filterByMonthYear' => $this->filterByMonthYear,
-            'filterStartDate' => $this->filterStartDate,
-            'filterEndDate' => $this->filterEndDate,
-        ])->filter()->count();
     }
 
+    public function updatedFilterEndDate()
+    {
+        $this->resetPage();
+        $this->calculateMetrics();
+    }
+
+    // Carregar dados para filtros
+    private function loadFilterData()
+    {
+        $companyId = auth()->user()->company_id;
+
+        $this->employees = Employee::where('company_id', $companyId)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        $this->statuses = Status::where('company_id', $companyId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        $this->locations = Location::where('company_id', $companyId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+    }
+
+    // Calcular métricas
+    public function calculateMetrics()
+    {
+        $query = $this->getBaseQuery();
+
+        $this->metrics = [
+            'total_orders' => $query->clone()->count(),
+            'orders_with_employees' => $query->clone()->whereHas('employees')->count(),
+            'orders_with_additional_materials' => $query->clone()->whereHas('additionalMaterials')->count(),
+            'completed_orders' => $query->clone()->whereHas('repairOrder', function ($q) {
+                $q->whereHas('form5');
+            })->count(),
+            'period_start' => $this->filterStartDate ? Carbon::parse($this->filterStartDate)->format('d/m/Y') : null,
+            'period_end' => $this->filterEndDate ? Carbon::parse($this->filterEndDate)->format('d/m/Y') : null,
+        ];
+    }
+
+    // Query base
+    private function getBaseQuery()
+    {
+        $companyId = auth()->user()->company_id;
+        $user = auth()->user();
+
+        $query = RepairOrderForm2::with(['repairOrder', 'location', 'status', 'employees', 'materials', 'additionalMaterials']);
+
+        // Aplicar permissões (adaptado para form2)
+        if (!$user->can('repair_orders.view_all')) {
+            if ($user->can('repair_orders.view_own')) {
+                $query->whereHas('employees', function ($q) use ($user) {
+                    $q->where('employee_id', $user->employee_id);
+                });
+            } elseif ($user->can('repair_orders.view_department')) {
+                $query->whereHas('employees', function ($q) use ($user) {
+                    $q->whereHas('department', function ($deptQ) use ($user) {
+                        $deptQ->where('id', $user->employee->department_id);
+                    });
+                });
+            }
+        }
+
+        // Filtro de período
+        if ($this->filterStartDate && $this->filterEndDate) {
+            $query->whereBetween('carimbo', [
+                Carbon::parse($this->filterStartDate)->startOfDay(),
+                Carbon::parse($this->filterEndDate)->endOfDay()
+            ]);
+        }
+
+        return $query;
+    }
+
+    // Ordenação
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
@@ -74,112 +171,230 @@ class RepairOrdersForm2List extends Component
         $this->resetPage();
     }
 
+    // Ações
+    public function clearFilters()
+    {
+        $this->search = '';
+        $this->filterByEmployee = '';
+        $this->filterByStatus = '';
+        $this->filterByLocation = '';
+        $this->filterByMonthYear = '';
+        $this->filterStartDate = Carbon::now()->subDays(30)->format('Y-m-d');
+        $this->filterEndDate = Carbon::now()->format('Y-m-d');
+        $this->resetPage();
+        $this->calculateMetrics();
+    }
+
     public function toggleViewMode()
     {
         $this->viewMode = $this->viewMode === 'table' ? 'cards' : 'table';
     }
 
-    public function clearFilters()
-    {
-        $this->reset([
-            'search',
-            'filterByTechnician',
-            'filterByState',
-            'filterByLocation',
-            'filterByMonthYear',
-            'filterStartDate',
-            'filterEndDate',
-        ]);
-        $this->resetPage();
-        $this->activeFiltersCount = 0;
-    }
-
     public function refreshData()
     {
-        $this->resetPage();
+        $this->loadFilterData();
         $this->calculateMetrics();
-        $this->emit('refresh-complete');
+        $this->dispatch('refresh-complete');
     }
 
-    public function viewOrder($orderId)
+    public function continueOrder($form2Id)
     {
-        $order = RepairOrder::with('form2')->findOrFail($orderId);
-        $this->emit('show-order-details', ['orderId' => $orderId, 'orderData' => $order->toArray()]);
+        $form2 = RepairOrderForm2::findOrFail($form2Id);
+        return redirect()->route('company.orders.form3', $form2->repair_order_id);
     }
 
-    public function continueOrder($orderId)
+    public function viewOrder($form2Id)
     {
-        return redirect()->route('company.orders.form3', ['order' => $orderId]);
+        $form2 = RepairOrderForm2::with(['repairOrder', 'location', 'status', 'employees.employee', 'materials.material', 'additionalMaterials'])->findOrFail($form2Id);
+        $this->dispatch('show-order-details', [
+            'form2Id' => $form2Id,
+            'form2Data' => $form2->toArray()
+        ]);
     }
 
-    public function exportOrders($format)
+    public function exportOrders($format = 'excel')
     {
-        // Implementar lógica de exportação (Excel, CSV, PDF)
-        // Exemplo: return $this->exportTo($format);
+        if (!auth()->user()->can('repair_orders.export')) {
+            session()->flash('error', 'Sem permissão para exportar dados.');
+            return;
+        }
+
+        try {
+            $query = $this->getBaseQuery();
+
+            if ($this->search) {
+                $query->where(function ($q) {
+                    $q->whereHas('repairOrder', function ($subQ) {
+                        $subQ->where('order_number', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhereHas('employees.employee', function ($subQ) {
+                        $subQ->where('name', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhereHas('materials.material', function ($subQ) {
+                        $subQ->where('name', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhere('actividade_realizada', 'like', '%' . $this->search . '%');
+                });
+            }
+
+            if ($this->filterByEmployee) {
+                $query->whereHas('employees', function ($q) {
+                    $q->where('employee_id', $this->filterByEmployee);
+                });
+            }
+
+            if ($this->filterByStatus) {
+                $query->where('status_id', $this->filterByStatus);
+            }
+
+            if ($this->filterByLocation) {
+                $query->where('location_id', $this->filterByLocation);
+            }
+
+            if ($this->filterByMonthYear) {
+                [$month, $year] = explode('/', $this->filterByMonthYear);
+                $query->whereMonth('carimbo', $month)->whereYear('carimbo', $year);
+            }
+
+            $form2s = $query->orderBy($this->sortField, $this->sortDirection)->get();
+
+            $exportData = $form2s->map(function ($form2) {
+                return [
+                    'Ordem' => $form2->repairOrder?->order_number ?? '',
+                    'Data' => $form2->carimbo->format('d/m/Y H:i') ?? '',
+                    'Localização' => $form2->location?->name ?? '',
+                    'Status' => $form2->status?->name ?? '',
+                    'Tempo Total' => number_format($form2->tempo_total_horas, 2) . ' h',
+                    'Funcionários' => $form2->employees->pluck('employee.name')->implode(', ') ?? '',
+                    'Atividade Realizada' => $form2->actividade_realizada ?? '',
+                ];
+            })->toArray();
+
+            $filename = 'ordens-form2-' . date('Y-m-d-H-i-s') . '.' . $format;
+            $filePath = storage_path('app/temp/' . $filename);
+
+            if (!file_exists(storage_path('app/temp'))) {
+                mkdir(storage_path('app/temp'), 0755, true);
+            }
+
+            switch ($format) {
+                case 'excel':
+                case 'csv':
+                    $handle = fopen($filePath, 'w');
+                    if (!empty($exportData)) {
+                        fputcsv($handle, array_keys($exportData[0]));
+                        foreach ($exportData as $row) {
+                            fputcsv($handle, $row);
+                        }
+                    }
+                    fclose($handle);
+                    break;
+                case 'pdf':
+                    $html = '<html><body>';
+                    $html .= '<h1>Ordens de Reparação - Formulário 2</h1>';
+                    $html .= '<p>Gerado em: ' . date('d/m/Y H:i:s') . '</p>';
+                    if (!empty($exportData)) {
+                        $html .= '<table border="1" cellpadding="5">';
+                        $html .= '<tr>';
+                        foreach (array_keys($exportData[0]) as $header) {
+                            $html .= '<th>' . htmlspecialchars($header) . '</th>';
+                        }
+                        $html .= '</tr>';
+                        foreach ($exportData as $row) {
+                            $html .= '<tr>';
+                            foreach ($row as $cell) {
+                                $html .= '<td>' . htmlspecialchars($cell) . '</td>';
+                            }
+                            $html .= '</tr>';
+                        }
+                        $html .= '</table>';
+                    }
+                    $html .= '</body></html>';
+                    file_put_contents($filePath, $html);
+                    break;
+                default:
+                    throw new \Exception('Formato de exportação não suportado.');
+            }
+
+            return response()->download($filePath, $filename)->deleteFileAfterSend();
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erro ao exportar dados: ' . $e->getMessage());
+            \Log::error('Erro na exportação Form2: ' . $e->getMessage());
+        }
     }
 
-    protected function calculateMetrics()
+    // Query principal
+    public function getForm2sProperty()
     {
         $query = $this->getBaseQuery();
 
-        $this->metrics = [
-            'total_orders' => $query->clone()->count(),
-            'orders_with_technicians' => $query->clone()->whereHas('form2.employees')->count(),
-            'orders_with_additional_materials' => $query->clone()->whereNotNull('form2.additionalMaterials')->count(),
-            'completed_orders' => $query->clone()->whereHas('form5')->count(),
-            'period_start' => $this->filterStartDate ? Carbon::parse($this->filterStartDate)->format('d/m/Y') : null,
-            'period_end' => $this->filterEndDate ? Carbon::parse($this->filterEndDate)->format('d/m/Y') : null,
-        ];
-    }
-
-    protected function getBaseQuery()
-    {
-        $query = RepairOrder::query()
-            ->whereHas('form2')
-            ->with(['form2.location', 'form2.state', 'form2.technicians']);
-
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('order_number', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('form2.technicians', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
-                    ->orWhereHas('form2.materials', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
+                $q->whereHas('repairOrder', function ($subQ) {
+                    $subQ->where('order_number', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('employees.employee', function ($subQ) {
+                    $subQ->where('name', 'like', '%' . $this->search . '%');
+                })
+                ->orWhereHas('materials.material', function ($subQ) {
+                    $subQ->where('name', 'like', '%' . $this->search . '%');
+                })
+                ->orWhere('actividade_realizada', 'like', '%' . $this->search . '%');
             });
         }
 
-        if ($this->filterByTechnician) {
-            $query->whereHas('form2.technicians', fn($q) => $q->where('id', $this->filterByTechnician));
+        if ($this->filterByEmployee) {
+            $query->whereHas('employees', function ($q) {
+                $q->where('employee_id', $this->filterByEmployee);
+            });
         }
 
-        if ($this->filterByState) {
-            $query->whereHas('form2.state', fn($q) => $q->where('id', $this->filterByState));
+        if ($this->filterByStatus) {
+            $query->where('status_id', $this->filterByStatus);
         }
 
         if ($this->filterByLocation) {
-            $query->whereHas('form2.location', fn($q) => $q->where('id', $this->filterByLocation));
+            $query->where('location_id', $this->filterByLocation);
         }
 
         if ($this->filterByMonthYear) {
             [$month, $year] = explode('/', $this->filterByMonthYear);
-            $query->whereMonth('form2.carimbo', $month)->whereYear('form2.carimbo', $year);
+            $query->whereMonth('carimbo', $month)->whereYear('carimbo', $year);
         }
 
-        if ($this->filterStartDate) {
-            $query->where('form2.carimbo', '>=', Carbon::parse($this->filterStartDate));
-        }
-
-        if ($this->filterEndDate) {
-            $query->where('form2.carimbo', '<=', Carbon::parse($this->filterEndDate));
-        }
-
-        return $query->orderBy($this->sortField, $this->sortDirection);
+        return $query->orderBy($this->sortField, $this->sortDirection)
+                    ->paginate($this->perPage);
     }
+
+    // Contagem de filtros ativos
+    public function getActiveFiltersCountProperty()
+    {
+        $count = 0;
+        if ($this->search) $count++;
+        if ($this->filterByEmployee) $count++;
+        if ($this->filterByStatus) $count++;
+        if ($this->filterByLocation) $count++;
+        if ($this->filterByMonthYear) $count++;
+        return $count;
+    }
+
+    public function getHasPermissionToExportProperty()
+    {
+        return auth()->user()->can('repair_orders.export');
+    }
+
+    public function getHasPermissionToCreateProperty()
+    {
+        return auth()->user()->can('repair_orders.create');
+    }
+
     public function render()
     {
         return view('livewire.company.listings.repair-orders-form2-list',[
-            'orders' => $this->getBaseQuery()->paginate($this->perPage),
-            'technicians' => Employee::orderBy('name')->get(),
-            'states' => Status::where('form_number', 2)->orderBy('name')->get(),
-            'locations' => Location::where('form_number', 2)->orderBy('name')->get(),
+            'form2s' => $this->form2s,
+            'metrics' => $this->metrics,
+        ])->layout('layouts.company', [
+                'title' => 'Formulário 2 - Técnicos e Materiais'
         ]);
     }
 }
