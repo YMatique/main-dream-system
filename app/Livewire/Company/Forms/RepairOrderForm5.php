@@ -282,7 +282,8 @@ class RepairOrderForm5 extends Component
         if ($this->repairOrder->form3) {
             $form3Hours = $this->repairOrder->form3->horas_faturadas;
             if ($totalHours > ($form3Hours * 1.2)) { // 20% de tolerância
-                throw new \Exception('Total de horas (' . $totalHours . 'h) excede significativamente as horas faturadas no Form3 (' . $form3Hours . 'h).');
+                session()->flush('error', 'Total de horas (' . $totalHours . 'h) excede 20% das horas faturadas no Form3 (' . $form3Hours . 'h).');
+                // throw new \Exception('Total de horas (' . $totalHours . 'h) excede significativamente as horas faturadas no Form3 (' . $form3Hours . 'h).');
             }
         }
     }

@@ -411,7 +411,8 @@
 
                     {{-- Botão de sucesso se já finalizou --}}
                     @if($repairOrder && $repairOrder->form5 && $repairOrder->is_completed)
-                        <a href="{{ route('company.repair-orders.index') }}" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center">
+                        {{--{{ route('company.repair-orders.index') }}  --}}
+                    <a href="" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center">
                             <span class="mr-2">Ver Todas as Ordens</span>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
