@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Company\Forms;
 
-
+use App\Models\Company\ClientCost;
 use App\Models\Company\Material;
 use App\Models\Company\Status;
 use App\Models\Company\Location;
@@ -12,7 +12,7 @@ use Livewire\Attributes\Rule;
 
 class RepairOrderForm3 extends Component
 {
-    // Propriedades do formulário
+     // Propriedades do formulário
     public $repairOrder;
     public $form3Data;
     public $selectedOrderId = ''; // Para seleção de ordem
@@ -363,12 +363,85 @@ class RepairOrderForm3 extends Component
             return 0;
         }
 
+        $client = $this->repairOrder->form1->client;
         $maintenanceType = $this->repairOrder->form1->maintenanceType;
-        if ($maintenanceType) {
-            return $this->horas_faturadas * $maintenanceType->hourly_rate_mzn;
+        
+        if (!$client || !$maintenanceType) {
+            return 0;
         }
 
-        return 0;
+        // Verificar se existe custo específico para este cliente e tipo de manutenção
+        $clientCost = ClientCost::where('company_id', auth()->user()->company_id)
+            ->where('client_id', $client->id)
+            ->where('maintenance_type_id', $maintenanceType->id)
+            ->first();
+
+        if ($clientCost) {
+            // Usar custo específico do cliente
+            return $this->horas_faturadas * $clientCost->cost_mzn;
+        } else {
+            // Usar custo padrão do tipo de manutenção
+            return $this->horas_faturadas * $maintenanceType->hourly_rate_mzn;
+        }
+    }
+
+    public function getClientSpecificRateProperty()
+    {
+        if (!$this->repairOrder || !$this->repairOrder->form1) {
+            return null;
+        }
+
+        $client = $this->repairOrder->form1->client;
+        $maintenanceType = $this->repairOrder->form1->maintenanceType;
+        
+        if (!$client || !$maintenanceType) {
+            return null;
+        }
+
+        return ClientCost::where('company_id', auth()->user()->company_id)
+            ->where('client_id', $client->id)
+            ->where('maintenance_type_id', $maintenanceType->id)
+            ->first();
+    }
+
+    public function getHourlyRateInfoProperty()
+    {
+        if (!$this->repairOrder || !$this->repairOrder->form1) {
+            return [
+                'rate' => 0,
+                'source' => 'none',
+                'description' => 'Nenhuma informação disponível'
+            ];
+        }
+
+        $client = $this->repairOrder->form1->client;
+        $maintenanceType = $this->repairOrder->form1->maintenanceType;
+        
+        if (!$client || !$maintenanceType) {
+            return [
+                'rate' => 0,
+                'source' => 'none',
+                'description' => 'Cliente ou tipo de manutenção não encontrado'
+            ];
+        }
+
+        // Verificar custo específico do cliente
+        $clientCost = $this->clientSpecificRate;
+        
+        if ($clientCost) {
+            return [
+                'rate' => $clientCost->cost_mzn,
+                'source' => 'client_specific',
+                'description' => "Taxa específica para {$client->name} - {$maintenanceType->name}",
+                'effective_date' => $clientCost->effective_date
+            ];
+        } else {
+            return [
+                'rate' => $maintenanceType->hourly_rate_mzn,
+                'source' => 'standard',
+                'description' => "Taxa padrão para {$maintenanceType->name}"
+            ];
+        }
     }
 
     public function getTotalEstimatedCostProperty()
