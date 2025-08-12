@@ -293,7 +293,173 @@ class RepairOrdersList extends Component
     public function viewOrder($orderId)
     {
         // TODO: Implementar modal de visualização ou página de detalhes
-        $this->dispatch('show-order-details', orderId: $orderId);
+        // $this->dispatch('show-order-details', orderId: $orderId);
+        $order = RepairOrder::where('company_id', auth()->user()->company_id)
+            ->where('id', $orderId)
+            ->withAllForms()
+            ->first();
+
+        if (!$order) {
+            session()->flash('error', 'Ordem não encontrada.');
+            return;
+        }
+
+        // Verificar permissões de visualização
+        if (!$this->canViewOrder($order)) {
+            session()->flash('error', 'Sem permissão para visualizar esta ordem.');
+            return;
+        }
+
+        // Dispatch evento para abrir modal de detalhes
+        $this->dispatch('show-order-details', [
+            'orderId' => $orderId,
+            'orderData' => $order->getFullSummary()
+        ]);
+    }
+
+
+        public function exportOrders($format = 'excel')
+    {
+        // Verificar permissão de exportação
+        if (!$this->hasPermissionToExport) {
+            session()->flash('error', 'Sem permissão para exportar dados.');
+            return;
+        }
+
+        try {
+            // Obter dados filtrados (sem paginação)
+            $query = $this->getBaseQuery();
+            
+            // Aplicar mesmos filtros da listagem
+            if ($this->search) {
+                $query->search($this->search);
+            }
+
+            if ($this->filterByForm !== 'all') {
+                if ($this->filterByForm === 'completed') {
+                    $query->where('is_completed', true);
+                } else {
+                    $query->where('current_form', $this->filterByForm);
+                }
+            }
+
+            if ($this->filterByClient) {
+                $query->whereHas('form1', function ($q) {
+                    $q->where('client_id', $this->filterByClient);
+                });
+            }
+
+            // Carregar relacionamentos e obter dados
+            $orders = $query->withAllForms()
+                ->orderBy($this->sortField, $this->sortDirection)
+                ->get();
+
+            // Preparar dados para exportação
+            $exportData = $orders->map(function ($order) {
+                return $order->getExportData();
+            })->toArray();
+
+            // Gerar arquivo temporário
+            $filename = 'ordens-reparacao-' . date('Y-m-d-H-i-s') . '.' . $format;
+            $filePath = storage_path('app/temp/' . $filename);
+            
+            // Criar diretório se não existir
+            if (!file_exists(storage_path('app/temp'))) {
+                mkdir(storage_path('app/temp'), 0755, true);
+            }
+
+            // Gerar arquivo baseado no formato
+            switch ($format) {
+                case 'excel':
+                    $this->generateExcelFile($exportData, $filePath);
+                    break;
+                case 'csv':
+                    $this->generateCSVFile($exportData, $filePath);
+                    break;
+                case 'pdf':
+                    $this->generatePDFFile($exportData, $filePath);
+                    break;
+                default:
+                    throw new \Exception('Formato de exportação não suportado.');
+            }
+
+            // Retornar download
+            return response()->download($filePath, $filename)->deleteFileAfterSend();
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erro ao exportar dados: ' . $e->getMessage());
+            \Log::error('Erro na exportação: ' . $e->getMessage());
+        }
+    }
+
+    
+    private function generateExcelFile($data, $filePath)
+    {
+        // Implementação simples usando CSV com headers Excel
+        $handle = fopen($filePath, 'w');
+        
+        if (!empty($data)) {
+            // Headers
+            fputcsv($handle, array_keys($data[0]));
+            
+            // Dados
+            foreach ($data as $row) {
+                fputcsv($handle, $row);
+            }
+        }
+        
+        fclose($handle);
+    }
+
+    private function generateCSVFile($data, $filePath)
+    {
+        $handle = fopen($filePath, 'w');
+        
+        if (!empty($data)) {
+            // Headers
+            fputcsv($handle, array_keys($data[0]));
+            
+            // Dados
+            foreach ($data as $row) {
+                fputcsv($handle, $row);
+            }
+        }
+        
+        fclose($handle);
+    }
+
+    private function generatePDFFile($data, $filePath)
+    {
+        // Implementação básica - pode ser melhorada com uma biblioteca PDF
+        $html = '<html><body>';
+        $html .= '<h1>Relatório de Ordens de Reparação</h1>';
+        $html .= '<p>Gerado em: ' . date('d/m/Y H:i:s') . '</p>';
+        
+        if (!empty($data)) {
+            $html .= '<table border="1" cellpadding="5">';
+            
+            // Headers
+            $html .= '<tr>';
+            foreach (array_keys($data[0]) as $header) {
+                $html .= '<th>' . htmlspecialchars($header) . '</th>';
+            }
+            $html .= '</tr>';
+            
+            // Dados
+            foreach ($data as $row) {
+                $html .= '<tr>';
+                foreach ($row as $cell) {
+                    $html .= '<td>' . htmlspecialchars($cell) . '</td>';
+                }
+                $html .= '</tr>';
+            }
+            
+            $html .= '</table>';
+        }
+        
+        $html .= '</body></html>';
+        
+        file_put_contents($filePath, $html);
     }
 
     // =============================================
