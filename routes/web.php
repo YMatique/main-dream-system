@@ -18,6 +18,7 @@ use App\Livewire\Company\Forms\RepairOrderForm2;
 use App\Livewire\Company\Forms\RepairOrderForm3;
 use App\Livewire\Company\Forms\RepairOrderForm4;
 use App\Livewire\Company\Forms\RepairOrderForm5;
+use App\Livewire\Company\Listings\AdvancedListing;
 use App\Livewire\Company\Listings\RepairOrdersForm1List;
 use App\Livewire\Company\Listings\RepairOrdersForm2List;
 use App\Livewire\Company\Listings\RepairOrdersList;
@@ -345,19 +346,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             })->name('form5-list');
             
             // Listagem avançada (todos os campos de todos os formulários)
-            Route::get('/advanced-list', function () {
-                return view('company.orders.advanced-list', [
-                    'title' => 'Listagem Avançada',
-                    'company' => auth()->user()->company,
-                    'all_fields' => [
-                        'form1' => ['carimbo', 'ordem_reparacao', 'tipo_manutencao', 'cliente', 'estado', 'localizacao', 'descricao_avaria', 'mes', 'ano', 'solicitante', 'numero_maquina'],
-                        'form2' => ['carimbo', 'ordem_reparacao', 'localizacao', 'estado_obra', 'tempo_total', 'tecnicos', 'material', 'material_adicional', 'actividade_realizada'],
-                        'form3' => ['carimbo', 'ordem_reparacao', 'localizacao', 'estado', 'data_faturacao', 'horas_faturadas', 'materiais'],
-                        'form4' => ['carimbo', 'ordem_reparacao', 'localizacao', 'estado', 'numero_maquina'],
-                        'form5' => ['carimbo', 'ordem_reparacao', 'numero_equipamento', 'data_faturacao_1', 'horas_faturadas_1', 'data_faturacao_2', 'horas_faturadas_2', 'cliente', 'descricao_actividades', 'tecnico']
-                    ]
-                ]);
-            })->name('advanced-list');
+            Route::get('/advanced-list', AdvancedListing::class)->name('advanced-list');
         });
         
         // ===== SISTEMA DE FATURAÇÃO =====
