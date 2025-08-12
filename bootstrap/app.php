@@ -30,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission'=> \App\Http\Middleware\CheckPermission::class
             
         ]);
-        $middleware->append(\App\Http\Middleware\LogActivity::class,);
+        // $middleware->append(\App\Http\Middleware\LogActivity::class,);ss
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
