@@ -190,7 +190,7 @@
                                     Listagens
                                 </div>
                                 
-                                <a href="{{ route('company.orders.form1-list') }}" 
+                                <a href="{{ route('company.orders.index') }}" 
                                    class="group flex items-center px-4 py-2.5 text-sm rounded-lg transition-all duration-200
                                           {{ request()->routeIs('company.orders.*-list') 
                                              ? 'bg-purple-50 text-purple-700 border-l-2 border-purple-500 dark:bg-purple-900/20' 
@@ -688,11 +688,12 @@
                                     'company.manage.requesters' => [['Gestão', null], ['Solicitantes', null]],
                                     'company.manage.statuses' => [['Gestão', null], ['Estados & Localização', null]],
                                     'company.manage.users-permissions'=> [['Gestão', null], ['Utilizadores & Permissões', null]],
-                                    'company.repair-orders.form1' => [['Ordens', null], ['Formulário 1', null]],
-                                    'company.repair-orders.form2' => [['Ordens', null], ['Formulário 2', null]],
-                                    'company.repair-orders.form3' => [['Ordens', null], ['Formulário 3', null]],
-                                    'company.repair-orders.form4' => [['Ordens', null], ['Formulário 4', null]],
-                                    'company.repair-orders.form5' => [['Ordens', null], ['Formulário 5', null]],
+                                    'company.orders.index' => [['Ordens de Reparação', null], ['Listagem', null]],
+                                    'company.orders.form1' => [['Ordens', null], ['Formulário 1', null]],
+                                    'company.orders.form2' => [['Ordens', null], ['Formulário 2', null]],
+                                    'company.orders.form3' => [['Ordens', null], ['Formulário 3', null]],
+                                    'company.orders.form4' => [['Ordens', null], ['Formulário 4', null]],
+                                    'company.orders.form5' => [['Ordens', null], ['Formulário 5', null]],
                                     'company.billing.real' => [['Faturação', null], ['Real', null]],
                                     'company.billing.estimated' => [['Faturação', null], ['Estimada', null]],
                                     'company.billing.hh' => [['Faturação', null], ['HH', null]],
