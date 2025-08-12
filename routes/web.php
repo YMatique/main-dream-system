@@ -17,6 +17,7 @@ use App\Livewire\Company\Forms\RepairOrderForm1;
 use App\Livewire\Company\Forms\RepairOrderForm2;
 use App\Livewire\Company\Forms\RepairOrderForm3;
 use App\Livewire\Company\Forms\RepairOrderForm4;
+use App\Livewire\Company\Forms\RepairOrderForm5;
 use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\Company\MaintenanceTypeManagement;
 use App\Livewire\Company\MaterialManagement;
@@ -295,22 +296,13 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             Route::get('/form2/{order?}', RepairOrderForm2::class)->name('form2')->middleware('form.access:2');
             
             // Formulário 3 - Faturação Real
-            Route::get('/form3/{order?}', RepairOrderForm3::class)->name('form3');
+            Route::get('/form3/{order?}', RepairOrderForm3::class)->name('form3')->middleware('form.access:3');
             
             // Formulário 4 - Número de Máquina
-            Route::get('/form4/{order?}', RepairOrderForm4::class)->name('form4');
+            Route::get('/form4/{order?}', RepairOrderForm4::class)->name('form4')->middleware('form.access:4');
             
             // Formulário 5 - Equipamento + Validação
-            Route::get('/form5/{order?}', function ($order = null) {
-                return view('company.repair-orders.form5', [
-                    'title' => 'Formulário 5 - Equipamento e Validação',
-                    'company' => auth()->user()->company,
-                    'order' => $order,
-                    'clients' => \App\Models\Company\Client::where('company_id', auth()->user()->company_id)->active()->get(),
-                    'employees' => \App\Models\Company\Employee::where('company_id', auth()->user()->company_id)->active()->get(),
-                    'machine_numbers' => \App\Models\Company\MachineNumber::where('company_id', auth()->user()->company_id)->active()->get()
-                ]);
-            })->name('form5');
+            Route::get('/form5/{order?}', RepairOrderForm5::class)->name('form5')->middleware('form.access:5');;
         });
         
         // ===== LISTAGENS DE ORDENS =====
