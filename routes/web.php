@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\System\CompanyController;
 use App\Livewire\Auth\System\ForgotPassword;
 use App\Livewire\Auth\System\ResetPassword;
+use App\Livewire\Company\Billing\BillingHHManagement;
 use App\Livewire\Company\ClientCostManagement;
 use App\Livewire\Company\ClientManagement;
 use App\Livewire\Company\CompanyLogin;
@@ -369,15 +370,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             })->name('estimated');
             
             // Faturação HH (Preços do Sistema)
-            Route::get('/hh', function () {
-                return view('company.billing.hh', [
-                    'title' => 'Faturação HH',
-                    'company' => auth()->user()->company,
-                    'billing_count' => 0,
-                    'total_amount_mzn' => 0,
-                    'total_amount_usd' => 0
-                ]);
-            })->name('hh');
+            Route::get('/hh', BillingHHManagement::class)->name('hh');
         });
         
         // ===== AVALIAÇÃO DE DESEMPENHO (apenas Company Admin) =====

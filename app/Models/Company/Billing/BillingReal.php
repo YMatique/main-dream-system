@@ -60,7 +60,7 @@ class BillingReal extends Model
      */
     public static function generateFromForm3(RepairOrder $order)
     {
-        if (!$order->form3 || $order->has_billing_real) {
+        if (!$order->form3) {
             return null;
         }
 
@@ -68,7 +68,7 @@ class BillingReal extends Model
         $clientCost = ClientCost::where('company_id', $order->company_id)
             ->where('client_id', $order->form1->client_id)
             ->where('maintenance_type_id', $order->form1->maintenance_type_id)
-            ->where('is_active', true)
+            // ->where('is_active', true)
             ->first();
 
         if (!$clientCost) {
@@ -94,9 +94,9 @@ class BillingReal extends Model
         $totalUsd = $order->form3->horas_faturadas * $priceUsd;
 
         // Criar faturação real
-        $billing = self::create([
+        $billing = self::updateOrCreate([
             'company_id' => $order->company_id,
-            'repair_order_id' => $order->id,
+            'repair_order_id' => $order->id,],[
             'billing_date' => $order->form3->data_faturacao,
             'billed_hours' => $order->form3->horas_faturadas,
             'hourly_price_mzn' => $priceMzn,
@@ -108,7 +108,7 @@ class BillingReal extends Model
         ]);
         
         // Marcar como gerada
-        $order->update(['has_billing_real' => true]);
+        // $order->update(['has_billing_real' => true]);
 
         return $billing;
     }

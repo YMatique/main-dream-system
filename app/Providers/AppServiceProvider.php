@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Company\RepairOrder\RepairOrderForm2;
+use App\Models\Company\RepairOrder\RepairOrderForm3;
+use App\Observers\RepairOrderForm2Observer;
+use App\Observers\RepairOrderForm3Observer;
 use App\Services\ActivityLoggerService;
 use App\Services\AuditService;
 use Illuminate\Auth\Events\Failed;
@@ -34,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Registrar observers para auto-geração de faturação
+        RepairOrderForm2::observe(RepairOrderForm2Observer::class);
+        RepairOrderForm3::observe(RepairOrderForm3Observer::class);
+
          Event::listen(Login::class, function (Login $event) {
             app(AuditService::class)->logLogin($event->user);
         });

@@ -22,8 +22,9 @@ class RepairOrderForm2Observer
      */
     public function updated(RepairOrderForm2 $form2): void
     {
+        $this->generateBillingsAfterForm2($form2);
         // Só regenerar se ainda não tem faturações
-        if (!$form2->repairOrder->has_billing_hh || !$form2->repairOrder->has_billing_estimated) {
+        if (!$form2->repairOrder || !$form2->repairOrder->form3) {
             $this->generateBillingsAfterForm2($form2);
         }
     }

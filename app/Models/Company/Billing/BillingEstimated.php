@@ -59,14 +59,14 @@ class BillingEstimated extends Model
      */
     public static function generateFromForm2(RepairOrder $order)
     {
-        if (!$order->form2 || $order->has_billing_estimated) {
+        if (!$order->form2 ) {
             return null;
         }
 
         // Obter preços do sistema como base
         $systemPrice = ClientCost::where('company_id', $order->company_id)
             ->where('maintenance_type_id', $order->form1->maintenance_type_id)
-            ->where('is_active', true)
+            // ->where('is_active', true)
             ->first();
 
         // if (!$systemPrice) {
@@ -74,18 +74,23 @@ class BillingEstimated extends Model
         // }
 
         // Criar faturação estimada
-        $billing = self::create([
-            'company_id' => $order->company_id,
+        $billing = self::updateOrCreate([
             'repair_order_id' => $order->id,
+                        'company_id' => $order->company_id,
+            ],[
             'estimated_hours' => $order->form2->tempo_total_horas,
             'hourly_price_mzn' => $systemPrice->cost_mzn??0,
             'hourly_price_usd' => $systemPrice->cost_usd??0,
+            'total_mzn' => $order->form2->tempo_total_horas * ($systemPrice->cost_mzn??0),
+            'total_usd' => $order->form2->tempo_total_horas * ($systemPrice->cost_usd??0),
+            'billing_currency' => 'MZN', // Padrão, pode ser alterado depois
+            'billed_amount' => $order->form2->tempo_total_horas * ($systemPrice->cost_mzn??0)
         ]);
 
         $billing->calculateTotals();
         
         // Marcar como gerada
-        $order->update(['has_billing_estimated' => true]);
+        // $order->update(['has_billing_estimated' => true]);
 
         return $billing;
     }

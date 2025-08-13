@@ -68,28 +68,30 @@ class BillingHH extends Model
      */
     public static function generateFromForm2(RepairOrder $order)
     {
-        if (!$order->form2 || $order->has_billing_hh) {
+        if (!$order->form2 ) {
             return null;
         }
 
         // Obter preços do sistema
         $systemPrice = ClientCost::where('company_id', $order->company_id)
             ->where('maintenance_type_id', $order->form1->maintenance_type_id)
-            ->where('is_active', true)
+            // ->where('is_active', true)
             ->first();
 
-        if (!$systemPrice) {
-            throw new \Exception('Preços do sistema não configurados para este tipo de manutenção.');
-        }
+        // if (!$systemPrice) {
+        //     throw new \Exception('Preços do sistema não configurados para este tipo de manutenção.');
+        // }
 
         // Calcular totais
         $totalMzn = $order->form2->tempo_total_horas * ($systemPrice->cost_mzn??0);
         $totalUsd = $order->form2->tempo_total_horas * ($systemPrice->cost_usd??0);
 
         // Criar faturação HH
-        $billing = self::create([
-            'company_id' => $order->company_id,
+        $billing = self::updateOrCreate(
+           [
             'repair_order_id' => $order->id,
+             'company_id' => $order->company_id,
+           ],[            
             'total_hours' => $order->form2->tempo_total_horas,
             'total_mzn' => $totalMzn,
             'total_usd' => $totalUsd,
@@ -98,7 +100,7 @@ class BillingHH extends Model
         ]);
         
         // Marcar como gerada
-        $order->update(['has_billing_hh' => true]);
+        // $order->update(['has_billing_hh' => true]);
 
         return $billing;
     }
