@@ -12,7 +12,7 @@ use Livewire\WithPagination;
 
 class BillingHHManagement extends Component
 {
-    use WithPagination;
+ use WithPagination;
 
     // Filtros
     public $search = '';
@@ -27,6 +27,10 @@ class BillingHHManagement extends Component
     public $showCurrencyModal = false;
     public $selectedBilling = null;
     public $newCurrency = '';
+
+    // Modal de visualização
+    public $showViewModal = false;
+    public $viewBilling = null;
 
     // Propriedades para resetar paginação
     protected $updatesQueryString = [
@@ -51,11 +55,23 @@ class BillingHHManagement extends Component
         $this->dateFrom = now()->subDays(30)->format('Y-m-d');
     }
 
+    // =============================================
+    // MODAL DE ALTERAÇÃO DE MOEDA
+    // =============================================
+
     public function openCurrencyModal($billingId)
     {
-        $this->selectedBilling = BillingHH::find($billingId);
+        $this->selectedBilling = BillingHH::with([
+            'repairOrder.form1.client',
+            'repairOrder.form1.maintenanceType',
+            'repairOrder.form1.machineNumber'
+        ])->find($billingId);
+        
         $this->newCurrency = $this->selectedBilling->billing_currency;
         $this->showCurrencyModal = true;
+        
+        // Reset do modal de visualização
+        $this->showViewModal = false;
     }
 
     public function closeCurrencyModal()
@@ -82,6 +98,40 @@ class BillingHHManagement extends Component
         }
     }
 
+    // =============================================
+    // MODAL DE VISUALIZAÇÃO
+    // =============================================
+
+    public function openViewModal($billingId)
+    {
+        $this->viewBilling = BillingHH::with([
+            'repairOrder.form1.client',
+            'repairOrder.form1.maintenanceType', 
+            'repairOrder.form1.machineNumber',
+            'repairOrder.form1.requester',
+            'repairOrder.form1.status',
+            'repairOrder.form1.location',
+            'repairOrder.form2.employees.employee',
+            'repairOrder.form2.materials.material',
+            'repairOrder.form2.additionalMaterials'
+        ])->find($billingId);
+        
+        $this->showViewModal = true;
+        
+        // Reset do modal de moeda
+        $this->showCurrencyModal = false;
+    }
+
+    public function closeViewModal()
+    {
+        $this->showViewModal = false;
+        $this->viewBilling = null;
+    }
+
+    // =============================================
+    // FILTROS
+    // =============================================
+
     public function resetFilters()
     {
         $this->search = '';
@@ -93,6 +143,10 @@ class BillingHHManagement extends Component
         $this->dateFrom = now()->subDays(30)->format('Y-m-d');
         $this->resetPage();
     }
+
+    // =============================================
+    // PROPRIEDADES COMPUTADAS
+    // =============================================
 
     public function getBillingsProperty()
     {
