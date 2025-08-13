@@ -63,23 +63,30 @@ class EmployeePortalAccess extends Model
     {
         return route('employee.portal.login', ['token' => $this->access_token]);
     }
-
-    // Methods
-    public static function createForEmployee($employee, $email, $password = null)
+     public function scopeForCompany($query, $companyId)
     {
-        $password = $password ?? Str::random(8);
-        
-        return static::create([
+        return $query->where('company_id', $companyId);
+    }
+ public function scopeForEmployee($query, $employeeId)
+    {
+        return $query->where('employee_id', $employeeId);
+    }
+
+// Methods
+    public static function createForEmployee(Employee $employee, string $email, string $password): self
+    {
+        return self::create([
             'company_id' => $employee->company_id,
             'employee_id' => $employee->id,
-            'access_token' => Str::uuid(),
+            'access_token' => Str::random(60),
             'email' => $email,
-            'password' => Hash::make($password),
-            'is_active' => true
+            'password' => bcrypt($password),
+            'is_active' => true,
+            'login_count' => 0
         ]);
     }
 
-    public function recordLogin()
+    public function recordLogin(): void
     {
         $this->update([
             'last_login_at' => now(),
@@ -87,23 +94,36 @@ class EmployeePortalAccess extends Model
         ]);
     }
 
-    public function verifyEmail()
-    {
-        $this->update(['email_verified_at' => now()]);
-    }
-
-    public function resetPassword($newPassword)
-    {
-        $this->update(['password' => Hash::make($newPassword)]);
-    }
-
-    public function deactivate()
+    public function deactivate(): void
     {
         $this->update(['is_active' => false]);
     }
 
-    public function activate()
+    public function activate(): void
     {
         $this->update(['is_active' => true]);
+    }
+
+    public function regenerateAccessToken(): string
+    {
+        $newToken = Str::random(60);
+        $this->update(['access_token' => $newToken]);
+        return $newToken;
+    }
+
+    // Accessors
+    public function getEmployeeNameAttribute(): string
+    {
+        return $this->employee->name ?? 'N/A';
+    }
+
+    public function getCompanyNameAttribute(): string
+    {
+        return $this->company->name ?? 'N/A';
+    }
+
+    public function getInitialsAttribute(): string
+    {
+        return substr($this->employee_name, 0, 2);
     }
 }
