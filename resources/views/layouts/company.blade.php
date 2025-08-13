@@ -454,7 +454,15 @@
                                     <span class="flex-1">Avaliar Funcionários</span>
                                     <span class="text-xs text-orange-600 font-medium">Eval</span>
                                 </a>
-                                
+                                <a href="{{ route('company.performance.evaluations.approvals') }}" 
+                                   class="group flex items-center px-4 py-2.5 text-sm rounded-lg transition-all duration-200
+                                          {{ request()->routeIs('company.performance.evaluations.approvals') 
+                                             ? 'bg-orange-50 text-orange-700 border-l-2 border-orange-500 dark:bg-orange-900/20' 
+                                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700' }}">
+                                    <div class="w-2 h-2 rounded-full mr-3 {{ request()->routeIs('company.performance.evaluations.approvals') ? 'bg-orange-500' : 'bg-gray-300 group-hover:bg-orange-500' }}"></div>
+                                    <span class="flex-1">Aprovação de Funcionários</span>
+                                    <span class="text-xs text-orange-600 font-medium">Apr</span>
+                                </a>
                                 <a href="{{ route('company.performance.reports') }}" 
                                    class="group flex items-center px-4 py-2.5 text-sm rounded-lg transition-all duration-200
                                           {{ request()->routeIs('company.performance.reports') 

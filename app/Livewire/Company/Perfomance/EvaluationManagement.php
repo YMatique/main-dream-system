@@ -290,7 +290,7 @@ class EvaluationManagement extends Component
                 ->whereMonth('evaluation_period', now()->month)
                 ->count(),
             'pending_approval' => (clone $baseQuery)
-                ->where('status', 'in_approval')
+                ->where('status', 'submitted')
                 ->count(),
             'below_threshold' => (clone $baseQuery)
                 ->where('is_below_threshold', true)

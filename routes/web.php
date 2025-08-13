@@ -31,6 +31,7 @@ use App\Livewire\Company\Listings\RepairOrdersList;
 use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\Company\MaintenanceTypeManagement;
 use App\Livewire\Company\MaterialManagement;
+use App\Livewire\Company\Perfomance\EvaluationApprovals;
 use App\Livewire\Company\Perfomance\EvaluationManagement;
 use App\Livewire\Company\Perfomance\MetricsManagement;
 use App\Livewire\Company\RequesterManagement;
@@ -359,6 +360,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                 // Avaliações
                 Route::get('/evaluations', EvaluationManagement::class)->name('evaluations')->middleware('permission:evaluation.create');
                 
+                Route::get('/evaluations/approvals', EvaluationApprovals::class)->name('evaluations.approvals');
                 // Relatórios de Desempenho
                 Route::get('/reports', function () {
                     return view('company.performance.reports', [

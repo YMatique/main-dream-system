@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PerformanceEvaluation extends Model
 {
-    use HasFactory;
+       use HasFactory;
 
     protected $fillable = [
         'company_id',
@@ -20,10 +20,13 @@ class PerformanceEvaluation extends Model
         'final_percentage',
         'recommendations',
         'status',
-        'current_approval_stage',
         'submitted_at',
         'approved_at',
         'approved_by',
+        'rejected_at',
+        'rejected_by',
+        'rejection_reason',
+        'approval_comments',
         'is_below_threshold',
         'notifications_sent'
     ];
@@ -32,9 +35,9 @@ class PerformanceEvaluation extends Model
         'evaluation_period' => 'date',
         'total_score' => 'decimal:2',
         'final_percentage' => 'decimal:2',
-        'current_approval_stage' => 'integer',
         'submitted_at' => 'datetime',
         'approved_at' => 'datetime',
+        'rejected_at' => 'datetime',
         'is_below_threshold' => 'boolean',
         'notifications_sent' => 'boolean'
     ];
@@ -60,19 +63,14 @@ class PerformanceEvaluation extends Model
         return $this->belongsTo(\App\Models\User::class, 'approved_by');
     }
 
+    public function rejectedBy()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'rejected_by');
+    }
+
     public function responses()
     {
         return $this->hasMany(EvaluationResponse::class, 'evaluation_id');
-    }
-
-    public function approvals()
-    {
-        return $this->hasMany(EvaluationApproval::class, 'evaluation_id');
-    }
-
-    public function notifications()
-    {
-        return $this->hasMany(EvaluationNotification::class, 'evaluation_id');
     }
 
     // Scopes
@@ -102,7 +100,7 @@ class PerformanceEvaluation extends Model
 
     public function scopePendingApproval($query)
     {
-        return $query->where('status', 'in_approval');
+        return $query->where('status', 'submitted');
     }
 
     // Accessors
@@ -110,8 +108,7 @@ class PerformanceEvaluation extends Model
     {
         return match($this->status) {
             'draft' => 'Rascunho',
-            'submitted' => 'Submetida',
-            'in_approval' => 'Em Aprovação',
+            'submitted' => 'Aguardando Aprovação',
             'approved' => 'Aprovada',
             'rejected' => 'Rejeitada',
             default => $this->status
@@ -143,13 +140,14 @@ class PerformanceEvaluation extends Model
         };
     }
 
-    // Methods
+    // ===== MÉTODOS SIMPLIFICADOS =====
+
     public function calculateFinalScore()
     {
         $totalScore = $this->responses()->sum('calculated_score');
         $this->update([
             'total_score' => $totalScore,
-            'final_percentage' => min(100, $totalScore), // Cap at 100%
+            'final_percentage' => min(100, $totalScore),
             'is_below_threshold' => $totalScore < 50
         ]);
 
@@ -166,29 +164,33 @@ class PerformanceEvaluation extends Model
         return $this->status === 'draft' && $this->responses()->count() > 0;
     }
 
-    public function canBeApproved($userId)
+    public function canBeApproved($userId = null)
     {
-        if ($this->status !== 'in_approval') {
+        if ($this->status !== 'submitted') {
             return false;
         }
 
-        return $this->approvals()
-            ->where('stage_number', $this->current_approval_stage)
-            ->where('approver_id', $userId)
-            ->where('status', 'pending')
-            ->exists();
+        // Se não especificar usuário, só verifica o status
+        if (!$userId) {
+            return true;
+        }
+
+        // Verificar se usuário pode aprovar
+        $user = \App\Models\User::find($userId);
+        return $user && 
+               $user->company_id === $this->company_id && 
+               ($user->isCompanyAdmin() || $user->hasPermission('evaluation.approve'));
     }
 
+    /**
+     * SUBMETER AVALIAÇÃO PARA APROVAÇÃO
+     */
     public function submit()
     {
         $this->update([
-            'status' => 'in_approval',
-            'submitted_at' => now(),
-            'current_approval_stage' => 1
+            'status' => 'submitted',
+            'submitted_at' => now()
         ]);
-
-        // Criar registros de aprovação
-        $this->createApprovalStages();
 
         // Enviar notificações se abaixo do threshold
         if ($this->is_below_threshold) {
@@ -196,102 +198,108 @@ class PerformanceEvaluation extends Model
         }
     }
 
+    /**
+     * APROVAR AVALIAÇÃO - MÉTODO SIMPLIFICADO
+     */
     public function approve($approverId, $comments = null)
     {
-        $approval = $this->approvals()
-            ->where('stage_number', $this->current_approval_stage)
-            ->where('approver_id', $approverId)
-            ->first();
-
-        if (!$approval) {
-            throw new \Exception('Aprovação não encontrada');
+        // Verificar se pode ser aprovada
+        if ($this->status !== 'submitted') {
+            throw new \Exception('Avaliação não pode ser aprovada. Status atual: ' . $this->status);
         }
 
-        $approval->update([
+        // Verificar se usuário pode aprovar
+        $user = \App\Models\User::find($approverId);
+        if (!$user || $user->company_id !== $this->company_id) {
+            throw new \Exception('Usuário não tem permissão para aprovar esta avaliação');
+        }
+
+        if (!$user->isCompanyAdmin() && !$user->hasPermission('evaluation.approve')) {
+            throw new \Exception('Usuário não tem permissão para aprovar avaliações');
+        }
+
+        // Aprovar
+        $this->update([
             'status' => 'approved',
-            'comments' => $comments,
-            'reviewed_at' => now()
+            'approved_at' => now(),
+            'approved_by' => $approverId,
+            'approval_comments' => $comments
         ]);
 
-        // Verificar se há próximo estágio
-        $nextStage = $this->current_approval_stage + 1;
-        $hasNextStage = $this->approvals()
-            ->where('stage_number', $nextStage)
-            ->exists();
-
-        if ($hasNextStage) {
-            $this->update(['current_approval_stage' => $nextStage]);
-        } else {
-            // Aprovação final
-            $this->update([
-                'status' => 'approved',
-                'approved_at' => now(),
-                'approved_by' => $approverId
-            ]);
-        }
+        \Log::info('Avaliação aprovada', [
+            'evaluation_id' => $this->id,
+            'approved_by' => $approverId,
+            'employee' => $this->employee->name
+        ]);
     }
 
-    public function reject($approverId, $comments)
+    /**
+     * REJEITAR AVALIAÇÃO - MÉTODO SIMPLIFICADO
+     */
+    public function reject($approverId, $reason)
     {
-        $approval = $this->approvals()
-            ->where('stage_number', $this->current_approval_stage)
-            ->where('approver_id', $approverId)
-            ->first();
-
-        if (!$approval) {
-            throw new \Exception('Aprovação não encontrada');
+        // Verificar se pode ser rejeitada
+        if ($this->status !== 'submitted') {
+            throw new \Exception('Avaliação não pode ser rejeitada. Status atual: ' . $this->status);
         }
 
-        $approval->update([
+        // Verificar se usuário pode rejeitar
+        $user = \App\Models\User::find($approverId);
+        if (!$user || $user->company_id !== $this->company_id) {
+            throw new \Exception('Usuário não tem permissão para rejeitar esta avaliação');
+        }
+
+        if (!$user->isCompanyAdmin() && !$user->hasPermission('evaluation.approve')) {
+            throw new \Exception('Usuário não tem permissão para rejeitar avaliações');
+        }
+
+        // Rejeitar
+        $this->update([
             'status' => 'rejected',
-            'comments' => $comments,
-            'reviewed_at' => now()
+            'rejected_at' => now(),
+            'rejected_by' => $approverId,
+            'rejection_reason' => $reason
         ]);
 
-        $this->update(['status' => 'rejected']);
+        \Log::info('Avaliação rejeitada', [
+            'evaluation_id' => $this->id,
+            'rejected_by' => $approverId,
+            'reason' => $reason
+        ]);
     }
 
-    protected function createApprovalStages()
+    /**
+     * Verificar se usuário específico pode aprovar
+     */
+    public function canUserApprove($userId)
     {
-        $stages = EvaluationApprovalStage::where('company_id', $this->company_id)
-            ->where('is_active', true)
-            ->orderBy('stage_number')
-            ->get();
-
-        foreach ($stages as $stage) {
-            // Determinar aprovadores baseado nas regras do estágio
-            $approvers = $this->getApproversForStage($stage);
-
-            foreach ($approvers as $approverId) {
-                EvaluationApproval::create([
-                    'evaluation_id' => $this->id,
-                    'stage_number' => $stage->stage_number,
-                    'stage_name' => $stage->stage_name,
-                    'approver_id' => $approverId,
-                    'status' => 'pending'
-                ]);
-            }
-        }
+        return $this->canBeApproved($userId);
     }
 
-    protected function getApproversForStage($stage)
-    {
-        // Lógica para determinar aprovadores baseado no estágio
-        // Por enquanto retorna o admin master da empresa
-        return [\App\Models\User::where('company_id', $this->company_id)
-                                ->where('user_type', 'company_admin')
-                                ->first()?->id ?? 1];
-    }
-
+    /**
+     * Enviar notificações de performance baixa
+     */
     protected function sendLowPerformanceNotifications()
     {
         if ($this->notifications_sent) {
             return;
         }
 
-        // Lógica para enviar notificações
-        // Implementar em um Job/Service separado
-        
+        // Implementar notificações conforme necessário
+        // Por enquanto só marcar como enviado
         $this->update(['notifications_sent' => true]);
+    }
+
+    /**
+     * Obter histórico de avaliações do funcionário
+     */
+    public function getEmployeeHistory($limit = 6)
+    {
+        return static::where('employee_id', $this->employee_id)
+            ->where('status', 'approved')
+            ->where('id', '!=', $this->id)
+            ->orderBy('evaluation_period', 'desc')
+            ->limit($limit)
+            ->get(['evaluation_period', 'final_percentage', 'performance_class', 'approved_at']);
     }
 }
