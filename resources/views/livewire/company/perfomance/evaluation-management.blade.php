@@ -280,7 +280,7 @@
             <div class="fixed inset-0 z-50 overflow-y-auto">
                 <div class="flex items-center justify-center min-h-screen px-4">
                     <div class="fixed inset-0 bg-zinc-900 opacity-75" wire:click="closeEvaluationModal"></div>
- <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                
                     <div class="relative bg-white rounded-lg shadow-xl w-full max-w-4xl relative max-h-screen overflow-y-auto">
                         <form wire:submit.prevent="saveEvaluation">
