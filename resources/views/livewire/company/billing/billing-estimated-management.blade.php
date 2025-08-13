@@ -4,7 +4,7 @@
     <div class="bg-gradient-to-r from-green-600 via-green-700 to-emerald-800 rounded-xl shadow-lg p-6 text-white">
         <div class="flex justify-between items-center">
             <div>
-                <h2 class="text-3xl font-bold tracking-tight">Faturação HH</h2>
+                <h2 class="text-3xl font-bold tracking-tight">Faturação Estimada</h2>
                 <p class="mt-2 text-green-100">Gestão de faturação baseada em horas do sistema</p>
             </div>
             <div class="text-right">
@@ -385,7 +385,7 @@
                             </div>
                             <div class="ml-4">
                                 <h3 class="text-xl font-semibold text-zinc-900 dark:text-white">
-                                    Detalhes da Faturação HH
+                                    Detalhes da Faturação Estimada
                                 </h3>
                                 <p class="text-sm text-zinc-500 dark:text-zinc-400">
                                     Ordem: {{ $viewBilling->repairOrder->order_number }}

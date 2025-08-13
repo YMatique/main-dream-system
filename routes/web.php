@@ -9,6 +9,7 @@ use App\Livewire\Auth\System\ForgotPassword;
 use App\Livewire\Auth\System\ResetPassword;
 use App\Livewire\Company\Billing\BillingEstimatedManagement;
 use App\Livewire\Company\Billing\BillingHHManagement;
+use App\Livewire\Company\Billing\BillingRealManagement;
 use App\Livewire\Company\ClientCostManagement;
 use App\Livewire\Company\ClientManagement;
 use App\Livewire\Company\CompanyLogin;
@@ -337,15 +338,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
         Route::prefix('billing')->name('billing.')->middleware('permission:billing.view_all')->group(function () {
             
             // Faturação Real
-            Route::get('/real', function () {
-                return view('company.billing.real', [
-                    'title' => 'Faturação Real',
-                    'company' => auth()->user()->company,
-                    'billing_count' => 0, // TODO: implementar
-                    'total_amount_mzn' => 0,
-                    'total_amount_usd' => 0
-                ]);
-            })->name('real')->middleware('permission:billing.real.manage');
+            Route::get('/real', BillingRealManagement::class)->name('real')->middleware('permission:billing.real.manage');
             
             // Faturação Estimada
             Route::get('/estimated', BillingEstimatedManagement::class)->name('estimated');
