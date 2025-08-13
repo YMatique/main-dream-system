@@ -129,6 +129,39 @@ class EmployeeEvaluations extends Component
     }
     public function render()
     {
-        return view('livewire.portal.employee-evaluations');
+        return view('livewire.portal.employee-evaluations',[
+            'evaluations' => $this->evaluations,
+            'years' => $this->getAvailableYears(),
+            'months' => $this->getMonths(),
+            'statusOptions' => $this->getStatusOptions()
+        ])->layout('layouts.company');
+    }
+
+     private function getAvailableYears()
+    {
+        return PerformanceEvaluation::forEmployee($this->employee->id)
+            ->selectRaw('YEAR(evaluation_period) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+    }
+
+    private function getMonths()
+    {
+        return collect([
+            '01' => 'Janeiro', '02' => 'Fevereiro', '03' => 'Março', '04' => 'Abril',
+            '05' => 'Maio', '06' => 'Junho', '07' => 'Julho', '08' => 'Agosto',
+            '09' => 'Setembro', '10' => 'Outubro', '11' => 'Novembro', '12' => 'Dezembro'
+        ]);
+    }
+
+    private function getStatusOptions()
+    {
+        return [
+            'approved' => 'Aprovada',
+            'submitted' => 'Aguardando Aprovação',
+            'rejected' => 'Rejeitada',
+            'draft' => 'Rascunho'
+        ];
     }
 }
