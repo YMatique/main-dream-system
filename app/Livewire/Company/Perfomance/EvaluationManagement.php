@@ -4,6 +4,7 @@ namespace App\Livewire\Company\Perfomance;
 
 use App\Models\Company\Department;
 use App\Models\Company\Employee;
+use App\Models\Company\Evaluation\EvaluationResponse;
 use App\Models\Company\Evaluation\PerformanceEvaluation;
 use App\Models\Company\Evaluation\PerformanceMetric;
 use App\Services\PerformanceEvaluationService;
@@ -234,11 +235,11 @@ class EvaluationManagement extends Component
             ->whereHas('employee', function($q) {
                 $q->whereIn('department_id', $this->accessibleDepartments);
             })
-            ->with(['employee.department', 'evaluator'])
+            ->with(['employee.department', 'evaluator','approvedBy', 'rejectedBy'])
             ->when($this->search, function ($q) {
                 $q->whereHas('employee', function ($query) {
                     $query->where('name', 'like', '%' . $this->search . '%')
-                          ->orWhere('employee_code', 'like', '%' . $this->search . '%');
+                          ->orWhere('code', 'like', '%' . $this->search . '%');
                 });
             })
             ->when($this->departmentFilter, function ($q) {
@@ -446,21 +447,32 @@ class EvaluationManagement extends Component
 
             if ($value !== null && $value !== '') {
                 // ✅ CORREÇÃO: Seu model já aplica o peso, só somar
-                $score = $metric->calculateScore($value);
-                $totalScore += $score;
+                // $score = $metric->calculateScore($value);
+                // $totalScore += $score;
+                // $totalWeight += $metric->weight;
+
+                // Calcular score individual da métrica
+                $score = $this->calculateMetricScore($metric, $value);
+                
+                // Aplicar peso
+                $weightedScore = ($score * $metric->weight) / 100;
+                
+                $totalScore += $weightedScore;
                 $totalWeight += $metric->weight;
             }
         }
 
         $this->totalScore = $totalScore;
+
         
         // ✅ CORREÇÃO: totalScore já está ponderado pelo peso
         // Se peso total for 100%, totalScore será o percentual final
-        if ($totalWeight > 0) {
-            $this->finalPercentage = min(100, $totalScore);
-        } else {
-            $this->finalPercentage = 0;
-        }
+        // if ($totalWeight > 0) {
+        //     $this->finalPercentage = min(100, $totalScore);
+        // } else {
+        //     $this->finalPercentage = 0;
+        // }
+             $this->finalPercentage = min(100, $totalScore);
 
         // Debug para verificar
         \Log::info('Score Calculation Debug', [
@@ -471,6 +483,43 @@ class EvaluationManagement extends Component
                 return array_filter($response);
             }, $this->responses)
         ]);
+    }
+
+    
+    /**
+     * Calcular score de uma métrica individual
+     */
+    private function calculateMetricScore($metric, $value)
+    {
+        switch ($metric->type) {
+            case 'numeric':
+                // Score = (valor / valor_máximo) * 100
+                return min(100, ($value / $metric->max_value) * 100);
+                
+            case 'rating':
+                // Usar rating_scale se disponível
+                if ($metric->rating_scale) {
+                    $scale = json_decode($metric->rating_scale, true);
+                    return $scale[$value] ?? 0;
+                }
+                
+                // Fallback para rating_options
+                // dd($metric->rating_options);
+                $options = json_decode(json_encode($metric->rating_options), true);
+                $optionCount = count($options);
+                $optionIndex = array_search($value, $options);
+                
+                if ($optionIndex !== false) {
+                    return (($optionIndex + 1) / $optionCount) * 100;
+                }
+                return 0;
+                
+            case 'boolean':
+                return $value ? 100 : 0;
+                
+            default:
+                return 0;
+        }
     }
 
     public function saveEvaluation()
@@ -488,27 +537,70 @@ class EvaluationManagement extends Component
         }
 
         $this->validate();
-
+        // Calcular score final
+        $this->calculateScore();
         try {
             DB::transaction(function () {
                 // Criar avaliação
-                $evaluation = $this->evaluationService->createEvaluation(
-                    $this->selectedEmployeeId,
-                    auth()->id(),
-                    $this->evaluationPeriod
-                );
+                // $evaluation = $this->evaluationService->createEvaluation(
+                //     $this->selectedEmployeeId,
+                //     auth()->id(),
+                //     $this->evaluationPeriod
+                // );
 
+                 // Criar avaliação
+                $evaluation = PerformanceEvaluation::create([
+                    'company_id' => auth()->user()->company_id,
+                    'employee_id' => $this->selectedEmployeeId,
+                    'evaluator_id' => auth()->id(),
+                    'evaluation_period' => Carbon::parse($this->evaluationPeriod)->startOfMonth(),
+                    'total_score' => $this->totalScore,
+                    'final_percentage' => $this->finalPercentage,
+                    'recommendations' => $this->recommendations,
+                    'status' => 'submitted', // Submeter diretamente para aprovação
+                    'submitted_at' => now(),
+                    'is_below_threshold' => $this->finalPercentage < 50,
+                    'notifications_sent' => false
+                ]);
+
+                    // Salvar respostas
+                foreach ($this->responses as $metricId => $response) {
+                    $metric = $this->metrics->find($metricId);
+                    if (!$metric) continue;
+
+                    $value = null;
+                    $ratingValue = null;
+                    
+                    if ($metric->type === 'numeric' || $metric->type === 'boolean') {
+                        $value = $response['numeric_value'];
+                    } elseif ($metric->type === 'rating') {
+                        $ratingValue = $response['rating_value'];
+                    }
+
+                    if ($value !== null || $ratingValue !== null) {
+                        $calculatedScore = $this->calculateMetricScore($metric, $value ?? $ratingValue);
+                        
+                        EvaluationResponse::create([
+                            'evaluation_id' => $evaluation->id,
+                            'metric_id' => $metricId,
+                            'numeric_value' => $value,
+                            'rating_value' => $ratingValue,
+                            'calculated_score' => $calculatedScore,
+                            'comments' => $response['comments'] ?? null
+                        ]);
+                    }
+                }
                 // Salvar respostas
-                $this->evaluationService->saveEvaluationResponses(
-                    $evaluation->id,
-                    $this->responses
-                );
+                // $this->evaluationService->saveEvaluationResponses(
+                //     $evaluation->id,
+                //     $this->responses
+                // );
 
-                // Submeter para aprovação
-                $this->evaluationService->submitEvaluation(
-                    $evaluation->id,
-                    $this->recommendations
-                );
+                // // Submeter para aprovação
+                // $this->evaluationService->submitEvaluation(
+                //     $evaluation->id,
+                //     $this->recommendations
+                // );
 
                 $this->currentEvaluationId = $evaluation->id;
             });
@@ -548,7 +640,11 @@ class EvaluationManagement extends Component
         $this->showViewModal = false;
         $this->viewingEvaluationId = null;
     }
-
+public function viewEvaluation($evaluationId)
+    {
+        $this->viewingEvaluationId = $evaluationId;
+        $this->showViewModal = true;
+    }
     public function getEvaluationForViewing()
     {
         if (!$this->viewingEvaluationId) {

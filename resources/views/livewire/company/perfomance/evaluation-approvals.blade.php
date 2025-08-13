@@ -221,7 +221,6 @@
                             <td class="px-6 py-4">
                                 <span class="px-2 py-1 text-xs font-medium rounded-full 
                                     {{ $evaluation->status === 'submitted' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400' : '' }}
-                                    {{ $evaluation->status === 'in_approval' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' : '' }}
                                     {{ $evaluation->status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : '' }}
                                     {{ $evaluation->status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' : '' }}">
                                     {{ $evaluation->status_display }}
@@ -534,29 +533,56 @@
                     </div>
                     @endif
 
-                    {{-- Histórico de Aprovações --}}
-                    @if($selectedEvaluation->approvals->count() > 0)
+                    {{-- Histórico de Aprovação/Rejeição --}}
+                    @if($selectedEvaluation->status === 'approved' || $selectedEvaluation->status === 'rejected')
                     <div class="mt-6">
-                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Histórico de Aprovações</h4>
+                        <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Histórico de Aprovação</h4>
                         <div class="space-y-2">
-                            @foreach($selectedEvaluation->approvals as $approval)
-                            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                <div>
-                                    <span class="font-medium">{{ $approval->stage_name }}</span>
-                                    <span class="text-gray-500 dark:text-gray-400 ml-2">{{ $approval->approver->name ?? 'N/A' }}</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="px-2 py-1 text-xs rounded-full bg-{{ $approval->status_color }}-100 text-{{ $approval->status_color }}-800 dark:bg-{{ $approval->status_color }}-900/20 dark:text-{{ $approval->status_color }}-400">
-                                        {{ $approval->status_display }}
-                                    </span>
-                                    @if($approval->reviewed_at)
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $approval->reviewed_at->format('d/m/Y H:i') }}
+                            @if($selectedEvaluation->status === 'approved')
+                                <div class="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                    <div>
+                                        <span class="font-medium text-green-800 dark:text-green-200">Aprovada</span>
+                                        <span class="text-green-600 dark:text-green-400 ml-2">{{ $selectedEvaluation->approvedBy->name ?? 'N/A' }}</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                                            Aprovada
                                         </span>
-                                    @endif
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ $selectedEvaluation->approved_at?->format('d/m/Y H:i') }}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            @endforeach
+                                @if($selectedEvaluation->approval_comments)
+                                    <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                                        <p class="text-sm text-green-700 dark:text-green-300">
+                                            <strong>Comentários:</strong> {{ $selectedEvaluation->approval_comments }}
+                                        </p>
+                                    </div>
+                                @endif
+                            @elseif($selectedEvaluation->status === 'rejected')
+                                <div class="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                                    <div>
+                                        <span class="font-medium text-red-800 dark:text-red-200">Rejeitada</span>
+                                        <span class="text-red-600 dark:text-red-400 ml-2">{{ $selectedEvaluation->rejectedBy->name ?? 'N/A' }}</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400">
+                                            Rejeitada
+                                        </span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ $selectedEvaluation->rejected_at?->format('d/m/Y H:i') }}
+                                        </span>
+                                    </div>
+                                </div>
+                                @if($selectedEvaluation->rejection_reason)
+                                    <div class="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                                        <p class="text-sm text-red-700 dark:text-red-300">
+                                            <strong>Motivo da Rejeição:</strong> {{ $selectedEvaluation->rejection_reason }}
+                                        </p>
+                                    </div>
+                                @endif
+                            @endif
                         </div>
                     </div>
                     @endif
