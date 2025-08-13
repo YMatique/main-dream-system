@@ -24,6 +24,7 @@ use App\Livewire\Company\Listings\RepairOrdersForm1List;
 use App\Livewire\Company\Listings\RepairOrdersForm2List;
 use App\Livewire\Company\Listings\RepairOrdersForm3List;
 use App\Livewire\Company\Listings\RepairOrdersForm4List;
+use App\Livewire\Company\Listings\RepairOrdersForm5List;
 use App\Livewire\Company\Listings\RepairOrdersList;
 use App\Livewire\Company\MachineNumberManagement;
 use App\Livewire\Company\MaintenanceTypeManagement;
@@ -325,14 +326,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             
             Route::get('/form4-list', RepairOrdersForm4List::class)->name('form4-list');
             
-            Route::get('/form5-list', function () {
-                return view('company.orders.list', [
-                    'title' => 'Listagem - Formulário 5',
-                    'form_type' => 'form5',
-                    'company' => auth()->user()->company,
-                    'orders_count' => 0
-                ]);
-            })->name('form5-list');
+            Route::get('/form5-list', RepairOrdersForm5List::class)->name('form5-list');
             
             // Listagem avançada (todos os campos de todos os formulários)
             Route::get('/advanced-list', AdvancedListing::class)->name('advanced-list');
