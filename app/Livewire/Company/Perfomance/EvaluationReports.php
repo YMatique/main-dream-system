@@ -351,8 +351,7 @@ protected function generatePerformanceReport()
 
     // Top performers
     $topPerformers = (clone $query)->orderBy('performance_evaluations.final_percentage', 'desc')
-        ->limit(10)
-        ->get();
+        ->take(10);
 
     // Bottom performers (apenas se admin)
     $bottomPerformers = collect();
