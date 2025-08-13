@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // ADICIONAR ESTE GUARD:
+        'employee_portal' => [
+            'driver' => 'employee_portal',
+            'provider' => 'employee_portal_users',
+        ],
     ],
 
     /*
@@ -69,6 +74,11 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+        // ADICIONAR ESTE PROVIDER:
+        'employee_portal_users' => [
+            'driver' => 'employee_portal',
+            'model' => App\Models\Company\EmployeePortalAccess::class,
+        ],
     ],
 
     /*
