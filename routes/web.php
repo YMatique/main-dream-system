@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\System\CompanyController;
 use App\Livewire\Auth\System\ForgotPassword;
 use App\Livewire\Auth\System\ResetPassword;
+use App\Livewire\Company\Billing\BillingEstimatedManagement;
 use App\Livewire\Company\Billing\BillingHHManagement;
 use App\Livewire\Company\ClientCostManagement;
 use App\Livewire\Company\ClientManagement;
@@ -347,15 +348,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             })->name('real')->middleware('permission:billing.real.manage');
             
             // Faturação Estimada
-            Route::get('/estimated', function () {
-                return view('company.billing.estimated', [
-                    'title' => 'Faturação Estimada',
-                    'company' => auth()->user()->company,
-                    'billing_count' => 0,
-                    'total_amount_mzn' => 0,
-                    'total_amount_usd' => 0
-                ]);
-            })->name('estimated');
+            Route::get('/estimated', BillingEstimatedManagement::class)->name('estimated');
             
             // Faturação HH (Preços do Sistema)
             Route::get('/hh', BillingHHManagement::class)->name('hh');
