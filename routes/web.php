@@ -33,6 +33,7 @@ use App\Livewire\Company\MaintenanceTypeManagement;
 use App\Livewire\Company\MaterialManagement;
 use App\Livewire\Company\Perfomance\EvaluationApprovals;
 use App\Livewire\Company\Perfomance\EvaluationManagement;
+use App\Livewire\Company\Perfomance\EvaluationReports;
 use App\Livewire\Company\Perfomance\MetricsManagement;
 use App\Livewire\Company\RequesterManagement;
 use App\Livewire\Company\StatusLocationManagement;
@@ -362,16 +363,8 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                 
                 Route::get('/evaluations/approvals', EvaluationApprovals::class)->name('evaluations.approvals');
                 // Relatórios de Desempenho
-                Route::get('/reports', function () {
-                    return view('company.performance.reports', [
-                        'title' => 'Relatórios de Desempenho',
-                        'company' => auth()->user()->company,
-                        'employees' => \App\Models\Company\Employee::where('company_id', auth()->user()->company_id)->active()->get(),
-                        'departments' => \App\Models\Company\Department::where('company_id', auth()->user()->company_id)->active()->get()
-                    ]);
-                })->name('reports');
-            });
-        
+                Route::get('/reports', EvaluationReports::class)->name('reports');
+              });
         // ===== RELATÓRIOS E EXPORTAÇÕES =====
         Route::prefix('reports')->name('reports.')->group(function () {
             
