@@ -518,41 +518,6 @@ Route::post('/company/logout', function () {
 })
     ->middleware('auth')
     ->name('company.logout');
-/*
-|--------------------------------------------------------------------------
-| Portal do Funcionário (/portal) - Para funcionários verem avaliações
-|--------------------------------------------------------------------------
-*/
 
-/*
-Route::prefix('portal')
-    ->middleware(['auth', 'verified'])
-    ->name('portal.')
-    ->group(function () {
-        
-        // Dashboard do Portal do Funcionário
-        Route::get('/dashboard', EmployeeDashboard::class)->name('dashboard');
-        
-        // Minhas Avaliações (acesso por link + credenciais)
-        Route::get('/evaluations', EmployeeEvaluations::class)->name('evaluations');
-        Route::get('/evaluations/{month}/{year}', EmployeeEvaluations::class)->name('evaluations.monthly');
-        
-        // Histórico de Desempenho com pesquisa por mês
-        Route::get('/performance-history', EmployeePerformanceHistory::class)->name('performance-history');
-        
-        // Perfil do Funcionário
-        Route::get('/profile', EmployeeProfile::class)->name('profile');
-        
-        // Impressão de avaliações
-        Route::get('/evaluations/{evaluation}/print', function ($evaluation) {
-            return view('portal.evaluations.print', compact('evaluation'));
-        })->name('evaluations.print');
-        
-        // Download de avaliações
-        Route::get('/evaluations/{evaluation}/download', function ($evaluation) {
-            return response()->download(storage_path('app/evaluations/evaluation-' . $evaluation . '.pdf'));
-        })->name('evaluations.download');
-    });
- */
 require __DIR__ . '/auth.php';
 require __DIR__ . '/portal.php';

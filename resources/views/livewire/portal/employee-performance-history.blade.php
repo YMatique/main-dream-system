@@ -26,34 +26,37 @@
     @endif
 
     {{-- Análise de Tendências --}}
-    @if($trendAnalysis)
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Análise de Tendências</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div class="text-2xl font-bold {{ $trendAnalysis['trend'] === 'improving' ? 'text-green-600' : ($trendAnalysis['trend'] === 'declining' ? 'text-red-600' : 'text-gray-600') }}">
-                    {{ $trendAnalysis['change'] > 0 ? '+' : '' }}{{ $trendAnalysis['change'] }}%
-                </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">Mudança Total</div>
+ 
+{{-- Análise de Tendências --}}
+@if($trendAnalysis && isset($trendAnalysis['change']))
+<div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Análise de Tendências</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div class="text-2xl font-bold {{ ($trendAnalysis['trend'] ?? '') === 'improving' ? 'text-green-600' : (($trendAnalysis['trend'] ?? '') === 'declining' ? 'text-red-600' : 'text-gray-600') }}">
+                {{ ($trendAnalysis['change'] ?? 0) > 0 ? '+' : '' }}{{ $trendAnalysis['change'] ?? 0 }}%
             </div>
-            <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div class="text-lg font-semibold text-gray-900 dark:text-white">
-                    {{ ucfirst(str_replace('_', ' ', $trendAnalysis['trend'])) }}
-                </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">Tendência</div>
-            </div>
-            <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div class="text-lg font-semibold text-gray-900 dark:text-white">
-                    {{ $trendAnalysis['consistency'] }}
-                </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">Consistência</div>
-            </div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Mudança Total</div>
         </div>
-        <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <p class="text-blue-800 dark:text-blue-200">{{ $trendAnalysis['description'] }}</p>
+        <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div class="text-lg font-semibold text-gray-900 dark:text-white">
+                {{ ucfirst(str_replace('_', ' ', $trendAnalysis['trend'] ?? 'Sem dados')) }}
+            </div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Tendência</div>
+        </div>
+        <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div class="text-lg font-semibold text-gray-900 dark:text-white">
+                {{ $trendAnalysis['consistency'] ?? 'N/A' }}
+            </div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Consistência</div>
         </div>
     </div>
-    @endif
+    <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <p class="text-blue-800 dark:text-blue-200">{{ $trendAnalysis['description'] ?? 'Sem análise disponível' }}</p>
+    </div>
+</div>
+@endif
+
 
     {{-- Performance por Métrica --}}
     @if(count($performanceMetrics) > 0)
@@ -128,30 +131,36 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+
 document.addEventListener('DOMContentLoaded', function() {
     @if(count($chartData) > 0)
     const ctx = document.getElementById('performanceTrendChart').getContext('2d');
+    
+    // Preparar cores no PHP primeiro
+    const chartData = @json($chartData);
+    const pointColors = chartData.map(function(item) {
+        switch(item.color) {
+            case 'green': return 'rgb(34, 197, 94)';
+            case 'blue': return 'rgb(59, 130, 246)';
+            case 'yellow': return 'rgb(234, 179, 8)';
+            case 'red': return 'rgb(239, 68, 68)';
+            default: return 'rgb(107, 114, 128)';
+        }
+    });
+    
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: @json(array_column($chartData, 'date')),
+            labels: chartData.map(item => item.date),
             datasets: [{
                 label: 'Performance (%)',
-                data: @json(array_column($chartData, 'percentage')),
+                data: chartData.map(item => item.percentage),
                 borderColor: 'rgb(59, 130, 246)',
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4,
-                pointBackgroundColor: @json(array_map(function($item) {
-                    return match($item['color']) {
-                        'green' => 'rgb(34, 197, 94)',
-                        'blue' => 'rgb(59, 130, 246)',
-                        'yellow' => 'rgb(234, 179, 8)',
-                        'red' => 'rgb(239, 68, 68)',
-                        default => 'rgb(107, 114, 128)'
-                    };
-                }, $chartData)),
+                pointBackgroundColor: pointColors,
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
                 pointRadius: 6
@@ -178,8 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 tooltip: {
                     callbacks: {
                         afterLabel: function(context) {
-                            const data = @json($chartData);
-                            return 'Classificação: ' + data[context.dataIndex].class;
+                            return 'Classificação: ' + chartData[context.dataIndex].class;
                         }
                     }
                 }

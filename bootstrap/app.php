@@ -27,7 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.unified' => \App\Http\Middleware\AuthenticatedMiddleware::class,
             'user.type' => \App\Http\Middleware\UserTypeMiddleware::class,
             'form.access'=>\App\Http\Middleware\System\CheckFormAccess::class,
-            'permission'=> \App\Http\Middleware\CheckPermission::class
+            'permission'=> \App\Http\Middleware\CheckPermission::class,
+            'portal.employee'=> \App\Http\Middleware\PortalEmployeeMiddleware::class,
             
         ]);
         // $middleware->append(\App\Http\Middleware\LogActivity::class,);ss

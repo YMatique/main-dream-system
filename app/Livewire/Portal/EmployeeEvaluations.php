@@ -3,6 +3,7 @@
 namespace App\Livewire\Portal;
 
 use App\Models\Company\Evaluation\PerformanceEvaluation;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -19,12 +20,12 @@ class EmployeeEvaluations extends Component
     public $monthFilter = '';
     public $statusFilter = '';
     public $perPage = 10;
+    public $portalUser ;
 
     public function mount($month = null, $year = null)
     {
-        $this->employee = auth()->user()->company->employees()
-            ->where('email', auth()->user()->email)
-            ->first();
+       $this->portalUser = Auth::guard('employee_portal')->user();
+        $this->employee = $this->portalUser->employee;
 
         if (!$this->employee) {
             abort(403, 'Funcionário não encontrado.');
@@ -134,7 +135,7 @@ class EmployeeEvaluations extends Component
             'years' => $this->getAvailableYears(),
             'months' => $this->getMonths(),
             'statusOptions' => $this->getStatusOptions()
-        ])->layout('layouts.company');
+        ])->layout('layouts.portal');
     }
 
      private function getAvailableYears()

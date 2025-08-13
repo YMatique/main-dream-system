@@ -46,6 +46,7 @@ class EmployeePortalGuard implements Guard
     {
         $this->lastAttempted = $user = $this->provider->retrieveByCredentials($credentials);
 
+        // dd($user);
         if ($this->hasValidCredentials($user, $credentials)) {
             $this->login($user, $remember);
             return true;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company\EmployeePortalAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -22,7 +23,7 @@ class PortalAuthController extends Controller
      */
     public function login(Request $request)
     {
-        $request->validate([
+          $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ], [
@@ -34,9 +35,30 @@ class PortalAuthController extends Controller
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
 
+        // Primeiro verificar se o usuário existe e está ativo
+        $portalUser = EmployeePortalAccess::where('email', $credentials['email'])
+            ->where('is_active', true)
+            ->first();
+
+        if (!$portalUser) {
+            throw ValidationException::withMessages([
+                'email' => 'Usuário não encontrado ou conta inativa.',
+            ]);
+        }
+
+        // Verificar se o funcionário está ativo
+        if (!$portalUser->employee || !$portalUser->employee->is_active) {
+            throw ValidationException::withMessages([
+                'email' => 'Funcionário não encontrado ou inativo.',
+            ]);
+        }
+
         // Tentar fazer login usando o guard do portal
         if (Auth::guard('employee_portal')->attempt($credentials, $remember)) {
-            $portalUser = Auth::guard('employee_portal')->user();
+            $request->session()->regenerate();
+            
+            // Registrar login
+            $portalUser->recordLogin();
             
             // Log do acesso
             \Log::info('Portal do funcionário acessado', [
@@ -53,7 +75,7 @@ class PortalAuthController extends Controller
         }
 
         throw ValidationException::withMessages([
-            'email' => 'As credenciais fornecidas não conferem com nossos registros ou a conta está inativa.',
+            'email' => 'As credenciais fornecidas são inválidas.',
         ]);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Portal;
 
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class EmployeeProfile extends Component
@@ -9,13 +10,11 @@ class EmployeeProfile extends Component
     public $employee;
     public $workStats;
     public $evaluationStats;
-
+    public $portalUser;
     public function mount()
     {
-        $this->employee = auth()->user()->company->employees()
-            ->where('email', auth()->user()->email)
-            ->with(['department', 'company'])
-            ->first();
+       $this->portalUser = Auth::guard('employee_portal')->user();
+        $this->employee = $this->portalUser->employee;
 
         if (!$this->employee) {
             abort(403, 'Funcionário não encontrado.');
@@ -46,6 +45,6 @@ class EmployeeProfile extends Component
 
     public function render()
     {
-        return view('livewire.portal.employee-profile')->layout('layouts.company');
+        return view('livewire.portal.employee-profile')->layout('layouts.portal');
     }
 }

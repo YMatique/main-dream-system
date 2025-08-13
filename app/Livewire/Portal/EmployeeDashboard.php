@@ -3,20 +3,21 @@
 namespace App\Livewire\Portal;
 
 use App\Models\Company\Evaluation\PerformanceEvaluation;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class EmployeeDashboard extends Component
 {
     public $employee;
+     public $portalUser;
     public $recentEvaluations;
     public $stats;
     public $performanceChart;
 
     public function mount()
     {
-        $this->employee = auth()->user()->company->employees()
-            ->where('email', auth()->user()->email)
-            ->first();
+        $this->portalUser = Auth::guard('employee_portal')->user();
+        $this->employee = $this->portalUser->employee;
 
         if (!$this->employee) {
             abort(403, 'Acesso negado. Funcionário não encontrado.');
@@ -80,6 +81,6 @@ class EmployeeDashboard extends Component
     }
     public function render()
     {
-        return view('livewire.portal.employee-dashboard')->layout('layouts.company');
+        return view('livewire.portal.employee-dashboard')->layout('layouts.portal');
     }
 }

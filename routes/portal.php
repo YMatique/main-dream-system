@@ -32,7 +32,7 @@ Route::name('portal.')->group(function () {
 
 Route::prefix('employee')
     ->name('employee.')
-    ->middleware(['auth:employee_portal', 'portal.employee'])
+    ->middleware(['auth:employee_portal'])
     ->group(function () {
         
         Route::get('/portal', EmployeeDashboard::class)->name('portal');

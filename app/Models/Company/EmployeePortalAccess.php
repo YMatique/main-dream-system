@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class EmployeePortalAccess extends Model
+class EmployeePortalAccess extends  Authenticatable
 {
     use HasFactory;
 

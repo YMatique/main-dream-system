@@ -3,22 +3,23 @@
 namespace App\Livewire\Portal;
 
 use App\Models\Company\Evaluation\PerformanceEvaluation;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class EmployeePerformanceHistory extends Component
 {
-     public $employee;
+    public $employee;
     public $yearFilter;
     public $chartData;
     public $performanceMetrics;
     public $comparisonData;
     public $trendAnalysis;
+    public $portalUser;
 
     public function mount()
     {
-        $this->employee = auth()->user()->company->employees()
-            ->where('email', auth()->user()->email)
-            ->first();
+        $this->portalUser = Auth::guard('employee_portal')->user();
+        $this->employee = $this->portalUser->employee;
 
         if (!$this->employee) {
             abort(403, 'Funcionário não encontrado.');
@@ -46,6 +47,7 @@ class EmployeePerformanceHistory extends Component
         $this->performanceMetrics = $this->calculateMetricsPerformance($evaluations);
         $this->comparisonData = $this->prepareComparisonData();
         $this->trendAnalysis = $this->analyzeTrends($evaluations);
+        // dd($this->trendAnalysis);
     }
 
     private function prepareChartData($evaluations)
@@ -69,7 +71,7 @@ class EmployeePerformanceHistory extends Component
         foreach ($evaluations as $evaluation) {
             foreach ($evaluation->responses as $response) {
                 $metricName = $response->metric->name;
-                
+
                 if (!isset($metricsPerformance[$metricName])) {
                     $metricsPerformance[$metricName] = [
                         'name' => $metricName,
@@ -79,7 +81,7 @@ class EmployeePerformanceHistory extends Component
                         'weight' => $response->metric->weight
                     ];
                 }
-                
+
                 $metricsPerformance[$metricName]['scores'][] = [
                     'period' => $evaluation->evaluation_period_formatted,
                     'score' => $response->calculated_score,
@@ -101,13 +103,13 @@ class EmployeePerformanceHistory extends Component
     private function prepareComparisonData()
     {
         // Comparar com média do departamento
-        $departmentAvg = PerformanceEvaluation::whereHas('employee', function($query) {
+        $departmentAvg = PerformanceEvaluation::whereHas('employee', function ($query) {
             $query->where('department_id', $this->employee->department_id)
-                  ->where('company_id', $this->employee->company_id);
+                ->where('company_id', $this->employee->company_id);
         })
-        ->byStatus('approved')
-        ->forPeriod($this->yearFilter)
-        ->avg('final_percentage');
+            ->byStatus('approved')
+            ->forPeriod($this->yearFilter)
+            ->avg('final_percentage');
 
         $myAvg = PerformanceEvaluation::forEmployee($this->employee->id)
             ->byStatus('approved')
@@ -123,15 +125,32 @@ class EmployeePerformanceHistory extends Component
 
     private function analyzeTrends($evaluations)
     {
+        // Garantir que sempre retorna um array válido
         if ($evaluations->count() < 2) {
-            return ['trend' => 'insufficient_data', 'description' => 'Dados insuficientes para análise'];
+            return [
+                'trend' => 'insufficient_data',
+                'change' => 0,
+                'description' => 'Dados insuficientes para análise',
+                'consistency' => 'N/A'
+            ];
         }
 
         $scores = $evaluations->pluck('final_percentage')->toArray();
+
+        // Verificar se há scores válidos
+        if (empty($scores) || count($scores) < 2) {
+            return [
+                'trend' => 'no_data',
+                'change' => 0,
+                'description' => 'Sem dados suficientes',
+                'consistency' => 'N/A'
+            ];
+        }
+
         $trend = $this->calculateTrend($scores);
-        
-        $first = $evaluations->first()->final_percentage;
-        $last = $evaluations->last()->final_percentage;
+
+        $first = $evaluations->first()->final_percentage ?? 0;
+        $last = $evaluations->last()->final_percentage ?? 0;
         $change = $last - $first;
 
         return [
@@ -161,7 +180,7 @@ class EmployeePerformanceHistory extends Component
 
         $slope = ($n * $sumXY - $sumX * $sumY) / ($n * $sumXX - $sumX * $sumX);
 
-        return match(true) {
+        return match (true) {
             $slope > 2 => 'improving',
             $slope < -2 => 'declining',
             default => 'stable'
@@ -170,7 +189,7 @@ class EmployeePerformanceHistory extends Component
 
     private function getTrendDescription($trend, $change)
     {
-        return match($trend) {
+        return match ($trend) {
             'improving' => "Desempenho em melhoria (+{$change}%)",
             'declining' => "Desempenho em declínio ({$change}%)",
             'stable' => 'Desempenho estável',
@@ -183,14 +202,14 @@ class EmployeePerformanceHistory extends Component
         if (count($scores) < 2) return 'N/A';
 
         $mean = array_sum($scores) / count($scores);
-        $variance = array_sum(array_map(function($x) use ($mean) {
+        $variance = array_sum(array_map(function ($x) use ($mean) {
             return pow($x - $mean, 2);
         }, $scores)) / count($scores);
-        
+
         $stdDev = sqrt($variance);
         $cv = ($stdDev / $mean) * 100; // Coeficiente de variação
 
-        return match(true) {
+        return match (true) {
             $cv < 10 => 'Muito Consistente',
             $cv < 20 => 'Consistente',
             $cv < 30 => 'Moderadamente Variável',
@@ -201,9 +220,9 @@ class EmployeePerformanceHistory extends Component
     {
         return view('livewire.portal.employee-performance-history', [
             'availableYears' => $this->getAvailableYears()
-        ])->layout('layouts.company');
+        ])->layout('layouts.portal');
     }
-     private function getAvailableYears()
+    private function getAvailableYears()
     {
         return PerformanceEvaluation::forEmployee($this->employee->id)
             ->selectRaw('YEAR(evaluation_period) as year')
