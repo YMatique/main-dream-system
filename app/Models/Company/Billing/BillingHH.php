@@ -83,8 +83,8 @@ class BillingHH extends Model
         }
 
         // Calcular totais
-        $totalMzn = $order->form2->tempo_total_horas * $systemPrice->cost_mzn;
-        $totalUsd = $order->form2->tempo_total_horas * $systemPrice->cost_usd;
+        $totalMzn = $order->form2->tempo_total_horas * ($systemPrice->cost_mzn??0);
+        $totalUsd = $order->form2->tempo_total_horas * ($systemPrice->cost_usd??0);
 
         // Criar faturação HH
         $billing = self::create([

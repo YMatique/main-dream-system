@@ -69,17 +69,17 @@ class BillingEstimated extends Model
             ->where('is_active', true)
             ->first();
 
-        if (!$systemPrice) {
-            throw new \Exception('Preços do sistema não configurados.');
-        }
+        // if (!$systemPrice) {
+        //     throw new \Exception('Preços do sistema não configurados.');
+        // }
 
         // Criar faturação estimada
         $billing = self::create([
             'company_id' => $order->company_id,
             'repair_order_id' => $order->id,
             'estimated_hours' => $order->form2->tempo_total_horas,
-            'hourly_price_mzn' => $systemPrice->cost_mzn,
-            'hourly_price_usd' => $systemPrice->cost_usd,
+            'hourly_price_mzn' => $systemPrice->cost_mzn??0,
+            'hourly_price_usd' => $systemPrice->cost_usd??0,
         ]);
 
         $billing->calculateTotals();
