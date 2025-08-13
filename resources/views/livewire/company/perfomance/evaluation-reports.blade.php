@@ -40,7 +40,7 @@
                         Tipo de Relatório
                     </label>
                     <select wire:model.live="reportType"
-                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
+                        class="w-full p-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
                         <option value="overview">Visão Geral</option>
                         <option value="performance">Performance</option>
                         <option value="department">Por Departamento</option>
@@ -55,7 +55,7 @@
                         Período
                     </label>
                     <select wire:model.live="period"
-                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
+                        class="w-full border-gray-300 p-2 border dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
                         <option value="last_month">Último Mês</option>
                         <option value="last_3_months">Últimos 3 Meses</option>
                         <option value="last_6_months">Últimos 6 Meses</option>
@@ -70,7 +70,7 @@
                         Departamento
                     </label>
                     <select wire:model.live="departmentFilter"
-                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
+                        class="w-full border-gray-300 p-2 border dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
                         <option value="">Todos</option>
                         @foreach ($departments as $department)
                             <option value="{{ $department->id }}">{{ $department->name }}</option>
@@ -84,7 +84,7 @@
                         Funcionário
                     </label>
                     <select wire:model.live="employeeFilter"
-                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
+                        class="w-full border-gray-300 p-2 border dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
                         <option value="">Todos</option>
                         @foreach ($employees as $employee)
                             <option value="{{ $employee->id }}">{{ $employee->name }}</option>
@@ -98,7 +98,7 @@
                         Status
                     </label>
                     <select wire:model.live="statusFilter"
-                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
+                        class="w-full border-gray-300 p-2 border dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
                         <option value="">Todos</option>
                         <option value="approved">Aprovado</option>
                         <option value="submitted">Submetido</option>
@@ -112,7 +112,7 @@
                         Performance
                     </label>
                     <select wire:model.live="performanceFilter"
-                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
+                        class="w-full border-gray-300 p-2 border dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
                         <option value="all">Todas</option>
                         <option value="excellent">Excelente (≥90%)</option>
                         <option value="good">Bom (70-89%)</option>
@@ -130,14 +130,14 @@
                             Data Início
                         </label>
                         <input type="date" wire:model.live="startDate"
-                            class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
+                            class="w-full border-gray-300 p-2 border dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Data Fim
                         </label>
                         <input type="date" wire:model.live="endDate"
-                            class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
+                            class="w-full border-gray-300 p-2 border dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
                     </div>
                 </div>
             @endif

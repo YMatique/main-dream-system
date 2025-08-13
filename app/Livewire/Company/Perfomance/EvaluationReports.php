@@ -357,8 +357,7 @@ protected function generatePerformanceReport()
     $bottomPerformers = collect();
     if (auth()->user()->isCompanyAdmin()) {
         $bottomPerformers = (clone $query)->orderBy('performance_evaluations.final_percentage', 'asc')
-            ->limit(10)
-            ->get();
+            ->take(10);
     }
 
     $this->reportData = [
@@ -367,6 +366,7 @@ protected function generatePerformanceReport()
         'bottom_performers' => $bottomPerformers,
     ];
 
+    // dd($topPerformers[0]);
     // Estatísticas de performance
     $this->stats = [
         'highest_score' => (clone $query)->max('performance_evaluations.final_percentage') ?? 0,
@@ -653,6 +653,7 @@ protected function calculateStandardDeviation($query, $column)
     }
     public function render()
     {
+        // dd($this->evaluation);
         return view('livewire.company.perfomance.evaluation-reports',[
             'reportData' => $this->reportData,
             'chartData' => $this->chartData,
