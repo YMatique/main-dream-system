@@ -42,7 +42,7 @@ return [
         ],
         // ADICIONAR ESTE GUARD:
         'employee_portal' => [
-            'driver' => 'employee_portal',
+            'driver' => 'session',
             'provider' => 'employee_portal_users',
         ],
     ],
@@ -76,7 +76,7 @@ return [
         // ],
         // ADICIONAR ESTE PROVIDER:
         'employee_portal_users' => [
-            'driver' => 'employee_portal',
+            'driver' => 'eloquent',
             'model' => App\Models\Company\EmployeePortalAccess::class,
         ],
     ],

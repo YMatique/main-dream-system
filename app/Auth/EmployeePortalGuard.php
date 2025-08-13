@@ -1,12 +1,10 @@
 <?
 namespace App\Auth;
 
-use App\Models\Company\EmployeePortalAccess;
 use Illuminate\Auth\GuardHelpers;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class EmployeePortalGuard implements Guard
 {

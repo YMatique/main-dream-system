@@ -140,4 +140,9 @@ return [
         'twitter' => env('TWITTER_URL', '#'),
         'instagram' => env('INSTAGRAM_URL', '#'),
     ],
+
+    // 'providers' => [
+    //     // ... outros providers
+    //     App\Providers\EmployeePortalServiceProvider::class,
+    // ],
 ];

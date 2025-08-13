@@ -242,7 +242,7 @@
                             <div class="border-t border-zinc-100 dark:border-zinc-600"></div>
 
                             <!-- FORMULÁRIO DE LOGOUT - JÁ IMPLEMENTADO -->
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ route('system.logout') }}">
                                 @csrf
                                 <button type="submit"
                                     class="block w-full text-left px-4 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-600">

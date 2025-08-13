@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Auth\EmployeePortalGuard;
+use App\Auth\EmployeePortalUserProvider;
 use App\Models\Company\RepairOrder\RepairOrderForm2;
 use App\Models\Company\RepairOrder\RepairOrderForm3;
 use App\Observers\RepairOrderForm2Observer;
@@ -69,5 +71,18 @@ class AppServiceProvider extends ServiceProvider
                 return \App\Helpers\LocaleHelper::getAlternateUrls();
             }
         }
+
+        // Registrar User Provider personalizado
+        Auth::provider('employee_portal', function ($app, array $config) {
+            return new EmployeePortalUserProvider();
+        });
+
+        // Registrar Guard personalizado
+        Auth::extend('employee_portal', function ($app, $name, array $config) {
+            return new EmployeePortalGuard(
+                Auth::createUserProvider($config['provider']),
+                $app['request']
+            );
+        });
     }
 }
