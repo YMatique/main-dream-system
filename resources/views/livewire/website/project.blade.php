@@ -1,6 +1,6 @@
 <div>
     <!--Page Title-->
-    <section class="page-title" style="background-image:url(template/images/background/4.jpg);">
+    <section class="page-title" style="background-image:url({{ asset('template/images/background/4.jpg') }});">
         <div class="auto-container">
             <h1>{{ __('messages.projects.detail.title') }}</h1>
         </div>
@@ -32,7 +32,7 @@
                     <!--Image Column-->
                     <div class="image-column col-md-8 col-sm-12 col-xs-12">
                         <div class="image">
-                            <img src="template/images/resource/automation-system.jpg" alt="{{ __('messages.projects.automation.image_alt') }}" />
+                            <img src="{{ asset('template/images/resource/automation-system.jpg') }}" alt="{{ __('messages.projects.automation.image_alt') }}" />
                         </div>
                     </div>
                     <!--Info Column-->
@@ -77,7 +77,7 @@
                     <!--Image Column-->
                     <div class="image-column col-md-4 col-sm-12 col-xs-12">
                         <div class="image">
-                            <img src="template/images/resource/automation-dashboard.jpg" alt="{{ __('messages.projects.automation.dashboard_alt') }}" />
+                            <img src="{{ asset('template/images/resource/automation-dashboard.jpg') }}" alt="{{ __('messages.projects.automation.dashboard_alt') }}" />
                         </div>
                     </div>
                     
