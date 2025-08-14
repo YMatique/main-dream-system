@@ -1,6 +1,6 @@
 <div>
 <!--Page Title-->
-    <section class="page-title" style="background-image:url(images/background/4.jpg);">
+    <section class="page-title" style="background-image:url(template/images/background/4.jpg);">
         <div class="auto-container">
             <h1>Mechanical Engineering</h1>
         </div>
@@ -32,7 +32,7 @@
                 	<div class="services-single">
 						<div class="inner-box">
 							<div class="big-image">
-                            	<img src="images/resource/service-19.jpg" alt="" />
+                            	<img src="template/images/resource/service-19.jpg" alt="" />
                             </div>
                             <h2>Mechanical Engineering</h2>
                             <div class="text">
