@@ -391,6 +391,41 @@ return [
         ],
     ],
 
+    // Página Contacto
+    // Contact Page 
+    'contact_page' => [
+        'title' => 'Contacto - MainGDream',
+        'description' => 'Entre em contacto com a MainGDream para soluções em engenharia, manutenção, tecnologia e peças sobressalentes.',
+        'form_title' => 'Envie-nos uma Mensagem',
+        'form_subtitle' => 'Estamos aqui para ajudar! Entre em contacto connosco para discutir as suas necessidades e como podemos fornecer as melhores soluções para o seu negócio.',
+        
+        // Contact Info Labels
+        'address_label' => 'Endereço',
+        'email_label' => 'Email',
+        'phone_label' => 'Telefone',
+        
+        // Business Hours
+        'business_hours' => 'Horário de Funcionamento',
+        'weekdays' => 'Segunda a Sexta',
+        'weekdays_hours' => '08:00 - 18:00',
+        'saturday' => 'Sábado',
+        'saturday_hours' => '08:00 - 13:00',
+        'sunday' => 'Domingo',
+        'sunday_hours' => 'Fechado',
+        
+        // Social Media
+        'follow_us' => 'Siga-nos',
+        
+        // Call to Action
+        'cta_title' => 'Precisa de Assistência Urgente?',
+        'cta_subtitle' => 'Nossa equipa está disponível para atender suas necessidades técnicas com rapidez e eficiência.',
+        'call_now' => 'Ligar Agora',
+        
+        // Success Messages
+        'form_sent' => 'Mensagem enviada com sucesso!',
+        'form_error' => 'Erro ao enviar mensagem. Tente novamente.',
+    ],
+
     // Contact Information
     'contact' => [
         'address' => 'Beira, Sofala, Moçambique',
