@@ -49,8 +49,10 @@ use App\Livewire\System\SubscriptionManagement;
 use App\Livewire\System\SystemDashboard;
 use App\Livewire\System\UserManagement;
 use App\Livewire\Website\About;
+use App\Livewire\Website\CheckOut;
 use App\Livewire\Website\Contact;
 use App\Livewire\Website\Home;
+use App\Livewire\Website\Project;
 use App\Livewire\Website\Service;
 use Illuminate\Support\Facades\Auth;
 
@@ -83,14 +85,6 @@ Route::group([
     // Sobre3
     Route::get('/sobre', About::class)->name('about');
 
-    // Route::get('/missao', function () {
-    //     return view('website.mission');
-    // })->name('mission');
-
-    // Route::get('/equipe', function () {
-    //     return view('website.team');
-    // })->name('team');
-
     // Serviços
     Route::get('/servicos', Service::class)->name('services');
 
@@ -111,12 +105,12 @@ Route::group([
     })->name('services.spare_parts');
 
     // Projetos
-    Route::get('/projetos', function () {
-        return view('website.projects');
-    })->name('projects');
+    Route::get('/projetos', Project::class)->name('projects');
 
     // Contato
     Route::get('/contacto', Contact::class)->name('contact');
+
+    Route::get('/check-out',CheckOut::class)->name('check-out');
 
     Route::post('/contacto', function () {
         // Lógica de envio do formulário
