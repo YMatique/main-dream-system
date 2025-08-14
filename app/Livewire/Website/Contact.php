@@ -88,7 +88,7 @@ class Contact extends Component
                 'date' => now()->format('d/m/Y H:i:s'),
             ];
               // Send email to company
-            Mail::to(config('mail.contact_email', 'info@maingdream.co.mz'))
+            Mail::to(config('mail.contact_email', 'info@maingdream.com'))
                 ->send(new ContactFormMail($contactData));
 
             // Send auto-reply to customer
