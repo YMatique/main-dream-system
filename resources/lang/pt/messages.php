@@ -14,6 +14,8 @@ return [
         'about_us' => 'Sobre a Empresa',
         'mission' => 'Missão & Visão',
         'team' => 'Nossa Equipe',
+        'history' => 'Nossa História',
+        'values' => 'Nossos Valores',
         'services' => 'Serviços',
         'all_services' => 'Todos os Serviços',
         'engineering' => 'Engenharia',
@@ -135,11 +137,48 @@ return [
         ],
     ],
 
+    // About Page
+    'about' => [
+        'title' => 'Sobre Nós - MainGDream',
+        'description' => 'Conheça a MainGDream, empresa especializada em soluções completas de engenharia, manutenção, tecnologia e peças sobressalentes.',
+        'intro' => 'A MainGDream é uma empresa especializada em fornecer soluções completas, inteligentes e personalizadas nas áreas de engenharia, manutenção, tecnologia e fornecimento de peças sobressalentes.',
+        'focus' => 'O nosso foco é garantir o desempenho contínuo, seguro e eficiente das operações dos nossos clientes, combinando inovação, confiabilidade e excelência técnica.',
+        'clients_desc' => 'Atendemos indústrias, empresas de manutenção, energia, construção, mineração, telecomunicações, logística e sectores agrícolas. Também servimos organizações públicas e privadas que requerem soluções técnicas altamente confiáveis.',
+        'team_desc' => 'Nossa equipa especializada garante excelência técnica, qualidade superior e parcerias duradouras baseadas em confiança e resultados. Valorizamos uma cultura de aprendizagem constante, ética profissional e trabalho colaborativo.',
+    ],
+
     // Company Information
     'company' => [
         'mission' => 'Fornecer soluções completas e inteligentes em engenharia, manutenção, tecnologia e fornecimento de peças sobressalentes, garantindo performance, confiabilidade e inovação em todas as operações dos clientes.',
         'vision' => 'Ser referência em soluções técnicas e tecnológicas a nível nacional, regional e internacional, destacando-se pela excelência, inovação e confiança dos nossos serviços.',
+        'founded' => 'Fundada em 2021',
+        'foundation_text' => 'A MainGDream nasceu da visão de um engenheiro experiente apaixonado por gestão de manutenção, confiabilidade, instrumentação, tecnologia e automação.',
+        'dedication' => 'Desde o início, a empresa tem-se dedicado a fornecer soluções inovadoras e eficientes que atendem às exigências industriais com qualidade, segurança e sustentabilidade.',
+        'recognition' => 'Ao longo dos anos, a MainGDream ganhou reconhecimento mundial por projetar sistemas confiáveis e eficazes que ajudam clientes a otimizar processos, reduzir custos operacionais e garantir continuidade operacional.',
+        'partnerships' => 'A empresa estabeleceu parcerias sólidas com várias marcas e fornecedores certificados, expandindo seu portfólio e capacidade técnica para atender mercados nacionais e internacionais.',
+        'achievements' => 'Entre suas principais conquistas estão o desenvolvimento e implementação de sistemas avançados de gestão de manutenção e controle, aquisições, avaliação de desempenho e gestão de inventário.',
+        'commitment' => 'Impulsionada pelo compromisso de avançar o setor industrial com tecnologias sustentáveis e eficientes, a MainGDream continua focada em desenvolver e instalar técnicas que prolongam a vida útil de máquinas.',
+        'culture' => 'A empresa valoriza uma cultura de aprendizagem constante, ética profissional e trabalho colaborativo, envolvendo clientes e parceiros para criar soluções personalizadas de alto impacto.',
+        'future' => 'Com uma abordagem voltada para o futuro, a MainGDream reafirma seu propósito de ser referência em excelência técnica, contribuindo para o crescimento sustentável e transformação digital das indústrias que atende.',
+        'expansion' => 'A visão é expandir sua presença regional e globalmente, sempre alinhada com tendências tecnológicas e necessidades em evolução dos mercados.',
+        
+        // History Section
+        'history' => [
+            'title' => 'Nossa História',
+            'intro' => 'Fundada em 2021, a MainGDream nasceu da visão de um engenheiro experiente apaixonado por gestão de manutenção, confiabilidade, instrumentação, tecnologia e automação.',
+            'beginning' => 'Desde o início, a empresa tem-se dedicado a fornecer soluções inovadoras e eficientes que atendem às exigências industriais com qualidade, segurança e sustentabilidade.',
+            'growth' => 'Ao longo dos anos, a MainGDream ganhou reconhecimento mundial por projetar sistemas confiáveis e eficazes que ajudam clientes a otimizar processos, reduzir custos operacionais e garantir continuidade operacional.',
+            'partnerships' => 'A empresa estabeleceu parcerias sólidas com várias marcas e fornecedores certificados, expandindo seu portfólio e capacidade técnica para atender mercados nacionais e internacionais.',
+            'achievements' => 'Entre suas principais conquistas estão o desenvolvimento e implementação de sistemas avançados de gestão de manutenção e controle, aquisições, avaliação de desempenho e gestão de inventário, que têm sido essenciais para aumentar a produtividade e competitividade das organizações clientes.',
+            'commitment' => 'Impulsionada pelo compromisso de avançar o setor industrial com tecnologias sustentáveis e eficientes, a MainGDream continua focada em desenvolver e instalar técnicas que prolongam a vida útil de máquinas, aumentam a robustez dos processos produtivos e fomentam a inovação contínua.',
+            'culture' => 'A empresa valoriza uma cultura de aprendizagem constante, ética profissional e trabalho colaborativo, envolvendo clientes e parceiros para criar soluções personalizadas de alto impacto.',
+            'future' => 'Com uma abordagem voltada para o futuro, a MainGDream reafirma seu propósito de ser referência em excelência técnica, contribuindo para o crescimento sustentável e transformação digital das indústrias que atende.',
+            'expansion' => 'A visão é expandir sua presença regional e globalmente, sempre alinhada com tendências tecnológicas e necessidades em evolução dos mercados.',
+        ],
+        
         'values' => [
+            'title' => 'Nossos Valores',
+            'intro' => 'Nossos valores fundamentais orientam todas as nossas ações e decisões, garantindo que mantenhamos os mais altos padrões de qualidade e integridade.',
             'commitment' => 'Compromisso',
             'commitment_desc' => 'Honramos prazos, acordos e resultados com total foco na entrega.',
             'excellence' => 'Excelência Técnica',
@@ -159,10 +198,49 @@ return [
 
     // Services
     'services' => [
+        'title' => 'Nossos Serviços',
+        'subtitle' => 'Soluções completas e especializadas para o seu negócio',
         'engineering' => 'Engenharia',
         'maintenance' => 'Manutenção',
         'technology' => 'Tecnologia',
         'spare_parts' => 'Peças Sobressalentes',
+        
+        // Detailed Services
+        'maintenance_overhaul' => [
+            'title' => 'Manutenção & Reparação',
+            'desc' => 'Manutenção industrial e automotiva (preventiva, corretiva, preditiva e de engenharia)',
+            'services' => [
+                'Reparação de componentes: motores, transmissões, diferenciais, cilindros hidráulicos, drives finais, bombas, geradores, cubos e mais',
+                'Retrofit de máquinas e sistemas com atualizações de controle modernas',
+                'Consultoria na implementação de estratégias de manutenção'
+            ]
+        ],
+        
+        'technology_automation' => [
+            'title' => 'Tecnologia & Automação',
+            'desc' => 'Soluções avançadas em instrumentação, automação e controle',
+            'services' => [
+                'Soluções de instrumentação, automação e controle',
+                'Desenvolvimento personalizado de software/sistemas',
+                'Integração de IoT industrial: monitoramento remoto, coleta de dados e conectividade de equipamentos',
+                'Implementação de redes, conectividade e sistemas técnicos',
+                'Design de projetos de engenharia e suporte técnico'
+            ]
+        ],
+        
+        'spare_parts_training' => [
+            'title' => 'Peças Sobressalentes & Formação',
+            'desc' => 'Fornecimento de peças de alta qualidade e programas de formação técnica',
+            'services' => [
+                'Fornecimento de peças sobressalentes e componentes de alta qualidade',
+                'Programas de formação técnica em sistemas hidráulicos e pneumáticos',
+                'Formação em sistemas de injeção eletrônica',
+                'Organização de oficinas e controle de qualidade',
+                'Técnicas de medição e programação CNC',
+                'Diagnósticos baseados em computador',
+                'Soldadura e outros módulos personalizados'
+            ]
+        ]
     ],
 
     // Contact Information
