@@ -2,7 +2,11 @@
 
 namespace App\Livewire\Website;
 
-use Illuminate\Contracts\Validation\Validator;
+use App\Mail\ContactAutoReply;
+use App\Mail\ContactFormMail;
+// use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
 class ContactForm extends Component
@@ -12,7 +16,7 @@ class ContactForm extends Component
     public $phone;
     public $subject;
     public $service_type = '';
-    
+
     public $isSubmitting = false;
     public $showSuccess = false;
     public $showError = false;
@@ -80,8 +84,8 @@ class ContactForm extends Component
             // Mostrar sucesso
             $this->showSuccess = true;
             $this->resetForm();
-
         } catch (\Exception $e) {
+            // dd($e);
             $this->showError = true;
             $this->errorMessage = __('messages.contact_form.error');
         } finally {
@@ -91,27 +95,41 @@ class ContactForm extends Component
 
     private function sendContactEmail($data)
     {
-        // Implementar envio de email aqui
-        // Por agora, apenas simular o envio
-        
-        // Exemplo usando Mail::raw():
-        /*
-        Mail::raw("Nova mensagem de contacto:\n\n" .
-                  "Nome: {$data['name']}\n" .
-                  "Email: {$data['email']}\n" .
-                  "Telefone: {$data['phone']}\n" .
-                  "Assunto: {$data['subject']}\n" .
-                  "Tipo de Serviço: {$data['service_type']}", function ($message) use ($data) {
-            $message->to(config('mail.contact_email', 'info@maingdream.co.mz'))
-                   ->subject('Nova Mensagem de Contacto - ' . $data['subject'])
-                   ->from($data['email'], $data['name']);
-        });
-        */
-        
+        $contactData = [
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'subject' => $data['subject'],
+            'service_type' => $data['service_type'],
+            'message_content' => '',
+            'service_label' => $this->getServiceLabel($data['service_type']),
+            'date' => now()->format('d/m/Y H:i:s'),
+        ];
+        // Send email to company
+        Mail::to(config('mail.contact_email', 'info@maingdream.com'))
+            ->send(new ContactFormMail($contactData));
+
+        // Send auto-reply to customer
+        Mail::to($data['email'])
+            ->send(new ContactAutoReply($contactData));
+
         // Por agora, apenas log
         logger('Nova mensagem de contacto', $data);
     }
 
+     private function getServiceLabel($serviceType)
+    {
+        $services = [
+            'engineering' => __('messages.contact_form.service_options.engineering'),
+            'maintenance' => __('messages.contact_form.service_options.maintenance'),
+            'technology' => __('messages.contact_form.service_options.technology'),
+            'spare_parts' => __('messages.contact_form.service_options.spare_parts'),
+            'consultation' => __('messages.contact_form.service_options.consultation'),
+            'other' => __('messages.contact_form.service_options.other'),
+        ];
+
+        return $services[$serviceType] ?? $serviceType;
+    }
     public function resetForm()
     {
         $this->name = '';
