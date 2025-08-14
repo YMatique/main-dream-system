@@ -132,6 +132,7 @@ return [
             'client5' => 'Cliente MainGDream 5',
             'client6' => 'Cliente MainGDream 6',
         ],
+
         'callback' => [
             'title' => 'Solicite um Contacto',
         ],
@@ -205,42 +206,65 @@ return [
         'technology' => 'Tecnologia',
         'spare_parts' => 'Peças Sobressalentes',
         
-        // Detailed Services
-        'maintenance_overhaul' => [
+        // Engineering Details
+        'engineering_detail' => [
+            'description' => 'Desenvolvemos projetos de engenharia personalizados que combinam eficiência operacional, sustentabilidade ambiental e inovação tecnológica. Nossa equipe especializada trabalha com as mais modernas ferramentas de design e simulação para garantir soluções que atendam perfeitamente às necessidades específicas de cada cliente.',
+            'benefits_title' => 'Benefícios do Serviço',
+            'benefits_desc' => 'Nossos projetos de engenharia são desenvolvidos com foco na otimização de processos e redução de custos operacionais.',
+            'benefit1' => 'Design personalizado para necessidades específicas',
+            'benefit2' => 'Otimização de processos industriais',
+            'benefit3' => 'Soluções sustentáveis e eficientes',
+            'benefit4' => 'Suporte técnico especializado',
+        ],
+        
+        // Maintenance Details
+        'maintenance_detail' => [
             'title' => 'Manutenção & Reparação',
             'desc' => 'Manutenção industrial e automotiva (preventiva, corretiva, preditiva e de engenharia)',
-            'services' => [
-                'Reparação de componentes: motores, transmissões, diferenciais, cilindros hidráulicos, drives finais, bombas, geradores, cubos e mais',
-                'Retrofit de máquinas e sistemas com atualizações de controle modernas',
-                'Consultoria na implementação de estratégias de manutenção'
-            ]
+            'services_title' => 'Nossos Serviços de Manutenção',
+            'services_desc' => 'Oferecemos soluções completas para garantir a operação contínua dos seus equipamentos.',
+            'service1' => 'Manutenção preventiva e corretiva',
+            'service2' => 'Reparação de componentes especializados',
+            'service3' => 'Retrofit de sistemas antigos',
+            'service4' => 'Consultoria em estratégias de manutenção',
         ],
         
-        'technology_automation' => [
+        // Technology Details
+        'technology_detail' => [
             'title' => 'Tecnologia & Automação',
             'desc' => 'Soluções avançadas em instrumentação, automação e controle',
-            'services' => [
-                'Soluções de instrumentação, automação e controle',
-                'Desenvolvimento personalizado de software/sistemas',
-                'Integração de IoT industrial: monitoramento remoto, coleta de dados e conectividade de equipamentos',
-                'Implementação de redes, conectividade e sistemas técnicos',
-                'Design de projetos de engenharia e suporte técnico'
-            ]
+            'solutions_title' => 'Soluções Tecnológicas',
+            'solutions_desc' => 'Implementamos tecnologias avançadas para otimização e automação de processos industriais.',
+            'solution1' => 'Sistemas de automação e controle',
+            'solution2' => 'Desenvolvimento de software personalizado',
+            'solution3' => 'Integração de IoT industrial',
+            'solution4' => 'Implementação de redes técnicas',
         ],
         
-        'spare_parts_training' => [
+        // Spare Parts Details
+        'spare_parts_detail' => [
             'title' => 'Peças Sobressalentes & Formação',
             'desc' => 'Fornecimento de peças de alta qualidade e programas de formação técnica',
-            'services' => [
-                'Fornecimento de peças sobressalentes e componentes de alta qualidade',
-                'Programas de formação técnica em sistemas hidráulicos e pneumáticos',
-                'Formação em sistemas de injeção eletrônica',
-                'Organização de oficinas e controle de qualidade',
-                'Técnicas de medição e programação CNC',
-                'Diagnósticos baseados em computador',
-                'Soldadura e outros módulos personalizados'
-            ]
-        ]
+            'training_title' => 'Peças & Formação',
+            'training_desc' => 'Fornecemos peças sobressalentes de qualidade e programas de formação técnica especializados.',
+            'feature1' => 'Peças originais e compatíveis',
+            'feature2' => 'Entrega rápida e confiável',
+            'feature3' => 'Programas de formação técnica',
+            'feature4' => 'Suporte pós-venda especializado',
+        ],
+        
+        // FAQ
+        'faq' => [
+            'title' => 'Mais Informações',
+            'question1' => 'Como garantimos a qualidade dos nossos serviços?',
+            'answer1' => 'Operamos com precisão, melhoria contínua e padrões de alta qualidade. Todos os nossos processos seguem rigorosos padrões de qualidade e são executados por profissionais certificados e experientes.',
+            'question2' => 'Qual é o prazo de entrega dos projetos?',
+            'answer2' => 'Honramos prazos, acordos e resultados com total foco na entrega. Os prazos variam conforme a complexidade do projeto, mas sempre cumprimos os acordos estabelecidos com transparência total.',
+            'question3' => 'Oferecemos suporte pós-implementação?',
+            'answer3' => 'Sim, oferecemos suporte técnico contínuo e manutenção preventiva para garantir o funcionamento otimizado de todas as nossas soluções implementadas.',
+            'question4' => 'Como é feito o acompanhamento dos projetos?',
+            'answer4' => 'Nossa metodologia integra planejamento estratégico, execução precisa e acompanhamento contínuo para garantir resultados excepcionais em todos os projetos. Utilizamos ferramentas modernas de gestão de projetos para total transparência e comunicação.',
+        ],
     ],
 
     // Contact Information
@@ -282,8 +306,7 @@ return [
         'submit' => 'Enviar Mensagem',
         'success' => 'Mensagem enviada com sucesso! Entraremos em contacto em breve.',
         'error' => 'Erro ao enviar mensagem. Por favor, tente novamente.',
-
-         
+        
         // Validation Messages
         'validation' => [
             'name_required' => 'O nome é obrigatório.',

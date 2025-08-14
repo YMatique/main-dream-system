@@ -1,10 +1,9 @@
 <div>
-<!--Page Title-->
+    <!--Page Title-->
     <section class="page-title" style="background-image:url(template/images/background/4.jpg);">
         <div class="auto-container">
-            <h1>Mechanical Engineering</h1>
+            <h1>{{ __('messages.services.title') }}</h1>
         </div>
-        
     </section>
     <!--End Page Title-->
     
@@ -13,104 +12,208 @@
         <div class="auto-container">
             <div class="inner-container clearfix">
                 <ul class="bread-crumb pull-left">
-                    <li><a href="index.html">Home</a></li>
-                    <li>Mechanical Engineering</li>
+                    <li><a href="{{ route('home', ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.home') }}</a></li>
+                    <li>{{ __('messages.nav.services') }}</li>
                 </ul>
-                <div class="text pull-right">Certified Company ISO 9001-2008</div>
+                <div class="text pull-right">{{ __('messages.footer.tagline') }}</div>
             </div>
         </div>
     </div>
     <!--End Page Info-->
     
-     <!--Sidebar Page Container-->
+    <!--Sidebar Page Container-->
     <div class="sidebar-page-container">
-    	<div class="auto-container">
-        	<div class="row clearfix">
-            	
-				<!--Content Side-->
+        <div class="auto-container">
+            <div class="row clearfix">
+                
+                <!--Content Side-->
                 <div class="content-side pull-right col-lg-9 col-md-8 col-sm-12 col-xs-12">
-                	<div class="services-single">
-						<div class="inner-box">
-							<div class="big-image">
-                            	<img src="template/images/resource/service-19.jpg" alt="" />
-                            </div>
-                            <h2>Mechanical Engineering</h2>
-                            <div class="text">
-								<p>Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.</p>
-                            	<p>Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in real-time will have multiple touchpoints for offshoring. Capitalize on low hanging fruit to identify a ballpark value added activity to beta test. </p>
-                                <div class="two-column">
-                                	<div class="row clearfix">
-                                    	<div class="content-column col-md-6 col-sm-6 col-xs-12">
-                                        	<div class="inner-column right-padd">
-                                                <h3>Benefit of Service</h3>
-                                                <p>Expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself.</p>
-                                                <ul class="list-style-four">
-                                                    <li>Those who do not know how to pursue</li>
-                                                    <li>Pleasure rationally encounter</li>
-                                                    <li>Consequences that are extremely painful.</li>
-                                                    <li>Nor again is there anyone who loves or pursues</li>
-                                                </ul>
+                    <div class="services-single">
+                        <div class="inner-box">
+                            
+                            @if($selectedService === 'engineering')
+                                <div class="big-image">
+                                    <img src="template/images/resource/service-engineering.jpg" alt="{{ __('messages.services.engineering') }}" />
+                                </div>
+                                <h2>{{ __('messages.services.engineering') }}</h2>
+                                <div class="text">
+                                    <p>{{ __('messages.home.services.engineering_desc') }}</p>
+                                    <p>{{ __('messages.services.engineering_detail.description') }}</p>
+                                    
+                                    <div class="two-column">
+                                        <div class="row clearfix">
+                                            <div class="content-column col-md-6 col-sm-6 col-xs-12">
+                                                <div class="inner-column right-padd">
+                                                    <h3>{{ __('messages.services.engineering_detail.benefits_title') }}</h3>
+                                                    <p>{{ __('messages.services.engineering_detail.benefits_desc') }}</p>
+                                                    <ul class="list-style-four">
+                                                        <li>{{ __('messages.services.engineering_detail.benefit1') }}</li>
+                                                        <li>{{ __('messages.services.engineering_detail.benefit2') }}</li>
+                                                        <li>{{ __('messages.services.engineering_detail.benefit3') }}</li>
+                                                        <li>{{ __('messages.services.engineering_detail.benefit4') }}</li>
+                                                    </ul>
+                                                </div>
                                             </div>
-                                        </div>
-                                    	<div class="image-column col-md-6 col-sm-6 col-xs-12">
-                                        	<div class="image">
-                                            	<img src="images/resource/service-20.jpg" alt="" />
+                                            <div class="image-column col-md-6 col-sm-6 col-xs-12">
+                                                <div class="image">
+                                                    <img src="template/images/resource/engineering-detail.jpg" alt="{{ __('messages.services.engineering') }} MainGDream" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
+
+                            @if($selectedService === 'maintenance')
+                                <div class="big-image">
+                                    <img src="template/images/resource/service-maintenance.jpg" alt="{{ __('messages.services.maintenance') }}" />
+                                </div>
+                                <h2>{{ __('messages.services.maintenance_detail.title') }}</h2>
+                                <div class="text">
+                                    <p>{{ __('messages.home.services.maintenance_desc') }}</p>
+                                    <p>{{ __('messages.services.maintenance_detail.desc') }}</p>
+                                    
+                                    <div class="two-column">
+                                        <div class="row clearfix">
+                                            <div class="content-column col-md-6 col-sm-6 col-xs-12">
+                                                <div class="inner-column right-padd">
+                                                    <h3>{{ __('messages.services.maintenance_detail.services_title') }}</h3>
+                                                    <p>{{ __('messages.services.maintenance_detail.services_desc') }}</p>
+                                                    <ul class="list-style-four">
+                                                        <li>{{ __('messages.services.maintenance_detail.service1') }}</li>
+                                                        <li>{{ __('messages.services.maintenance_detail.service2') }}</li>
+                                                        <li>{{ __('messages.services.maintenance_detail.service3') }}</li>
+                                                        <li>{{ __('messages.services.maintenance_detail.service4') }}</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="image-column col-md-6 col-sm-6 col-xs-12">
+                                                <div class="image">
+                                                    <img src="template/images/resource/maintenance-detail.jpg" alt="{{ __('messages.services.maintenance') }} MainGDream" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($selectedService === 'technology')
+                                <div class="big-image">
+                                    <img src="template/images/resource/service-technology.jpg" alt="{{ __('messages.services.technology') }}" />
+                                </div>
+                                <h2>{{ __('messages.services.technology_detail.title') }}</h2>
+                                <div class="text">
+                                    <p>{{ __('messages.home.services.technology_desc') }}</p>
+                                    <p>{{ __('messages.services.technology_detail.desc') }}</p>
+                                    
+                                    <div class="two-column">
+                                        <div class="row clearfix">
+                                            <div class="content-column col-md-6 col-sm-6 col-xs-12">
+                                                <div class="inner-column right-padd">
+                                                    <h3>{{ __('messages.services.technology_detail.solutions_title') }}</h3>
+                                                    <p>{{ __('messages.services.technology_detail.solutions_desc') }}</p>
+                                                    <ul class="list-style-four">
+                                                        <li>{{ __('messages.services.technology_detail.solution1') }}</li>
+                                                        <li>{{ __('messages.services.technology_detail.solution2') }}</li>
+                                                        <li>{{ __('messages.services.technology_detail.solution3') }}</li>
+                                                        <li>{{ __('messages.services.technology_detail.solution4') }}</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="image-column col-md-6 col-sm-6 col-xs-12">
+                                                <div class="image">
+                                                    <img src="template/images/resource/technology-detail.jpg" alt="{{ __('messages.services.technology') }} MainGDream" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($selectedService === 'spare_parts')
+                                <div class="big-image">
+                                    <img src="template/images/resource/service-spares.jpg" alt="{{ __('messages.services.spare_parts') }}" />
+                                </div>
+                                <h2>{{ __('messages.services.spare_parts_detail.title') }}</h2>
+                                <div class="text">
+                                    <p>{{ __('messages.home.services.spare_parts_desc') }}</p>
+                                    <p>{{ __('messages.services.spare_parts_detail.desc') }}</p>
+                                    
+                                    <div class="two-column">
+                                        <div class="row clearfix">
+                                            <div class="content-column col-md-6 col-sm-6 col-xs-12">
+                                                <div class="inner-column right-padd">
+                                                    <h3>{{ __('messages.services.spare_parts_detail.training_title') }}</h3>
+                                                    <p>{{ __('messages.services.spare_parts_detail.training_desc') }}</p>
+                                                    <ul class="list-style-four">
+                                                        <li>{{ __('messages.services.spare_parts_detail.feature1') }}</li>
+                                                        <li>{{ __('messages.services.spare_parts_detail.feature2') }}</li>
+                                                        <li>{{ __('messages.services.spare_parts_detail.feature3') }}</li>
+                                                        <li>{{ __('messages.services.spare_parts_detail.feature4') }}</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="image-column col-md-6 col-sm-6 col-xs-12">
+                                                <div class="image">
+                                                    <img src="template/images/resource/spares-detail.jpg" alt="{{ __('messages.services.spare_parts') }} MainGDream" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            
                             <div class="featured-blocks">
-                            	<div class="clearfix">
-                                	
+                                <div class="clearfix">
+                                    
                                     <!--Featured Block-->
                                     <div class="featured-block col-md-6 col-sm-6 col-xs-12">
-                                    	<div class="featured-inner">
-                                        	<div class="content">
-                                            	<div class="icon-box">
-                                                	<span class="icon flaticon-worker"></span>
+                                        <div class="featured-inner">
+                                            <div class="content">
+                                                <div class="icon-box">
+                                                    <span class="icon flaticon-worker"></span>
                                                 </div>
-                                                <h3><a href="#">Professional Team</a></h3>
-                                                <div class="featured-text">Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches.</div>
+                                                <h3><a href="#">{!! __('messages.home.approach.best_engineers') !!}</a></h3>
+                                                <div class="featured-text">{{ __('messages.about.team_desc') }}</div>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <!--Featured Block-->
                                     <div class="featured-block col-md-6 col-sm-6 col-xs-12">
-                                    	<div class="featured-inner">
-                                        	<div class="content">
-                                            	<div class="icon-box">
-                                                	<span class="icon flaticon-clock-1"></span>
+                                        <div class="featured-inner">
+                                            <div class="content">
+                                                <div class="icon-box">
+                                                    <span class="icon flaticon-clock-1"></span>
                                                 </div>
-                                                <h3><a href="#">Delivery on Time</a></h3>
-                                                <div class="featured-text">Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches.</div>
+                                                <h3><a href="#">{!! __('messages.home.approach.support_24_7') !!}</a></h3>
+                                                <div class="featured-text">{{ __('messages.company.values.commitment_desc') }}</div>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <!--Featured Block-->
                                     <div class="featured-block col-md-6 col-sm-6 col-xs-12">
-                                    	<div class="featured-inner">
-                                        	<div class="content">
-                                            	<div class="icon-box">
-                                                	<span class="icon flaticon-medal"></span>
+                                        <div class="featured-inner">
+                                            <div class="content">
+                                                <div class="icon-box">
+                                                    <span class="icon flaticon-medal"></span>
                                                 </div>
-                                                <h3><a href="#">Quality Products</a></h3>
-                                                <div class="featured-text">Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches.</div>
+                                                <h3><a href="#">{{ __('messages.company.values.excellence') }}</a></h3>
+                                                <div class="featured-text">{{ __('messages.company.values.excellence_desc') }}</div>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <!--Featured Block-->
                                     <div class="featured-block col-md-6 col-sm-6 col-xs-12">
-                                    	<div class="featured-inner">
-                                        	<div class="content">
-                                            	<div class="icon-box">
-                                                	<span class="icon flaticon-gear"></span>
+                                        <div class="featured-inner">
+                                            <div class="content">
+                                                <div class="icon-box">
+                                                    <span class="icon flaticon-gear"></span>
                                                 </div>
-                                                <h3><a href="#">#1 Manufacturing Unit</a></h3>
-                                                <div class="featured-text">Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches.</div>
+                                                <h3><a href="#">{{ __('messages.company.values.innovation') }}</a></h3>
+                                                <div class="featured-text">{{ __('messages.company.values.innovation_desc') }}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -120,46 +223,46 @@
                             
                             <!--Accordian Boxed-->
                             <div class="accordian-boxed">
-                            	<h3>More information</h3>
-                            	<!--Accordian Box-->
+                                <h3>{{ __('messages.services.faq.title') }}</h3>
+                                <!--Accordian Box-->
                                 <ul class="accordion-box style-three">
                                     
                                     <!--Block-->
                                     <li class="accordion block">
-                                        <div class="acc-btn"><div class="icon-outer"><span class="icon icon-plus fa fa-plus"></span> <span class="icon icon-minus fa fa-minus"></span></div>Capitalize on low hanging fruit to identify a ballpark value added activity.</div>
+                                        <div class="acc-btn"><div class="icon-outer"><span class="icon icon-plus fa fa-plus"></span> <span class="icon icon-minus fa fa-minus"></span></div>{{ __('messages.services.faq.question1') }}</div>
                                         <div class="acc-content">
                                             <div class="content">
-                                                <div class="text">Expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids. actual teachings of the great explorer of the truth, the master-builder of human actual teachings of the great explorer of the truth, the master-builder of human.</div>
+                                                <div class="text">{{ __('messages.services.faq.answer1') }}</div>
                                             </div>
                                         </div>
                                     </li>
-            
+
                                     <!--Block-->
                                     <li class="accordion block">
-                                        <div class="acc-btn"><div class="icon-outer"><span class="icon icon-plus fa fa-plus"></span> <span class="icon icon-minus fa fa-minus"></span></div>Digital divide with additional clickthroughs from DevOps. </div>
+                                        <div class="acc-btn"><div class="icon-outer"><span class="icon icon-plus fa fa-plus"></span> <span class="icon icon-minus fa fa-minus"></span></div>{{ __('messages.services.faq.question2') }}</div>
                                         <div class="acc-content">
                                             <div class="content">
-                                                <div class="text">Expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids. actual teachings of the great explorer of the truth, the master-builder of human actual teachings of the great explorer of the truth, the master-builder of human.</div>
+                                                <div class="text">{{ __('messages.services.faq.answer2') }}</div>
                                             </div>
                                         </div>
                                     </li>
                                     
                                     <!--Block-->
                                     <li class="accordion block active-block">
-                                        <div class="acc-btn active"><div class="icon-outer"><span class="icon icon-plus fa fa-plus"></span> <span class="icon icon-minus fa fa-minus"></span></div>Nanotechnology immersion along the information highway will close the loop.</div>
+                                        <div class="acc-btn active"><div class="icon-outer"><span class="icon icon-plus fa fa-plus"></span> <span class="icon icon-minus fa fa-minus"></span></div>{{ __('messages.services.faq.question3') }}</div>
                                         <div class="acc-content current">
                                             <div class="content">
-                                                <div class="text">Expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids. actual teachings of the great explorer of the truth, the master-builder of human actual teachings of the great explorer of the truth, the master-builder of human.</div>
+                                                <div class="text">{{ __('messages.services.faq.answer3') }}</div>
                                             </div>
                                         </div>
                                     </li>
                                     
                                     <!--Block-->
                                     <li class="accordion block">
-                                        <div class="acc-btn"><div class="icon-outer"><span class="icon icon-plus fa fa-plus"></span> <span class="icon icon-minus fa fa-minus"></span></div>Organically grow the holistic world view of disruptive innovation via workplace.</div>
+                                        <div class="acc-btn"><div class="icon-outer"><span class="icon icon-plus fa fa-plus"></span> <span class="icon icon-minus fa fa-minus"></span></div>{{ __('messages.services.faq.question4') }}</div>
                                         <div class="acc-content">
                                             <div class="content">
-                                                <div class="text">Expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids. actual teachings of the great explorer of the truth, the master-builder of human actual teachings of the great explorer of the truth, the master-builder of human.</div>
+                                                <div class="text">{{ __('messages.services.faq.answer4') }}</div>
                                             </div>
                                         </div>
                                     </li>
@@ -169,53 +272,59 @@
                         </div>
                     </div>
                 </div>
-				
+                
                 <!--Sidebar Side-->
                 <div class="sidebar-side col-lg-3 col-md-4 col-sm-12 col-xs-12">
-                	<aside class="sidebar">
-						
+                    <aside class="sidebar">
+                        
                         <!--Blog Category Widget-->
                         <div class="sidebar-widget sidebar-blog-category">
                             <ul class="blog-cat">
-                                <li class="active"><a href="mechanical-engineering.html">Mechanical Engineering</a></li>
-                                <li><a href="agricultural-processing.html">Agricultural Processing</a></li>
-                                <li><a href="petrolium.html">Petrolium & Gas</a></li>
-                                <li><a href="material-engineering.html">Material Engineering</a></li>
-                                <li><a href="chemical-engineering.html">Chemical Engineering</a></li>
-                                <li><a href="power-energy.html">Power & Energy</a></li>
+                                <li class="{{ $selectedService === 'engineering' ? 'active' : '' }}">
+                                    <a href="#" wire:click.prevent="selectService('engineering')">{{ __('messages.services.engineering') }}</a>
+                                </li>
+                                <li class="{{ $selectedService === 'maintenance' ? 'active' : '' }}">
+                                    <a href="#" wire:click.prevent="selectService('maintenance')">{{ __('messages.services.maintenance') }}</a>
+                                </li>
+                                <li class="{{ $selectedService === 'technology' ? 'active' : '' }}">
+                                    <a href="#" wire:click.prevent="selectService('technology')">{{ __('messages.services.technology') }}</a>
+                                </li>
+                                <li class="{{ $selectedService === 'spare_parts' ? 'active' : '' }}">
+                                    <a href="#" wire:click.prevent="selectService('spare_parts')">{{ __('messages.services.spare_parts') }}</a>
+                                </li>
                             </ul>
                         </div>
                         
                         <!--Brochure-->
-                    	<div class="sidebar-widget brochure-widget">
-							
-                        	<div class="brochure-box">
-                            	<div class="inner">
-                                	<span class="icon fa fa-file-pdf-o"></span>
-                                	<div class="text">PDF. Download</div>
+                        <div class="sidebar-widget brochure-widget">
+                            
+                            <div class="brochure-box">
+                                <div class="inner">
+                                    <span class="icon fa fa-file-pdf-o"></span>
+                                    <div class="text">PDF. {{ __('messages.buttons.download') }}</div>
                                 </div>
                                 <a href="#" class="overlay-link"></a>
                             </div>
                             
                             <div class="brochure-box">
-                            	<div class="inner">
-                                	<span class="icon flaticon-file"></span>
-                                	<div class="text">DOC.  Download</div>
+                                <div class="inner">
+                                    <span class="icon flaticon-file"></span>
+                                    <div class="text">DOC. {{ __('messages.buttons.download') }}</div>
                                 </div>
                                 <a href="#" class="overlay-link"></a>
                             </div>
                             
                         </div>
 
-						<!--Contact Widhet-->
-                    	<div class="sidebar-widget contact-info-widget">
-                        	<div class="sidebar-title style-two">
-                                <h2>Our Brochures</h2>
+                        <!--Contact Widget-->
+                        <div class="sidebar-widget contact-info-widget">
+                            <div class="sidebar-title style-two">
+                                <h2>{{ __('messages.footer.get_in_touch') }}</h2>
                             </div>
-                        	<div class="inner-box">
-                            	<ul>
-                                	<li><span class="icon fa fa-phone"></span>1800 456 7890</li>
-                                    <li><span class="icon fa fa-send"></span>info@nortech.co.in</li>
+                            <div class="inner-box">
+                                <ul>
+                                    <li><span class="icon fa fa-phone"></span>{{ __('messages.contact.phone') }}</li>
+                                    <li><span class="icon fa fa-send"></span>{{ __('messages.contact.email') }}</li>
                                 </ul>
                             </div>
                         </div>
