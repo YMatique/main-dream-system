@@ -21,7 +21,7 @@
     <link id="theme-color-file" href="{{ asset('template/css/color-themes/blue-theme.css') }}" rel="stylesheet">
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('template/images/favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('template/images/favicon.ico') }}" type="image/x-icon">
 
     <!-- Responsive -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
