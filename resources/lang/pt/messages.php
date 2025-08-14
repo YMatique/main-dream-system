@@ -57,7 +57,7 @@ return [
         // Company Section
         'company' => [
             'vision_title' => 'Nossa Visão',
-            'description' => 'A MainGDream nasceu com o propósito de transformar a realidade industrial em Moçambique e na região. Acreditamos que através de soluções inteligentes em engenharia, manutenção preventiva e tecnologia de ponta, podemos contribuir significativamente para o desenvolvimento económico sustentável. Nossa equipa de especialistas trabalha diariamente para garantir que cada projeto seja executado com os mais altos padrões de qualidade, segurança e eficiência. Valorizamos parcerias de longo prazo e construímos relações baseadas na confiança mútua e resultados comprovados.',
+            'description' => 'Oferecemos soluções completas em engenharia, manutenção e tecnologia industrial. Nossa equipa especializada garante excelência técnica, qualidade superior e parcerias duradouras baseadas em confiança e resultados.',
             'signature_alt' => 'Assinatura Direção MainGDream',
             'image_alt' => 'MainGDream - Nossa Empresa',
         ],
