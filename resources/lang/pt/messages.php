@@ -267,6 +267,130 @@ return [
         ],
     ],
 
+    // Project page
+
+    // Projects (adicionar esta seção ao arquivo messages.php)
+    'projects' => [
+        'title' => 'Nossos Projetos',
+        'subtitle' => 'Soluções inovadoras implementadas com sucesso',
+        
+        // Project Detail Page
+        'detail' => [
+            'title' => 'Detalhes do Projeto',
+            'client' => 'Cliente',
+            'category' => 'Categoria',
+            'date' => 'Data',
+            'status' => 'Status',
+            'duration' => 'Duração',
+            'technologies' => 'Tecnologias',
+            'description_title' => 'Descrição do Projeto',
+            'what_we_did' => 'Funcionalidades Desenvolvidas',
+            'technical_details' => 'Arquitetura Técnica',
+            'final_results' => 'Resultados e Benefícios',
+            'interested_title' => 'Interessado numa solução similar?',
+            'interested_desc' => 'Entre em contacto connosco para desenvolvermos uma solução personalizada para a sua empresa.',
+        ],
+        
+        // Repair Orders Management System
+        'automation' => [
+            'title' => 'Sistema SaaS de Gestão de Ordens de Reparação',
+            'client' => 'Empresas de Manutenção Industrial',
+            'category' => 'Sistema SaaS Multi-Empresa',
+            'date' => 'Desenvolvimento Contínuo',
+            'status' => 'Em Produção',
+            'duration' => '12+ meses',
+            'technologies' => 'Plataforma Web Completa',
+            'image_alt' => 'Sistema SaaS de Gestão de Ordens de Reparação',
+            'dashboard_alt' => 'Dashboard do Sistema de Ordens de Reparação',
+            
+            // Descriptions
+            'description_1' => 'Desenvolvemos uma plataforma SaaS multi-empresa completa para gestão de ordens de reparação, faturação automatizada e avaliação de desempenho. O sistema digitaliza todo o processo desde a abertura da ordem até a faturação final, incluindo controlo de materiais, gestão de técnicos e relatórios avançados.',
+            'description_2' => 'A solução implementa arquitetura multi-tenant com isolamento total de dados entre empresas, subscrições por planos, e funcionalidades específicas para empresas de manutenção industrial, oficinas especializadas e prestadores de serviços técnicos.',
+            
+            // Implementation
+            'implementation_desc' => 'O sistema foi estruturado em 5 formulários sequenciais que cobrem todo o fluxo de trabalho, desde a abertura até a validação final das ordens de reparação.',
+            'feature_1_title' => 'Fluxo de 5 Formulários Sequenciais:',
+            'feature_1_desc' => 'Abertura da ordem, execução técnica, faturação real, confirmação de máquina e validação final de equipamento - cada etapa com validações específicas e permissões granulares.',
+            'feature_2_title' => 'Sistema Tri-Modal de Faturação:',
+            'feature_2_desc' => 'Faturação HH automática, faturação estimada ajustável e faturação real definitiva, com suporte dual currency (MZN/USD) e conversão automática.',
+            'feature_3_title' => 'Gestão Multi-Empresa SaaS:',
+            'feature_3_desc' => 'Subscrições por planos, isolamento completo de dados, permissões granulares por formulário e departamento, notificações automáticas por email corporativo.',
+            
+            // Technical Details (focus on business benefits)
+            'frontend_title' => 'Interface & Experiência',
+            'frontend_desc' => 'Plataforma web acessível de qualquer lugar, com interface intuitiva e responsiva.',
+            'frontend_tech_1' => 'Acesso via navegador - sem instalação',
+            'frontend_tech_2' => 'Interface responsiva para computador e móvel',
+            'frontend_tech_3' => 'Portal dedicado para funcionários',
+            
+            'backend_title' => 'Segurança & Escalabilidade',
+            'backend_desc' => 'Sistema robusto e seguro, preparado para múltiplas empresas com dados isolados.',
+            'backend_tech_1' => 'Dados seguros e isolados por empresa',
+            'backend_tech_2' => 'Backup automático na nuvem',
+            'backend_tech_3' => 'Atualizações automáticas sem interrupção',
+            
+            // Key Features for client presentation
+            'key_features_title' => 'Principais Funcionalidades',
+            
+            'feature_block_1_title' => '📋 Processo Organizado',
+            'feature_block_1_item_1' => 'Abertura da Ordem',
+            'feature_block_1_item_2' => 'Execução Técnica',
+            'feature_block_1_item_3' => 'Faturação Real',
+            'feature_block_1_item_4' => 'Confirmação de Máquina',
+            'feature_block_1_item_5' => 'Validação Final',
+            
+            'feature_block_2_title' => '💰 Faturação Inteligente',
+            'feature_block_2_item_1' => 'Cálculo automático de valores',
+            'feature_block_2_item_2' => 'Faturação estimada ajustável',
+            'feature_block_2_item_3' => 'Faturação final definitiva',
+            'feature_block_2_item_4' => 'Suporte para Metical e Dólar',
+            
+            'feature_block_3_title' => '🏢 Gestão Empresarial',
+            'feature_block_3_item_1' => 'Múltiplas empresas numa plataforma',
+            'feature_block_3_item_2' => 'Dados isolados e seguros',
+            'feature_block_3_item_3' => 'Permissões personalizadas',
+            'feature_block_3_item_4' => 'Notificações automáticas',
+            
+            'feature_block_4_title' => '📈 Avaliação de Equipa',
+            'feature_block_4_item_1' => 'Avaliação mensal de técnicos',
+            'feature_block_4_item_2' => 'Critérios personalizados',
+            'feature_block_4_item_3' => 'Histórico de evolução',
+            'feature_block_4_item_4' => 'Portal para funcionários',
+            
+            'feature_block_5_title' => '📊 Relatórios Completos',
+            'feature_block_5_item_1' => 'Relatórios por período',
+            'feature_block_5_item_2' => 'Filtros inteligentes',
+            'feature_block_5_item_3' => 'Exportação para Excel',
+            'feature_block_5_item_4' => 'Gráficos visuais',
+            
+            'feature_block_6_title' => '🔐 Controlo de Acesso',
+            'feature_block_6_item_1' => 'Diferentes níveis de usuário',
+            'feature_block_6_item_2' => 'Acesso por departamento',
+            'feature_block_6_item_3' => 'Permissões granulares',
+            'feature_block_6_item_4' => 'Auditoria de ações',
+            
+            // Results
+            'results_1' => 'O sistema revolucionou a gestão de ordens de reparação para empresas de manutenção, eliminando completamente o uso de papel e automatizando processos manuais. A faturação que antes demorava horas agora é gerada automaticamente em minutos.',
+            'results_2' => 'A plataforma permite controlo completo sobre custos, materiais, desempenho de técnicos e rentabilidade por cliente, proporcionando dados precisos para tomada de decisões estratégicas e melhoria contínua dos processos.',
+            
+            // Benefits
+            'benefit_1' => '60% menos tempo em faturação manual',
+            'benefit_2' => '30% redução em erros de cobrança',
+            'benefit_3' => '25% melhoria na produtividade dos técnicos',
+            'benefit_4' => '90% menos tempo para gerar relatórios',
+            
+            // Statistics
+            'stat_efficiency' => '60%',
+            'stat_efficiency_label' => 'Redução Tempo Faturação',
+            'stat_time' => '90%',
+            'stat_time_label' => 'Menos Tempo Relatórios',
+            'stat_errors' => '30%',
+            'stat_errors_label' => 'Menos Erros Cobrança',
+            'stat_satisfaction' => '100%',
+            'stat_satisfaction_label' => 'Paperless Office',
+        ],
+    ],
+
     // Contact Information
     'contact' => [
         'address' => 'Beira, Sofala, Moçambique',
@@ -355,5 +479,9 @@ return [
         'warning' => 'Aviso',
         'info' => 'Informação',
     ],
+
+
+    // Project
+
     
 ];
