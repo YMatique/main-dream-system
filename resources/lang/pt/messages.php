@@ -130,6 +130,9 @@ return [
             'client5' => 'Cliente MainGDream 5',
             'client6' => 'Cliente MainGDream 6',
         ],
+        'callback' => [
+            'title' => 'Solicite um Contacto',
+        ],
     ],
 
     // Company Information
