@@ -12,16 +12,16 @@
         </div>
         
         <div style="padding: 20px;">
-            <h2>{{ __('messages.email.auto_reply.greeting') }} {{ $name }},</h2>
+            <h2>{{ __('messages.email.auto_reply.greeting') }} {{ $contactData['name'] }},</h2>
             
-            <p>{{ __('messages.email.auto_reply.thank_you') }} <strong>{{ $service_label }}</strong> {{ __('messages.email.auto_reply.response_time') }}</p>
+            <p>{{ __('messages.email.auto_reply.thank_you') }} <strong>{{ $contactData['service_label'] }}</strong> {{ __('messages.email.auto_reply.response_time') }}</p>
             
             <p>{{ __('messages.email.auto_reply.response_promise') }}</p>
             
             <div style="background: #f8f9fa; padding: 15px; margin: 20px 0; border-radius: 5px;">
                 <h3>{{ __('messages.email.auto_reply.summary_title') }}</h3>
-                <p><strong>{{ __('messages.email.contact_form.subject_label') }}:</strong> {{ $subject }}</p>
-                <p><strong>{{ __('messages.email.contact_form.service_label') }}:</strong> {{ $service_label }}</p>
+                <p><strong>{{ __('messages.email.contact_form.subject_label') }}:</strong> {{ $contactData['subject'] }}</p>
+                <p><strong>{{ __('messages.email.contact_form.service_label') }}:</strong> {{ $contactData['service_label'] }}</p>
             </div>
             
             <p>{{ __('messages.email.auto_reply.urgent_title') }}</p>
