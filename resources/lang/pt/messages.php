@@ -98,9 +98,27 @@ return [
             'project4_alt' => 'Projeto de Fornecimento de Peças MainGDream',
         ],
 
-        // Callback Section
-        'callback' => [
-            'title' => 'Solicite um Contacto',
+        // CEO Section
+        'ceo' => [
+            'title' => 'Mensagem do CEO',
+            'message_intro' => 'Na MainGDream, acreditamos que a inovação e a excelência técnica são os pilares para o sucesso industrial sustentável.',
+            'message_full' => 'Como CEO da MainGDream, tenho o orgulho de liderar uma equipe de especialistas comprometidos em transformar desafios industriais em oportunidades de crescimento. Nossa experiência combinada em engenharia, manutenção e tecnologia nos permite oferecer soluções que não apenas resolvem problemas imediatos, mas criam valor a longo prazo para nossos clientes.',
+            'image_alt' => 'CEO MainGDream',
+            'signature_alt' => 'Assinatura CEO MainGDream',
+        ],
+
+        // News Section
+        'news' => [
+            'title' => 'Últimas Notícias',
+            'subtitle' => 'Novidades & Comunicados',
+            'recent_date' => 'Dezembro 2024',
+            'news1_title' => 'MainGDream expande operações em Moçambique com novas tecnologias de automação industrial',
+            'news1_alt' => 'Notícia sobre expansão MainGDream',
+            'news2_title' => 'Novo centro de distribuição de peças sobressalentes inaugurado em Beira',
+            'news2_alt' => 'Centro de distribuição MainGDream',
+            'sidebar1_title' => 'Parceria estratégica com fornecedores internacionais fortalece catálogo de soluções',
+            'sidebar2_title' => 'Equipe técnica MainGDream recebe certificações internacionais em automação',
+            'sidebar3_title' => 'Investimento em sustentabilidade: MainGDream implementa práticas ecológicas',
         ],
 
         // Clients Section
