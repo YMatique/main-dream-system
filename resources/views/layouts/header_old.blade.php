@@ -62,43 +62,11 @@
                                     <a href="{{ route('about', ['locale' => app()->getLocale()]) }}">
                                         {{ __('messages.nav.about') }}
                                     </a>
-                                    {{-- <ul>
-                                        <li><a href="{{ route('about', ['locale' => app()->getLocale()]) }}">
-                                                {{ __('messages.nav.about_us') }}
-                                            </a></li>
-                                        <li><a href="{{ route('mission', ['locale' => app()->getLocale()]) }}">
-                                                {{ __('messages.nav.mission') }}
-                                            </a></li>
-                                        <li><a href="{{ route('team', ['locale' => app()->getLocale()]) }}">
-                                                {{ __('messages.nav.team') }}
-                                            </a></li>
-                                    </ul> --}}
                                 </li>
                                 <li class=" {{ request()->routeIs('services*') ? 'current' : '' }}">
                                     <a href="{{ route('services', ['locale' => app()->getLocale()]) }}">
                                         {{ __('messages.nav.services') }}
                                     </a>
-                                    {{-- <ul>
-                                        <li><a href="{{ route('services', ['locale' => app()->getLocale()]) }}">
-                                                {{ __('messages.nav.all_services') }}
-                                            </a></li>
-                                        <li><a
-                                                href="{{ route('services.engineering', ['locale' => app()->getLocale()]) }}">
-                                                {{ __('messages.nav.engineering') }}
-                                            </a></li>
-                                        <li><a
-                                                href="{{ route('services.maintenance', ['locale' => app()->getLocale()]) }}">
-                                                {{ __('messages.nav.maintenance') }}
-                                            </a></li>
-                                        <li><a
-                                                href="{{ route('services.technology', ['locale' => app()->getLocale()]) }}">
-                                                {{ __('messages.nav.technology') }}
-                                            </a></li>
-                                        <li><a
-                                                href="{{ route('services.spare_parts', ['locale' => app()->getLocale()]) }}">
-                                                {{ __('messages.nav.spare_parts') }}
-                                            </a></li>
-                                    </ul> --}}
                                 </li>
                                 <li class="{{ request()->routeIs('projects*') ? 'current' : '' }}">
                                     <a href="{{ route('projects', ['locale' => app()->getLocale()]) }}">
