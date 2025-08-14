@@ -460,7 +460,7 @@ return [
             'footer_address' => 'Beira, Sofala, Moçambique',
             'footer_website' => 'www.maingdream.co.mz',
         ],
-
+    ],
     // Contact Information
     'contact' => [
         'address' => 'Beira, Sofala, Moçambique',
@@ -551,7 +551,7 @@ return [
     ],
 
 
-    // Project
+    
 
     
 ];
