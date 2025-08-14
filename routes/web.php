@@ -48,7 +48,10 @@ use App\Livewire\System\PlanManagement;
 use App\Livewire\System\SubscriptionManagement;
 use App\Livewire\System\SystemDashboard;
 use App\Livewire\System\UserManagement;
+use App\Livewire\Website\About;
+use App\Livewire\Website\Contact;
 use App\Livewire\Website\Home;
+use App\Livewire\Website\Service;
 use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
@@ -78,22 +81,18 @@ Route::group([
     Route::get('/', Home::class)->name('home');
 
     // Sobre3
-    Route::get('/sobre', function () {
-        return view('website.about');
-    })->name('about');
+    Route::get('/sobre', About::class)->name('about');
 
-    Route::get('/missao', function () {
-        return view('website.mission');
-    })->name('mission');
+    // Route::get('/missao', function () {
+    //     return view('website.mission');
+    // })->name('mission');
 
-    Route::get('/equipe', function () {
-        return view('website.team');
-    })->name('team');
+    // Route::get('/equipe', function () {
+    //     return view('website.team');
+    // })->name('team');
 
     // Serviços
-    Route::get('/servicos', function () {
-        return view('website.services');
-    })->name('services');
+    Route::get('/servicos', Service::class)->name('services');
 
     Route::get('/servicos/engenharia', function () {
         return view('website.services.engineering');
@@ -117,9 +116,7 @@ Route::group([
     })->name('projects');
 
     // Contato
-    Route::get('/contacto', function () {
-        return view('website.contact');
-    })->name('contact');
+    Route::get('/contacto', Contact::class)->name('contact');
 
     Route::post('/contacto', function () {
         // Lógica de envio do formulário
