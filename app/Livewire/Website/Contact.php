@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Website;
 
+use App\Mail\ContactAutoReply;
+use App\Mail\ContactFormMail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
@@ -51,7 +53,31 @@ class Contact extends Component
 
         try {
             // Prepare email data
-            $emailData = [
+            // $emailData = [
+            //     'name' => $this->name,
+            //     'email' => $this->email,
+            //     'phone' => $this->phone,
+            //     'subject' => $this->subject,
+            //     'service_type' => $this->service_type,
+            //     'message_content' => $this->message,
+            //     'service_label' => $this->getServiceLabel($this->service_type),
+            // ];
+
+            // Send email to company
+            // Mail::send('emails.contact-form', $emailData, function ($message) {
+            //     $message->to(config('mail.contact_email', 'info@maingdream.co.mz'))
+            //             ->subject('Nova Mensagem de Contacto - MainGDream')
+            //             ->from($this->email, $this->name);
+            // });
+
+            // // Send auto-reply to customer
+            // Mail::send('emails.contact-auto-reply', $emailData, function ($message) {
+            //     $message->to($this->email, $this->name)
+            //             ->subject('Obrigado pelo seu contacto - MainGDream')
+            //             ->from(config('mail.from.address', 'info@maingdream.co.mz'), 'MainGDream');
+            // });
+
+              $contactData = [
                 'name' => $this->name,
                 'email' => $this->email,
                 'phone' => $this->phone,
@@ -59,22 +85,15 @@ class Contact extends Component
                 'service_type' => $this->service_type,
                 'message_content' => $this->message,
                 'service_label' => $this->getServiceLabel($this->service_type),
+                'date' => now()->format('d/m/Y H:i:s'),
             ];
-
-            // Send email to company
-            Mail::send('emails.contact-form', $emailData, function ($message) {
-                $message->to(config('mail.contact_email', 'info@maingdream.co.mz'))
-                        ->subject('Nova Mensagem de Contacto - MainGDream')
-                        ->from($this->email, $this->name);
-            });
+              // Send email to company
+            Mail::to(config('mail.contact_email', 'info@maingdream.co.mz'))
+                ->send(new ContactFormMail($contactData));
 
             // Send auto-reply to customer
-            Mail::send('emails.contact-auto-reply', $emailData, function ($message) {
-                $message->to($this->email, $this->name)
-                        ->subject('Obrigado pelo seu contacto - MainGDream')
-                        ->from(config('mail.from.address', 'info@maingdream.co.mz'), 'MainGDream');
-            });
-
+            Mail::to($this->email)
+                ->send(new ContactAutoReply($contactData));
             // Reset form
             $this->reset(['name', 'email', 'phone', 'subject', 'message', 'service_type']);
             
