@@ -426,6 +426,41 @@ return [
         'form_error' => 'Erro ao enviar mensagem. Tente novamente.',
     ],
 
+       // Email Templates
+    'email' => [
+        // Contact Form Email (to company)
+        'contact_form' => [
+            'subject' => 'Nova Mensagem de Contacto - MainGDream',
+            'title' => 'Nova Mensagem de Contacto',
+            'details_title' => 'Detalhes do Contacto:',
+            'name_label' => 'Nome',
+            'email_label' => 'Email',
+            'phone_label' => 'Telefone',
+            'service_label' => 'Tipo de Serviço',
+            'subject_label' => 'Assunto',
+            'message_label' => 'Mensagem',
+            'footer_text' => 'Esta mensagem foi enviada através do formulário de contacto do website MainGDream.',
+            'date_label' => 'Data',
+        ],
+        
+        // Auto-reply Email (to customer)
+        'auto_reply' => [
+            'subject' => 'Obrigado pelo seu contacto - MainGDream',
+            'greeting' => 'Olá',
+            'thank_you' => 'Obrigado por entrar em contacto connosco! Recebemos a sua mensagem sobre',
+            'response_time' => 'e a nossa equipa irá analisá-la com atenção.',
+            'response_promise' => 'Responderemos ao seu pedido no prazo de 24 horas durante os dias úteis.',
+            'summary_title' => 'Resumo da sua mensagem:',
+            'urgent_title' => 'Se tiver alguma questão urgente, pode contactar-nos diretamente:',
+            'phone_label' => 'Telefone',
+            'email_label' => 'Email',
+            'signature' => 'Atenciosamente,',
+            'team_name' => 'Equipa MainGDream',
+            'footer_company' => 'MainGDream - Soluções Completas em Engenharia, Manutenção e Tecnologia',
+            'footer_address' => 'Beira, Sofala, Moçambique',
+            'footer_website' => 'www.maingdream.co.mz',
+        ],
+
     // Contact Information
     'contact' => [
         'address' => 'Beira, Sofala, Moçambique',
