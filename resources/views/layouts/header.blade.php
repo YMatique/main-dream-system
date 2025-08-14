@@ -58,11 +58,11 @@
                                         {{ __('messages.nav.home') }}
                                     </a>
                                 </li>
-                                <li class="dropdown {{ request()->routeIs('about*') ? 'current' : '' }}">
+                                <li class="{{ request()->routeIs('about*') ? 'current' : '' }}">
                                     <a href="{{ route('about', ['locale' => app()->getLocale()]) }}">
                                         {{ __('messages.nav.about') }}
                                     </a>
-                                    <ul>
+                                    {{-- <ul>
                                         <li><a href="{{ route('about', ['locale' => app()->getLocale()]) }}">
                                                 {{ __('messages.nav.about_us') }}
                                             </a></li>
@@ -72,13 +72,13 @@
                                         <li><a href="{{ route('team', ['locale' => app()->getLocale()]) }}">
                                                 {{ __('messages.nav.team') }}
                                             </a></li>
-                                    </ul>
+                                    </ul> --}}
                                 </li>
-                                <li class="dropdown {{ request()->routeIs('services*') ? 'current' : '' }}">
+                                <li class=" {{ request()->routeIs('services*') ? 'current' : '' }}">
                                     <a href="{{ route('services', ['locale' => app()->getLocale()]) }}">
                                         {{ __('messages.nav.services') }}
                                     </a>
-                                    <ul>
+                                    {{-- <ul>
                                         <li><a href="{{ route('services', ['locale' => app()->getLocale()]) }}">
                                                 {{ __('messages.nav.all_services') }}
                                             </a></li>
@@ -98,7 +98,7 @@
                                                 href="{{ route('services.spare_parts', ['locale' => app()->getLocale()]) }}">
                                                 {{ __('messages.nav.spare_parts') }}
                                             </a></li>
-                                    </ul>
+                                    </ul> --}}
                                 </li>
                                 <li class="{{ request()->routeIs('projects*') ? 'current' : '' }}">
                                     <a href="{{ route('projects', ['locale' => app()->getLocale()]) }}">
