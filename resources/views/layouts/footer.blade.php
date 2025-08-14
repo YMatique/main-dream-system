@@ -14,16 +14,16 @@
                             <div class="footer-widget logo-widget">
                                 <div class="logo">
                                     <a href="{{ route('home',  ['locale' => app()->getLocale()]) }}">
-                                        <img src="{{ asset('images/footer-logo-maingdream.png') }}" alt="MainGDream" />
+                                        <img src="{{ asset('template/images/logo-letters.png') }}" alt="MainGDream" />
                                     </a>
                                 </div>
                                 <div class="text">{{ __('messages.footer.description') }}</div>
                                 
                                 <!-- Mission Statement -->
-                                <div class="mission-text">
+                                {{-- <div class="mission-text">
                                     <strong>{{ __('messages.footer.mission_title') }}:</strong><br>
                                     <small>{{ __('messages.company.mission') }}</small>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         

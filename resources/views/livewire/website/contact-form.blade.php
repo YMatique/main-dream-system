@@ -1,5 +1,4 @@
 <div>
-    {{-- resources/views/livewire/contact-form.blade.php --}}
     <div class="call-back-form">
 
         <!-- Success Message -->

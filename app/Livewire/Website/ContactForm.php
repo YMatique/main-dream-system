@@ -29,16 +29,27 @@ class ContactForm extends Component
     public function getValidationMessages()
     {
         return [
-            'name.required' => 'O nome é obrigatório.',
-            'name.min' => 'O nome deve ter pelo menos 2 caracteres.',
-            'email.required' => 'O email é obrigatório.',
-            'email.email' => 'Por favor, insira um email válido.',
-            'phone.required' => 'O telefone é obrigatório.',
-            'phone.min' => 'O telefone deve ter pelo menos 9 dígitos.',
-            'subject.required' => 'O assunto é obrigatório.',
-            'subject.min' => 'O assunto deve ter pelo menos 5 caracteres.',
-            'service_type.required' => 'Por favor, selecione o tipo de serviço.',
+            'name.required' => __('messages.contact_form.validation.name_required'),
+            'name.min' => __('messages.contact_form.validation.name_min'),
+            'email.required' => __('messages.contact_form.validation.email_required'),
+            'email.email' => __('messages.contact_form.validation.email_invalid'),
+            'phone.required' => __('messages.contact_form.validation.phone_required'),
+            'phone.min' => __('messages.contact_form.validation.phone_min'),
+            'subject.required' => __('messages.contact_form.validation.subject_required'),
+            'subject.min' => __('messages.contact_form.validation.subject_min'),
+            'service_type.required' => __('messages.contact_form.validation.service_type_required'),
         ];
+        // return [
+        //     'name.required' => 'O nome é obrigatório.',
+        //     'name.min' => 'O nome deve ter pelo menos 2 caracteres.',
+        //     'email.required' => 'O email é obrigatório.',
+        //     'email.email' => 'Por favor, insira um email válido.',
+        //     'phone.required' => 'O telefone é obrigatório.',
+        //     'phone.min' => 'O telefone deve ter pelo menos 9 dígitos.',
+        //     'subject.required' => 'O assunto é obrigatório.',
+        //     'subject.min' => 'O assunto deve ter pelo menos 5 caracteres.',
+        //     'service_type.required' => 'Por favor, selecione o tipo de serviço.',
+        // ];
     }
 
     public function updated($propertyName)

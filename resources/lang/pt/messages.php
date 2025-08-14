@@ -5,7 +5,7 @@ return [
     // Meta
     'tagline' => 'Engenharia | Manutenção | Tecnologia | Peças',
     'meta_description' => 'MainGDream fornece soluções completas em engenharia, manutenção, tecnologia e peças sobressalentes em Moçambique.',
-    'meta_keywords' => 'engenharia, manutenção, tecnologia, peças sobressalentes, Moçambique, Beira',
+    'meta_keywords' => 'engenharia, manutenção, tecnologia, peças sobressalentes',
 
     // Navigation
     'nav' => [
@@ -27,13 +27,13 @@ return [
     // Home Page
     'home' => [
         'title' => 'Início - Soluções em Engenharia, Manutenção e Tecnologia',
-        'description' => 'MainGDream oferece soluções completas em engenharia, manutenção, tecnologia e peças sobressalentes em Moçambique.',
+        'description' => 'MainGDream oferece soluções completas em engenharia, manutenção, tecnologia e peças sobressalentes em todo mundo.',
 
         // Slider
         'slider' => [
             'slide1' => [
-                'title' => 'Soluções Inteligentes em <br> Engenharia e Tecnologia',
-                'description' => 'Fornecemos soluções completas em engenharia, manutenção, tecnologia e peças sobressalentes para garantir performance, confiabilidade e inovação em todas as operações dos nossos clientes.',
+                'title' => 'Soluções Inteligentes em Engenharia',
+                'description' => 'Soluções completas em engenharia, manutenção, tecnologia e peças sobressalentes para garantir performance, confiabilidade e inovação em todas as operações dos nossos clientes.',
                 'alt' => 'MainGDream - Soluções em Engenharia',
             ],
             'slide2' => [
@@ -204,6 +204,20 @@ return [
         'submit' => 'Enviar Mensagem',
         'success' => 'Mensagem enviada com sucesso! Entraremos em contacto em breve.',
         'error' => 'Erro ao enviar mensagem. Por favor, tente novamente.',
+
+         
+        // Validation Messages
+        'validation' => [
+            'name_required' => 'O nome é obrigatório.',
+            'name_min' => 'O nome deve ter pelo menos 2 caracteres.',
+            'email_required' => 'O email é obrigatório.',
+            'email_invalid' => 'Por favor, insira um email válido.',
+            'phone_required' => 'O telefone é obrigatório.',
+            'phone_min' => 'O telefone deve ter pelo menos 9 dígitos.',
+            'subject_required' => 'O assunto é obrigatório.',
+            'subject_min' => 'O assunto deve ter pelo menos 5 caracteres.',
+            'service_type_required' => 'Por favor, selecione o tipo de serviço.',
+        ],
     ],
 
     // Newsletter
