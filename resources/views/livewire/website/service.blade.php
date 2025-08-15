@@ -1,6 +1,6 @@
 <div>
     <!--Page Title-->
-    <section class="page-title" style="background-image:url(template/images/background/4.jpg);">
+    <section class="page-title" style="background-image:url({{ asset('template/images/background/4.jpg') }});">
         <div class="auto-container">
             <h1>{{ __('messages.services.title') }}</h1>
         </div>
