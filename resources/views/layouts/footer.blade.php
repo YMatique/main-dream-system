@@ -33,11 +33,11 @@
                                 <h2>{{ __('messages.footer.quick_links') }}</h2>
                                 <div class="widget-content">
                                     <ul class="list">
-                                        <li><a href="{{ route('home', ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.home') }}</a></li>
-                                        <li><a href="{{ route('about',  ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.about') }}</a></li>
-                                        <li><a href="{{ route('services',  ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.services') }}</a></li>
-                                        <li><a href="{{ route('projects',  ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.projects') }}</a></li>
-                                        <li><a href="{{ route('contact',  ['locale' => app()->getLocale()]) }}">{{ __('messages.nav.contact') }}</a></li>
+                                        <li><a href="#" >{{ __('messages.nav.home') }}</a></li>
+                                        <li><a href="#" >{{ __('messages.nav.about') }}</a></li>
+                                        <li><a href="#" >{{ __('messages.nav.services') }}</a></li>
+                                        <li><a href="#" >{{ __('messages.nav.projects') }}</a></li>
+                                        <li><a href="#" >{{ __('messages.nav.contact') }}</a></li>
                                     </ul>
                                 </div>
                             </div>
