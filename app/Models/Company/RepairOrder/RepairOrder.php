@@ -2,6 +2,7 @@
 
 namespace App\Models\Company\RepairOrder;
 
+use App\Models\Company\Billing\BillingReal;
 use App\Models\System\Company;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -517,6 +518,12 @@ class RepairOrder extends Model
         }
 
         return $errors;
+    }
+    // =======================================
+    // FATURAÇÃo
+    //========================================
+    public function billingReal(){
+        return $this->hasOne(BillingReal::class);
     }
     // =============================================
     // BOOT
