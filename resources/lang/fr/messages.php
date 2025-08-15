@@ -681,7 +681,7 @@ return [
     // Contact Information
     'contact' => [
         'address' => '66 Perry Street, Monhattan, New York',
-        'phone' => '+258 84 123 4567',
+        'phone' => '+1 408 234 324+258 84 123 4567',
         'email' => 'info@maingdream.com',
         'full_address' => '66 Perry Street, Monhattan, New York',
     ],

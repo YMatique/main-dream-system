@@ -462,8 +462,8 @@ return [
     // Contact Information
     'contact' => [
         'address' => '纽约曼哈顿佩里街66号',
-        'phone' => '+258 84 123 4567',
-        'email' => 'info@maingdream.co.mz',
+        'phone' => '+1 408 234 324',
+        'email' => 'info@maingdream.com',
         'full_address' => '纽约曼哈顿佩里街66号',
     ],
 

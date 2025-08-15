@@ -1,6 +1,6 @@
 <div>
     <!--Page Title-->
-    <section class="page-title" style="background-image:url(template/images/background/4.jpg);">
+    <section class="page-title" style="background-image:url({{ asset('template/images/background/4.jpg') }});">
         <div class="auto-container">
             <h1>{{ __('messages.nav.contact') }}</h1>
         </div>
@@ -22,7 +22,7 @@
     <!--End Page Info-->
     
     <!--Map Section-->
-    <section class="map-section">
+    {{-- <section class="map-section">
         <!--Map Outer-->
         <div class="map-outer">
             <!--Map Canvas-->
@@ -37,7 +37,7 @@
                 data-content="{{ __('messages.contact.full_address') }}<br><a href='mailto:{{ __('messages.contact.email') }}'>{{ __('messages.contact.email') }}</a>">
             </div>
         </div>
-    </section>
+    </section> --}}
     <!--End Map Section-->
     
     <!--Contact Section-->
@@ -84,7 +84,7 @@
                                     </div>
                                     
                                     <div class="form-group col-md-6 col-sm-6 col-xs-12">
-                                        <input type="tel" wire:model="phone" placeholder="{{ __('messages.contact_form.phone') }}" required>
+                                        <input type="text" wire:model="phone" placeholder="{{ __('messages.contact_form.phone') }}" required>
                                         @error('phone') 
                                             <span class="error" style="color: #dc3545; font-size: 12px;">{{ $message }}</span> 
                                         @enderror

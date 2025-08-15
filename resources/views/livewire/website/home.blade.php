@@ -1,7 +1,4 @@
 <div>
-    {{-- resources/views/pages/home.blade.php --}}
-{{-- @extends('layouts.app') --}}
-
 @section('title', __('messages.home.title'))
 @section('description', __('messages.home.description'))
 
