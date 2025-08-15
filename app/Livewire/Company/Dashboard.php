@@ -463,9 +463,7 @@ class Dashboard extends Component
 
         // Ordens concluídas hoje
         $ordersCompletedToday = RepairOrder::where('company_id', $companyId)
-            ->whereHas('form1.status', function($query) {
-                $query->where('name', 'Concluída');
-            })
+            ->whereHas('form5')
             ->whereDate('updated_at', today())
             ->count();
 

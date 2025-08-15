@@ -4,7 +4,7 @@
 return [
     // Meta
     'tagline' => 'Engenharia | Manutenção | Tecnologia | Peças',
-    'meta_description' => 'MainGDream fornece soluções completas em engenharia, manutenção, tecnologia e peças sobressalentes em Moçambique.',
+    'meta_description' => 'MainGDream fornece soluções completas em engenharia, manutenção, tecnologia e peças sobressalentes.',
     'meta_keywords' => 'engenharia, manutenção, tecnologia, peças sobressalentes',
 
     // Navigation
@@ -114,9 +114,9 @@ return [
             'title' => 'Últimas Notícias',
             'subtitle' => 'Novidades & Comunicados',
             'recent_date' => 'Dezembro 2024',
-            'news1_title' => 'MainGDream expande operações em Moçambique com novas tecnologias de automação industrial',
+            'news1_title' => 'MainGDream expande operações em todo mundo com novas tecnologias de automação industrial',
             'news1_alt' => 'Notícia sobre expansão MainGDream',
-            'news2_title' => 'Novo centro de distribuição de peças sobressalentes inaugurado em Beira',
+            'news2_title' => 'Novo centro de distribuição de peças sobressalentes inaugurado em China',
             'news2_alt' => 'Centro de distribuição MainGDream',
             'sidebar1_title' => 'Parceria estratégica com fornecedores internacionais fortalece catálogo de soluções',
             'sidebar2_title' => 'Equipe técnica MainGDream recebe certificações internacionais em automação',
@@ -125,7 +125,7 @@ return [
 
         // Clients Section
         'clients' => [
-            'client1' => 'Cliente MainGDream 1',
+            'client1' => 'Selected Suply',
             'client2' => 'Cliente MainGDream 2',
             'client3' => 'Cliente MainGDream 3',
             'client4' => 'Cliente MainGDream 4',
@@ -457,16 +457,16 @@ return [
             'signature' => 'Atenciosamente,',
             'team_name' => 'Equipa MainGDream',
             'footer_company' => 'MainGDream - Soluções Completas em Engenharia, Manutenção e Tecnologia',
-            'footer_address' => 'Beira, Sofala, Moçambique',
-            'footer_website' => 'www.maingdream.co.mz',
+            'footer_address' => '66 Perry Street, Monhattan, New York',
+            'footer_website' => 'www.maingdream.com',
         ],
     ],
     // Contact Information
     'contact' => [
-        'address' => 'Beira, Sofala, Moçambique',
+        'address' => '66 Perry Street, Monhattan, New York',
         'phone' => '+258 84 123 4567',
         'email' => 'info@maingdream.co.mz',
-        'full_address' => 'Beira, Sofala, Moçambique',
+        'full_address' => '66 Perry Street, Monhattan, New York',
     ],
 
     // Footer
@@ -476,7 +476,7 @@ return [
         'quick_links' => 'Links Rápidos',
         'our_services' => 'Nossos Serviços',
         'get_in_touch' => 'Entre em Contacto',
-        'full_address' => 'Beira, Sofala, Moçambique',
+        'full_address' => '66 Perry Street, Monhattan, New York',
         'copyright' => 'Todos os direitos reservados.',
         'tagline' => 'Engenharia | Manutenção | Tecnologia | Peças',
     ],

@@ -4,7 +4,7 @@
 return [
     // Meta
     'tagline' => '工程 | 维护 | 技术 | 配件',
-    'meta_description' => 'MainGDream 在莫桑比克提供工程、维护、技术和备件的全方位解决方案。',
+    'meta_description' => 'MainGDream 提供工程、维护、技术和备件的完整解决方案。',
     'meta_keywords' => '工程, 维护, 技术, 备件',
 
     // Navigation
@@ -39,7 +39,7 @@ return [
                 'alt' => 'MainGDream - 工程解决方案',
             ],
             'slide2' => [
-                'title' => '工业维护的卓越表现',
+                'title' => '工业维护卓越',
                 'description' => '我们通过高质量的预防性和纠正性维护，确保设备持续运行，降低成本并提高生产力。',
                 'alt' => 'MainGDream - 工业维护',
             ],
@@ -59,7 +59,7 @@ return [
         // Company Section
         'company' => [
             'vision_title' => '我们的愿景',
-            'description' => '我们提供工程、维护和工业技术的全面智能解决方案。我们的专业团队确保技术卓越、优质品质以及基于信任和成果的长期合作伙伴关系。',
+            'description' => '我们提供工程、维护和工业技术的全面解决方案。我们的专业团队确保技术卓越、优质品质以及基于信任和成果的长期合作伙伴关系。',
             'signature_alt' => 'MainGDream 管理层签名',
             'image_alt' => 'MainGDream - 我们的公司',
         ],
@@ -67,7 +67,7 @@ return [
         // Services Section
         'services' => [
             'title' => '我们的服务',
-            'subtitle' => '为您的业务提供创新和技术卓越的全面解决方案',
+            'subtitle' => '以创新和技术卓越推动您的业务的全面解决方案',
             'engineering_desc' => '专注于效率、可持续性和技术创新的定制工程项目。',
             'maintenance_desc' => '专业化的预防性和纠正性维护，确保设备持续运行。',
             'technology_desc' => '实施先进技术，优化工业流程和自动化。',
@@ -78,7 +78,7 @@ return [
         'approach' => [
             'title' => '我们的方法',
             'paragraph1' => '我们根据对客户需求的详细分析，开发定制化解决方案，应用行业最佳实践和创新技术。',
-            'paragraph2' => '我们的方法整合了战略规划、精确执行和持续监控，以确保所有项目取得卓越成果。',
+            'paragraph2' => '我们的方法整合了战略规划、精确执行和持续监控，确保所有项目取得卓越成果。',
             'dedicated_team' => '专业团队',
             'best_engineers' => '顶级工程师',
             'support_24_7' => '24/7 支持',
@@ -114,9 +114,9 @@ return [
             'title' => '最新动态',
             'subtitle' => '更新与公告',
             'recent_date' => '2024年12月',
-            'news1_title' => 'MainGDream 在莫桑比克扩展业务，引入新的工业自动化技术',
+            'news1_title' => 'MainGDream 在全球扩展业务，引入新的工业自动化技术',
             'news1_alt' => 'MainGDream 扩展动态',
-            'news2_title' => '在贝拉开设新的备件配送中心',
+            'news2_title' => '在中国开设新的备件配送中心',
             'news2_alt' => 'MainGDream 配送中心',
             'sidebar1_title' => '与国际供应商的战略合作增强了解决方案目录',
             'sidebar2_title' => 'MainGDream 技术团队获得国际自动化认证',
@@ -125,7 +125,7 @@ return [
 
         // Clients Section
         'clients' => [
-            'client1' => 'MainGDream 客户 1',
+            'client1' => 'Selected Suply',
             'client2' => 'MainGDream 客户 2',
             'client3' => 'MainGDream 客户 3',
             'client4' => 'MainGDream 客户 4',
@@ -171,7 +171,7 @@ return [
             'growth' => '多年来，MainGDream 因设计可靠高效的系统而获得全球认可，帮助客户优化流程、降低运营成本并确保运营连续性。',
             'partnerships' => '公司与多个认证品牌和供应商建立了稳固的合作伙伴关系，扩展了其产品组合和技术能力，以服务于国内和国际市场。',
             'achievements' => '其主要成就包括开发和实施先进的维护与控制系统、采购、性能评估和库存管理系统，这些系统对提高客户组织的生产力和竞争力至关重要。',
-            'commitment' => '在推动工业领域采用可持续高效技术的承诺驱动下，MainGDream 继续专注于开发和安装延长机器寿命、增强生产流程稳健性并促进持续创新的技术。',
+            'commitment' => '在推动工业领域采用可持续高效技术的承诺驱动下，MainGDream 继续专注于开发-shirt和安装延长机器寿命、增强生产流程稳健性并促进持续创新的技术。',
             'culture' => '公司重视持续学习、专业道德和协作文化，涉及客户和合作伙伴，创造高影响力的定制解决方案。',
             'future' => '以面向未来的方法，MainGDream 重申其成为技术卓越标杆的目标，为其服务的行业的可持续增长和数字化转型做出贡献。',
             'expansion' => '愿景是扩大其区域和全球影响力，始终与技术趋势和不断变化的市场需求保持一致。',
@@ -454,17 +454,17 @@ return [
             'signature' => '此致敬礼，',
             'team_name' => 'MainGDream 团队',
             'footer_company' => 'MainGDream - 工程、维护和技术全面解决方案',
-            'footer_address' => '莫桑比克，索法拉，贝拉',
-            'footer_website' => 'www.maingdream.co.mz',
+            'footer_address' => '纽约曼哈顿佩里街66号',
+            'footer_website' => 'www.maingdream.com',
         ],
     ],
 
     // Contact Information
     'contact' => [
-        'address' => '莫桑比克，索法拉，贝拉',
+        'address' => '纽约曼哈顿佩里街66号',
         'phone' => '+258 84 123 4567',
         'email' => 'info@maingdream.co.mz',
-        'full_address' => '莫桑比克，索法拉，贝拉',
+        'full_address' => '纽约曼哈顿佩里街66号',
     ],
 
     // Footer
@@ -474,7 +474,7 @@ return [
         'quick_links' => '快速链接',
         'our_services' => '我们的服务',
         'get_in_touch' => '联系我们',
-        'full_address' => '莫桑比克，索法拉，贝拉',
+        'full_address' => '纽约曼哈顿佩里街66号',
         'copyright' => '版权所有。',
         'tagline' => '工程 | 维护 | 技术 | 配件',
     ],

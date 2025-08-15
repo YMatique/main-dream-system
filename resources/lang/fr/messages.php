@@ -4,7 +4,7 @@
 return [
     // Meta
     'tagline' => 'Ingénierie | Maintenance | Technologie | Pièces',
-    'meta_description' => 'MainGDream fournit des solutions complètes en ingénierie, maintenance, technologie et pièces de rechange au Mozambique.',
+    'meta_description' => 'MainGDream fournit des solutions complètes en ingénierie, maintenance, technologie et pièces de rechange',
     'meta_keywords' => 'ingénierie, maintenance, technologie, pièces de rechange',
 
     // Navigation
@@ -116,9 +116,9 @@ return [
             'title' => 'Dernières Nouvelles',
             'subtitle' => 'Nouveautés & Communiqués',
             'recent_date' => 'Décembre 2024',
-            'news1_title' => 'MainGDream étend ses opérations au Mozambique avec de nouvelles technologies d\'automatisation industrielle',
+            'news1_title' => 'MainGDream étend ses opérations avec de nouvelles technologies d\'automatisation industrielle',
             'news1_alt' => 'Nouvelle sur l\'expansion MainGDream',
-            'news2_title' => 'Nouveau centre de distribution de pièces de rechange inauguré à Beira',
+            'news2_title' => 'Nouveau centre de distribution de pièces de rechange inauguré à China',
             'news2_alt' => 'Centre de distribution MainGDream',
             'sidebar1_title' => 'Partenariat stratégique avec des fournisseurs internationaux renforce le catalogue de solutions',
             'sidebar2_title' => 'Équipe technique MainGDream reçoit des certifications internationales en automatisation',
@@ -673,17 +673,17 @@ return [
             'signature' => 'Cordialement,',
             'team_name' => 'Équipe MainGDream',
             'footer_company' => 'MainGDream - Solutions Complètes en Ingénierie, Maintenance et Technologie',
-            'footer_address' => 'Beira, Sofala, Mozambique',
-            'footer_website' => 'www.maingdream.co.mz',
+            'footer_address' => '66 Perry Street, Monhattan, New York',
+            'footer_website' => 'www.maingdream.com',
         ],
     ],
 
     // Contact Information
     'contact' => [
-        'address' => 'Beira, Sofala, Mozambique',
+        'address' => '66 Perry Street, Monhattan, New York',
         'phone' => '+258 84 123 4567',
-        'email' => 'info@maingdream.co.mz',
-        'full_address' => 'Beira, Sofala, Mozambique',
+        'email' => 'info@maingdream.com',
+        'full_address' => '66 Perry Street, Monhattan, New York',
     ],
 
     // Footer
@@ -693,7 +693,7 @@ return [
         'quick_links' => 'Liens Rapides',
         'our_services' => 'Nos Services',
         'get_in_touch' => 'Contactez-nous',
-        'full_address' => 'Beira, Sofala, Mozambique',
+        'full_address' => '66 Perry Street, Monhattan, New York',
         'copyright' => 'Tous droits réservés.',
         'tagline' => 'Ingénierie | Maintenance | Technologie | Pièces',
     ],
