@@ -32,7 +32,7 @@
                     <!--Image Column-->
                     <div class="image-column col-md-8 col-sm-12 col-xs-12">
                         <div class="image">
-                            <img src="{{ asset('template/images/resource/automation-system.jpg') }}" alt="{{ __('messages.projects.automation.image_alt') }}" />
+                            <img src="{{ asset('template/images/system__1.png') }}" alt="{{ __('messages.projects.automation.image_alt') }}" />
                         </div>
                     </div>
                     <!--Info Column-->
@@ -77,7 +77,7 @@
                     <!--Image Column-->
                     <div class="image-column col-md-4 col-sm-12 col-xs-12">
                         <div class="image">
-                            <img src="{{ asset('template/images/resource/automation-dashboard.jpg') }}" alt="{{ __('messages.projects.automation.dashboard_alt') }}" />
+                            <img src="{{ asset('template/images/system__2.png') }}" alt="{{ __('messages.projects.automation.dashboard_alt') }}" />
                         </div>
                     </div>
                     
@@ -123,7 +123,7 @@
                                     <li>{{ __('messages.projects.automation.feature_block_1_item_2') }}</li>
                                     <li>{{ __('messages.projects.automation.feature_block_1_item_3') }}</li>
                                     <li>{{ __('messages.projects.automation.feature_block_1_item_4') }}</li>
-                                    <li>{{ __('messages.projects.automation.feature_block_1_item_5') }}</li>
+                                    {{-- <li>{{ __('messages.projects.automation.feature_block_1_item_5') }}</li> --}}
                                 </ul>
                             </div>
                         </div>
