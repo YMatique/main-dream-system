@@ -46,6 +46,7 @@ class RepairOrderForm5 extends Model
         return $this->belongsTo(MachineNumber::class);
     }
 
+
     public function client()
     {
         return $this->belongsTo(Client::class);

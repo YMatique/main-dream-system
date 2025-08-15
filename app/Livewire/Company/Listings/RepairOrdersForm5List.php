@@ -203,8 +203,8 @@ class RepairOrdersForm5List extends Component
             'repairOrder',
             'client',
             'employee',
-            'repairOrder.maintenanceType',
-            'repairOrder.status',
+            'repairOrder.form1.maintenanceType',
+            'repairOrder.form1.status',
             'repairOrder.location'
         ])->findOrFail($form5Id);
         $this->dispatch('show-order-details', [
