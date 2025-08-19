@@ -442,9 +442,17 @@
                                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700' }}">
                                     <div class="w-2 h-2 rounded-full mr-3 {{ request()->routeIs('company.performance.metrics') ? 'bg-orange-500' : 'bg-gray-300 group-hover:bg-orange-500' }}"></div>
                                     <span class="flex-1">Gestão de Métricas</span>
-                                    <span class="text-xs text-orange-600 font-medium">Cfg</span>
+                                    <span class="text-xs text-orange-600 font-medium">GM</span>
                                 </a>
-                                
+                                <a href="{{ route('company.performance.evaluations.stages') }}" 
+                                   class="group flex items-center px-4 py-2.5 text-sm rounded-lg transition-all duration-200
+                                          {{ request()->routeIs('company.performance.evaluations.stages') 
+                                             ? 'bg-orange-50 text-orange-700 border-l-2 border-orange-500 dark:bg-orange-900/20' 
+                                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700' }}">
+                                    <div class="w-2 h-2 rounded-full mr-3 {{ request()->routeIs('company.performance.evaluations.stages') ? 'bg-orange-500' : 'bg-gray-300 group-hover:bg-orange-500' }}"></div>
+                                    <span class="flex-1">Gestão de Estágios</span>
+                                    <span class="text-xs text-orange-600 font-medium">GE</span>
+                                </a>
                                 <a href="{{ route('company.performance.evaluations') }}" 
                                    class="group flex items-center px-4 py-2.5 text-sm rounded-lg transition-all duration-200
                                           {{ request()->routeIs('company.performance.evaluations') 
