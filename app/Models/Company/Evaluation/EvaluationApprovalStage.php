@@ -50,4 +50,13 @@ class EvaluationApprovalStage extends Model
     {
         return $query->orderBy('stage_number');
     }
+
+    public function approver()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'approver_user_id');
+    }
+    public function targetDepartment()
+    {
+        return $this->belongsTo(\App\Models\Company\Department::class, 'target_department_id');
+    }
 }
