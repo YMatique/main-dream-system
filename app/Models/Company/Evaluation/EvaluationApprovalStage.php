@@ -18,7 +18,11 @@ class EvaluationApprovalStage extends Model
         'approver_roles',
         'approver_departments',
         'is_required',
-        'is_active'
+        'is_active',
+        'is_final_stage',
+        'approver_user_id', 
+        'target_department_id',
+        
     ];
 
     protected $casts = [
@@ -59,4 +63,15 @@ class EvaluationApprovalStage extends Model
     {
         return $this->belongsTo(\App\Models\Company\Department::class, 'target_department_id');
     }
+    // Método simples para verificar:
+public function isFinalStage()
+{
+    return $this->is_final_stage;
+}
+
+// Scope para buscar último estágio:
+public function scopeFinalStage($query)
+{
+    return $query->where('is_final_stage', true);
+}
 }
