@@ -60,7 +60,7 @@ class ApprovalStageManagement extends Component
         
         // Carregar usuários da empresa para dropdown
         $this->companyUsers = User::where('company_id', $companyId)
-            ->where('is_active', true)
+            ->where('status', 'active')
             ->orderBy('name')
             ->get(['id', 'name', 'email'])
             ->toArray();
@@ -284,6 +284,7 @@ class ApprovalStageManagement extends Component
     
     public function render()
     {
-        return view('livewire.company.perfomance.approval-stage-management');
+        return view('livewire.company.perfomance.approval-stage-management')  ->title('Avaliações de Desempenho')
+            ->layout('layouts.company');
     }
 }

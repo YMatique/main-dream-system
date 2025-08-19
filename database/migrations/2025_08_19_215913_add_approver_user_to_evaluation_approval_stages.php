@@ -34,9 +34,12 @@ return new class extends Migration
                 ->after('is_active');
 
             // Índices para performance
-            $table->index(['target_department_id', 'stage_number']);
-            $table->index(['approver_user_id', 'is_active']);
-            $table->index(['target_department_id', 'is_final_stage','depatament_final_stage']);
+            // $table->index(['target_department_id', 'stage_number','department_stage_number']);
+            $table->index(['target_department_id', 'stage_number'], 'eval_stages_dept_stage_idx');
+            // $table->index(['approver_user_id', 'is_active','aprrover_is_active']);
+            $table->index(['approver_user_id', 'is_active'], 'eval_stages_approver_idx');
+            $table->index(['company_id', 'target_department_id', 'is_active'], 'eval_stages_company_dept_idx');
+            $table->index(['target_department_id', 'is_final_stage'], 'eval_depatament_final_stage_idx');
         });
     }
 
@@ -48,12 +51,15 @@ return new class extends Migration
         Schema::table('evaluation_approval_stages', function (Blueprint $table) {
 
 
-
             $table->dropForeign(['approver_user_id']);
             $table->dropForeign(['target_department_id']);
-            $table->dropIndex(['target_department_id', 'stage_number']);
-            $table->dropIndex(['approver_user_id', 'is_active']);
-            $table->dropIndex(['target_department_id', 'is_final_stage','depatament_final_stage']);
+            $table->dropIndex('eval_stages_dept_stage_idx');
+            $table->dropIndex('eval_stages_approver_idx');
+            $table->dropIndex('eval_stages_company_dept_idx');
+            $table->dropIndex('eval_depatament_final_stage_idx');
+            // $table->dropIndex(['target_department_id', 'stage_number','department_stage_number']);
+            // $table->dropIndex(['approver_user_id', 'is_active','aprrover_is_active']);
+            // $table->dropIndex(['target_department_id', 'is_final_stage','depatament_final_stage']);
             $table->dropColumn(['approver_user_id', 'target_department_id']);
             $table->dropColumn('is_final_stage');
         });
