@@ -423,34 +423,6 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
 });
 
 
-// ===== PORTAL DO FUNCIONÁRIO =====
-/*
-|--------------------------------------------------------------------------
-| Company Routes (/company) - Para Company Admin e Company User
-|--------------------------------------------------------------------------
-*/
-Route::prefix('admin')
-    ->middleware(['auth', 'verified', 'user.type:super_admin,company_admin'])
-    ->name('admin.')
-    ->group(function () {
-
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
-
-        // Gestão de Funcionários
-        Route::get('/employees', function () {
-            return view('admin.employees.index');
-        })->name('employees');
-
-        // Gestão de Clientes
-        Route::get('/clients', function () {
-            return view('admin.clients.index');
-        })->name('clients');
-
-        // Outros módulos da empresa...
-    }); //Rotas para (Todos os usuários da empresa)
-
 
 /*
 |--------------------------------------------------------------------------
@@ -510,5 +482,6 @@ Route::post('/company/logout', function () {
     ->middleware('auth')
     ->name('company.logout');
 
-require __DIR__ . '/auth.php';
 require __DIR__ . '/portal.php';
+// require __DIR__ . '/auth.php';
+

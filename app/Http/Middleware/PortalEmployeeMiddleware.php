@@ -9,6 +9,7 @@ class PortalEmployeeMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
+        // dd('asas');
         // Verificar se está autenticado no guard do portal
         if (!Auth::guard('employee_portal')->check()) {
             return redirect()->route('portal.login');

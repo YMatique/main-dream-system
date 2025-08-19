@@ -69,7 +69,7 @@ class CheckPermission
         $loginRoute = match (true) {
             $request->routeIs('system.*') => 'system.login',
             $request->routeIs('company.*') => 'company.login',
-            default => 'login'
+            default => 'company.login'
         };
 
         $redirect = redirect()->route($loginRoute);

@@ -35,7 +35,7 @@ class CompanyMiddleware
         // Verificar se o usuário está ativo
         if ($user->status !== 'active') {
             auth()->logout();
-            return redirect()->route('login')->with('error', 'Sua conta foi desativada. Entre em contato com o administrador.');
+            return redirect()->route('system.login')->with('error', 'Sua conta foi desativada. Entre em contato com o administrador.');
         }
         return $next($request);
     }

@@ -12,21 +12,25 @@ use Illuminate\Support\Facades\Route;
 // ROTAS DE AUTENTICAÇÃO
 // =============================================
 
+//  Route::get('login', [PortalAuthController::class, 'showLoginForm'])
+//         ->name('login')
+//         ->middleware('guest:employee_portal');
 Route::name('portal.')->group(function () {
     
-    Route::get('/login', [PortalAuthController::class, 'showLoginForm'])
+    Route::get('login', [PortalAuthController::class, 'showLoginForm'])
         ->name('login')
         ->middleware('guest:employee_portal');
+        
     
-    Route::post('/login', [PortalAuthController::class, 'login'])
+    Route::post('portal/login', [PortalAuthController::class, 'login'])
         ->name('login.post')
         ->middleware('guest:employee_portal');
     
-    Route::post('/logout', [PortalAuthController::class, 'logout'])
+    Route::post('portal/logout', [PortalAuthController::class, 'logout'])
         ->name('logout')
         ->middleware('auth:employee_portal');
     
-    Route::get('/access-denied', [PortalAuthController::class, 'accessDenied'])
+    Route::get('portal/access-denied', [PortalAuthController::class, 'accessDenied'])
         ->name('access-denied');
 });
 
