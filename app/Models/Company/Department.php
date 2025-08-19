@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
-     protected $fillable = ['company_id', 'name', 'description', 'is_active'];
+    protected $fillable = ['company_id', 'name', 'description', 'is_active'];
 
     protected function casts(): array
     {
@@ -31,5 +31,9 @@ class Department extends Model
     public function performanceMetrics()
     {
         return $this->hasMany(PerformanceMetric::class);
+    }
+    public function approvalStages()
+    {
+        return $this->hasMany(\App\Models\Company\Evaluation\EvaluationApprovalStage::class, 'target_department_id');
     }
 }
