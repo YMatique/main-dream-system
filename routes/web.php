@@ -55,6 +55,9 @@ use App\Livewire\Website\Contact;
 use App\Livewire\Website\Home;
 use App\Livewire\Website\Project;
 use App\Livewire\Website\Service;
+use App\Models\Company\Department;
+use App\Models\Company\Evaluation\EvaluationApprovalStage;
+use App\Models\Company\Evaluation\PerformanceEvaluation;
 use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
@@ -250,6 +253,15 @@ Route::get('companies/login', CompanyLogin::class)->name('company.login');
 Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,company_user'])->name('company.')->group(function () {
     Route::get('dashboard', Dashboard::class)->name('dashboard');
 
+    Route::get('/debug-stages', function() {
+    $companyId = auth()->user()->company_id;
+    
+    return [
+        'stages' => EvaluationApprovalStage::where('company_id', $companyId)->get(),
+        'departments' => Department::where('company_id', $companyId)->get(),
+        'evaluations' => PerformanceEvaluation::where('company_id', $companyId)->latest()->take(5)->get()
+    ];
+});
     // ===== GESTÃO DE DADOS =====
     Route::prefix('manage')->name('manage.')->group(function () {
 

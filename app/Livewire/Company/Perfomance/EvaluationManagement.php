@@ -557,11 +557,12 @@ class EvaluationManagement extends Component
                     'total_score' => $this->totalScore,
                     'final_percentage' => $this->finalPercentage,
                     'recommendations' => $this->recommendations,
-                    'status' => 'submitted', // Submeter diretamente para aprovação
+                    'status' => 'draft', // Submeter diretamente para aprovação
                     'submitted_at' => now(),
                     'is_below_threshold' => $this->finalPercentage < 50,
                     'notifications_sent' => false
                 ]);
+
 
                     // Salvar respostas
                 foreach ($this->responses as $metricId => $response) {
@@ -590,6 +591,8 @@ class EvaluationManagement extends Component
                         ]);
                     }
                 }
+
+                $evaluation->submit();
                 // Salvar respostas
                 // $this->evaluationService->saveEvaluationResponses(
                 //     $evaluation->id,
