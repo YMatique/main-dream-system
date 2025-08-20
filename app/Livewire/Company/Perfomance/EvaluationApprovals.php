@@ -547,7 +547,7 @@ class EvaluationApprovals extends Component
     public function getCurrentStageInfo($evaluation)
     {
 
-        dd($evaluation->currentStageApproval);
+        // dd($evaluation->currentStageApproval);
         if ($evaluation->status !== 'in_approval') {
             return null;
         }

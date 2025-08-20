@@ -92,7 +92,7 @@ class PerformanceEvaluation extends Model
      */
     public function currentStageApproval()
     {
-        dd($this->current_stage_number, $this->id, $this->company_id);
+        // dd($this->current_stage_number, $this->id, $this->company());
         return $this->hasOne(EvaluationApproval::class, 'evaluation_id')
             ->where('stage_number', $this->current_stage_number ?? 1);
     }
