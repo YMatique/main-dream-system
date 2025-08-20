@@ -93,8 +93,8 @@ class EvaluationApprovals extends Component
             'evaluator:id,name',
             'approvedBy:id,name',
             'rejectedBy:id,name',
-            'currentStageApproval.approver:id,name', // NOVO
-            'approvals' // NOVO
+            // 'currentStageApproval.approver:id,name', // NOVO
+            'approvals.approver:id,name' // NOVO
         ])
         ->where('company_id', auth()->user()->company_id);
 
@@ -212,7 +212,7 @@ class EvaluationApprovals extends Component
             'employee.department',
             'evaluator',
             'responses.metric',
-            'currentStageApproval',
+            // 'currentStageApproval',
             'approvals.approver'
         ])->findOrFail($evaluationId);
 
@@ -277,7 +277,8 @@ class EvaluationApprovals extends Component
         $this->selectedEvaluation = PerformanceEvaluation::with([
             'employee', 
             'evaluator',
-            'currentStageApproval'
+            'approvals.approver'
+            // 'currentStageApproval'
         ])->findOrFail($evaluationId);
 
         // Verificar se usuário pode rejeitar estágio atual
@@ -552,7 +553,8 @@ class EvaluationApprovals extends Component
             return null;
         }
 
-        $currentApproval = $evaluation->currentStageApproval;
+        // $currentApproval = $evaluation->currentStageApproval;
+        $currentApproval = $evaluation->getCurrentStageApproval();
         if (!$currentApproval) {
             return null;
         }

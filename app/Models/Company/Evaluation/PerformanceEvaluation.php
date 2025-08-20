@@ -30,7 +30,7 @@ class PerformanceEvaluation extends Model
         'rejection_reason',
         'approval_comments',
         'is_below_threshold',
-        'current_stage_number', //ADICIONADO
+        'current_stage_number',
         'notifications_sent'
     ];
 
@@ -43,7 +43,7 @@ class PerformanceEvaluation extends Model
         'rejected_at' => 'datetime',
         'is_below_threshold' => 'boolean',
         'notifications_sent' => 'boolean',
-        'current_stage_number' => 'integer', // NOVO
+        'current_stage_number' => 'integer',
     ];
 
     // Relationships
@@ -77,9 +77,8 @@ class PerformanceEvaluation extends Model
         return $this->hasMany(EvaluationResponse::class, 'evaluation_id');
     }
 
-
     /**
-     * NOVO: Aprovações por estágio
+     * Aprovações por estágio
      */
     public function approvals()
     {
@@ -88,17 +87,21 @@ class PerformanceEvaluation extends Model
     }
 
     /**
-     * NOVO: Aprovação do estágio atual
+     * ✅ MÉTODO CORRIGIDO - Obter aprovação do estágio atual
      */
-    public function currentStageApproval()
+    public function getCurrentStageApproval()
     {
-        // dd($this->current_stage_number, $this->id, $this->company());
-        return $this->hasOne(EvaluationApproval::class, 'evaluation_id')
-            ->where('stage_number', $this->current_stage_number ?? 1);
+        if (!$this->current_stage_number) {
+            return null;
+        }
+
+        return $this->approvals()
+            ->where('stage_number', $this->current_stage_number)
+            ->first();
     }
 
     /**
-     * NOVO: Configuração dos estágios do departamento
+     * Configuração dos estágios do departamento
      */
     public function departmentStages()
     {
@@ -140,14 +143,18 @@ class PerformanceEvaluation extends Model
     }
 
     /**
-     * NOVO: Avaliações pendentes para um aprovador específico
+     * ✅ SCOPE CORRIGIDO - Avaliações pendentes para um aprovador específico
      */
     public function scopePendingForApprover($query, $userId)
     {
         return $query->where('status', 'in_approval')
-            ->whereHas('currentStageApproval', function ($q) use ($userId) {
-                $q->where('approver_id', $userId)
-                    ->where('status', 'pending');
+            ->whereExists(function ($subquery) use ($userId) {
+                $subquery->select(DB::raw(1))
+                    ->from('evaluation_approvals')
+                    ->whereColumn('evaluation_approvals.evaluation_id', 'performance_evaluations.id')
+                    ->whereColumn('evaluation_approvals.stage_number', 'performance_evaluations.current_stage_number')
+                    ->where('evaluation_approvals.approver_id', $userId)
+                    ->where('evaluation_approvals.status', 'pending');
             });
     }
 
@@ -155,10 +162,6 @@ class PerformanceEvaluation extends Model
     public function getStatusDisplayAttribute()
     {
         return match ($this->status) {
-            // 'draft' => 'Rascunho',
-            // 'submitted' => 'Aguardando Aprovação',
-            // 'approved' => 'Aprovada',
-            // 'rejected' => 'Rejeitada',
             'draft' => 'Rascunho',
             'submitted' => 'Submetida',
             'in_approval' => 'Em Aprovação',
@@ -235,9 +238,6 @@ class PerformanceEvaluation extends Model
             ($user->isCompanyAdmin() || $user->hasPermission('evaluation.approve'));
     }
 
-
-
-
     // =========== APROVAÇÃO MULTI-ESTÁGIO =============
 
     /**
@@ -245,7 +245,6 @@ class PerformanceEvaluation extends Model
      */
     public function submit()
     {
-       
         // Verificar se pode ser submetida
         if (!$this->canBeSubmitted()) {
             throw new \Exception('Avaliação não pode ser submetida');
@@ -295,7 +294,7 @@ class PerformanceEvaluation extends Model
     }
 
     /**
-     * APROVAR ESTÁGIO ATUAL
+     * ✅ MÉTODO CORRIGIDO - APROVAR ESTÁGIO ATUAL
      */
     public function approveCurrentStage($approverId, $comments = null)
     {
@@ -305,7 +304,7 @@ class PerformanceEvaluation extends Model
         }
 
         // Obter aprovação do estágio atual
-        $currentApproval = $this->currentStageApproval;
+        $currentApproval = $this->getCurrentStageApproval();
         if (!$currentApproval) {
             throw new \Exception('Estágio atual não encontrado');
         }
@@ -340,7 +339,7 @@ class PerformanceEvaluation extends Model
     }
 
     /**
-     * REJEITAR AVALIAÇÃO (qualquer estágio)
+     * ✅ MÉTODO CORRIGIDO - REJEITAR AVALIAÇÃO (qualquer estágio)
      */
     public function rejectAtCurrentStage($approverId, $reason)
     {
@@ -350,7 +349,7 @@ class PerformanceEvaluation extends Model
         }
 
         // Obter aprovação do estágio atual
-        $currentApproval = $this->currentStageApproval;
+        $currentApproval = $this->getCurrentStageApproval();
         if (!$currentApproval || $currentApproval->approver_id !== $approverId) {
             throw new \Exception('Usuário não tem permissão para rejeitar este estágio');
         }
@@ -438,9 +437,8 @@ class PerformanceEvaluation extends Model
         ]);
     }
 
-
     /**
-     * NOVO: Verificar se está no último estágio
+     * Verificar se está no último estágio
      */
     public function isAtLastStage()
     {
@@ -451,16 +449,16 @@ class PerformanceEvaluation extends Model
     }
 
     /**
-     * NOVO: Obter aprovador do estágio atual
+     * ✅ MÉTODO CORRIGIDO - Obter aprovador do estágio atual
      */
     public function getCurrentStageApprover()
     {
-        $currentApproval = $this->currentStageApproval;
+        $currentApproval = $this->getCurrentStageApproval();
         return $currentApproval ? $currentApproval->approver : null;
     }
 
     /**
-     * NOVO: Verificar se usuário pode aprovar estágio atual
+     * ✅ MÉTODO CORRIGIDO - Verificar se usuário pode aprovar estágio atual
      */
     public function canUserApproveCurrentStage($userId)
     {
@@ -468,11 +466,11 @@ class PerformanceEvaluation extends Model
             return false;
         }
 
-        $currentApproval = $this->currentStageApproval;
+        $currentApproval = $this->getCurrentStageApproval();
         return $currentApproval && $currentApproval->approver_id === $userId;
     }
 
-     // ===== NOTIFICAÇÕES =====
+    // ===== NOTIFICAÇÕES =====
 
     protected function notifyCurrentStageApprover()
     {
@@ -519,67 +517,17 @@ class PerformanceEvaluation extends Model
         ]);
     }
 
- 
-
-    /**
-     * SUBMETER AVALIAÇÃO PARA APROVAÇÃO
-     */
-    /*
-    public function submit()
-    {
-        $this->update([
-            'status' => 'submitted',
-            'submitted_at' => now()
-        ]);
-
-        // Enviar notificações se abaixo do threshold
-        if ($this->is_below_threshold) {
-            $this->sendLowPerformanceNotifications();
-        }
-    }
-
-    */
     /**
      * APROVAR AVALIAÇÃO - MÉTODO SIMPLIFICADO
      */
     public function approve($approverId, $comments = null)
     {
-          if ($this->status === 'submitted') {
+        if ($this->status === 'submitted') {
             // Se ainda não tem estágios, criar e submeter
             $this->submit();
         }
-        
+
         return $this->approveCurrentStage($approverId, $comments);
-        /*
-        // Verificar se pode ser aprovada
-        if ($this->status !== 'submitted') {
-            throw new \Exception('Avaliação não pode ser aprovada. Status atual: ' . $this->status);
-        }
-
-        // Verificar se usuário pode aprovar
-        $user = \App\Models\User::find($approverId);
-        if (!$user || $user->company_id !== $this->company_id) {
-            throw new \Exception('Usuário não tem permissão para aprovar esta avaliação');
-        }
-
-        if (!$user->isCompanyAdmin() && !$user->hasPermission('evaluation.approve')) {
-            throw new \Exception('Usuário não tem permissão para aprovar avaliações');
-        }
-
-        // Aprovar
-        $this->update([
-            'status' => 'approved',
-            'approved_at' => now(),
-            'approved_by' => $approverId,
-            'approval_comments' => $comments
-        ]);
-
-        \Log::info('Avaliação aprovada', [
-            'evaluation_id' => $this->id,
-            'approved_by' => $approverId,
-            'employee' => $this->employee->name
-        ]);
-        */
     }
 
     /**
@@ -587,37 +535,7 @@ class PerformanceEvaluation extends Model
      */
     public function reject($approverId, $reason)
     {
-          return $this->rejectAtCurrentStage($approverId, $reason);
-        /*
-        // Verificar se pode ser rejeitada
-        if ($this->status !== 'submitted') {
-            throw new \Exception('Avaliação não pode ser rejeitada. Status atual: ' . $this->status);
-        }
-
-        // Verificar se usuário pode rejeitar
-        $user = \App\Models\User::find($approverId);
-        if (!$user || $user->company_id !== $this->company_id) {
-            throw new \Exception('Usuário não tem permissão para rejeitar esta avaliação');
-        }
-
-        if (!$user->isCompanyAdmin() && !$user->hasPermission('evaluation.approve')) {
-            throw new \Exception('Usuário não tem permissão para rejeitar avaliações');
-        }
-
-        // Rejeitar
-        $this->update([
-            'status' => 'rejected',
-            'rejected_at' => now(),
-            'rejected_by' => $approverId,
-            'rejection_reason' => $reason
-        ]);
-
-        \Log::info('Avaliação rejeitada', [
-            'evaluation_id' => $this->id,
-            'rejected_by' => $approverId,
-            'reason' => $reason
-        ]);
-        */
+        return $this->rejectAtCurrentStage($approverId, $reason);
     }
 
     /**
