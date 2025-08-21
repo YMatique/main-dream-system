@@ -11,7 +11,7 @@ use Livewire\WithPagination;
 
 class EvaluationApprovals extends Component
 {
- use WithPagination;
+    use WithPagination;
 
     // Modal states
     public $showApprovalModal = false;
@@ -61,8 +61,8 @@ class EvaluationApprovals extends Component
     {
         // Verificar permissões
         abort_unless(
-            auth()->user()->isCompanyAdmin() || auth()->user()->hasPermission('evaluation.approve'), 
-            403, 
+            auth()->user()->isCompanyAdmin() || auth()->user()->hasPermission('evaluation.approve'),
+            403,
             'Sem permissão para aprovar avaliações'
         );
 
@@ -81,7 +81,7 @@ class EvaluationApprovals extends Component
 
         $this->calculateStats();
     }
-    
+
     /**
      * NOVA QUERY - FILTRO MULTI-ESTÁGIO
      */
@@ -96,7 +96,7 @@ class EvaluationApprovals extends Component
             // 'currentStageApproval.approver:id,name', // NOVO
             'approvals.approver:id,name' // NOVO
         ])
-        ->where('company_id', auth()->user()->company_id);
+            ->where('company_id', auth()->user()->company_id);
 
         // FILTRO PRINCIPAL POR STATUS
         switch ($this->statusFilter) {
@@ -104,25 +104,25 @@ class EvaluationApprovals extends Component
                 // Só avaliações onde EU sou o aprovador do estágio atual
                 $query->pendingForApprover(auth()->id());
                 break;
-                
+
             case 'in_approval':
                 // Todas em processo de aprovação
                 $query->where('status', 'in_approval');
                 break;
-                
+
             case 'submitted':
                 // Antigas submetidas (compatibilidade)
                 $query->where('status', 'submitted');
                 break;
-                
+
             case 'approved':
                 $query->where('status', 'approved');
                 break;
-                
+
             case 'rejected':
                 $query->where('status', 'rejected');
                 break;
-                
+
             default:
                 // Todos os status
                 break;
@@ -130,7 +130,7 @@ class EvaluationApprovals extends Component
 
         // Outros filtros
         if ($this->departmentFilter) {
-            $query->whereHas('employee', function($q) {
+            $query->whereHas('employee', function ($q) {
                 $q->where('department_id', $this->departmentFilter);
             });
         }
@@ -150,14 +150,14 @@ class EvaluationApprovals extends Component
         }
 
         if ($this->search) {
-            $query->whereHas('employee', function($q) {
+            $query->whereHas('employee', function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('code', 'like', '%' . $this->search . '%');
+                    ->orWhere('code', 'like', '%' . $this->search . '%');
             });
         }
 
         return $query->orderBy('is_below_threshold', 'desc')
-                    ->orderBy('submitted_at', 'asc');
+            ->orderBy('submitted_at', 'asc');
     }
 
     /**
@@ -168,11 +168,11 @@ class EvaluationApprovals extends Component
         $userId = auth()->id();
         $companyId = auth()->user()->company_id;
         $baseQuery = PerformanceEvaluation::where('company_id', $companyId);
-        
+
         if ($this->yearFilter) {
             $baseQuery->whereYear('evaluation_period', $this->yearFilter);
         }
-        
+
         if ($this->monthFilter) {
             $baseQuery->whereMonth('evaluation_period', $this->monthFilter);
         }
@@ -180,22 +180,22 @@ class EvaluationApprovals extends Component
         $this->stats = [
             // Pendentes para MIM especificamente
             'pending_for_me' => (clone $baseQuery)->pendingForApprover($userId)->count(),
-            
+
             // Total em processo de aprovação
             'total_in_approval' => (clone $baseQuery)->where('status', 'in_approval')->count(),
-            
+
             // Abaixo do threshold E pendentes para mim
             'critical_for_me' => (clone $baseQuery)
                 ->pendingForApprover($userId)
                 ->where('is_below_threshold', true)
                 ->count(),
-            
+
             // Total aprovadas
             'total_approved' => (clone $baseQuery)->where('status', 'approved')->count(),
-            
+
             // Total rejeitadas
             'total_rejected' => (clone $baseQuery)->where('status', 'rejected')->count(),
-            
+
             // Tempo médio de aprovação
             'avg_approval_time' => $this->calculateAverageApprovalTime(),
         ];
@@ -243,31 +243,30 @@ class EvaluationApprovals extends Component
         }
 
         try {
-            DB::transaction(function() {
+            DB::transaction(function () {
                 $this->selectedEvaluation->approveCurrentStage(auth()->id(), $this->approvalComments);
             });
 
             $this->showApprovalModal = false;
             $this->calculateStats();
-            
+
             // Verificar se foi aprovação final ou avançou estágio
             if ($this->selectedEvaluation->fresh()->status === 'approved') {
                 session()->flash('success', 'Avaliação aprovada definitivamente!');
             } else {
                 session()->flash('success', 'Estágio aprovado! Avaliação avançou para próximo aprovador.');
             }
-            
+
             Log::info('✅ DEBUG: Estágio aprovado com sucesso', [
                 'evaluation_id' => $this->selectedEvaluation->id,
                 'new_status' => $this->selectedEvaluation->fresh()->status
             ]);
-
         } catch (\Exception $e) {
             Log::error('❌ DEBUG: Erro na aprovação do estágio', [
                 'error' => $e->getMessage(),
                 'evaluation_id' => $this->selectedEvaluation->id
             ]);
-            
+
             session()->flash('error', 'Erro ao aprovar estágio: ' . $e->getMessage());
         }
     }
@@ -275,7 +274,7 @@ class EvaluationApprovals extends Component
     public function openRejectionModal($evaluationId)
     {
         $this->selectedEvaluation = PerformanceEvaluation::with([
-            'employee', 
+            'employee',
             'evaluator',
             'approvals.approver'
             // 'currentStageApproval'
@@ -301,15 +300,14 @@ class EvaluationApprovals extends Component
         }
 
         try {
-            DB::transaction(function() {
+            DB::transaction(function () {
                 $this->selectedEvaluation->rejectAtCurrentStage(auth()->id(), $this->rejectionComments);
             });
 
             $this->showRejectionModal = false;
             $this->calculateStats();
-            
-            session()->flash('success', 'Avaliação rejeitada. O avaliador foi notificado.');
 
+            session()->flash('success', 'Avaliação rejeitada. O avaliador foi notificado.');
         } catch (\Exception $e) {
             session()->flash('error', 'Erro ao rejeitar avaliação: ' . $e->getMessage());
         }
@@ -356,11 +354,11 @@ class EvaluationApprovals extends Component
         $advancedCount = 0;
         $errors = [];
 
-        DB::transaction(function() use (&$approvedCount, &$advancedCount, &$errors) {
+        DB::transaction(function () use (&$approvedCount, &$advancedCount, &$errors) {
             foreach ($this->selectedEvaluations as $evaluationId) {
                 try {
                     $evaluation = PerformanceEvaluation::findOrFail($evaluationId);
-                    
+
                     if (!$evaluation->canUserApproveCurrentStage(auth()->id())) {
                         $errors[] = "Sem permissão para aprovar: {$evaluation->employee->name}";
                         continue;
@@ -368,13 +366,12 @@ class EvaluationApprovals extends Component
 
                     $wasAtLastStage = $evaluation->isAtLastStage();
                     $evaluation->approveCurrentStage(auth()->id(), $this->bulkComments);
-                    
+
                     if ($wasAtLastStage) {
                         $approvedCount++;
                     } else {
                         $advancedCount++;
                     }
-                    
                 } catch (\Exception $e) {
                     $errors[] = "Erro na avaliação ID {$evaluationId}: " . $e->getMessage();
                 }
@@ -500,9 +497,18 @@ class EvaluationApprovals extends Component
     protected function getMonthsArray()
     {
         return [
-            1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril',
-            5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto',
-            9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
+            1 => 'Janeiro',
+            2 => 'Fevereiro',
+            3 => 'Março',
+            4 => 'Abril',
+            5 => 'Maio',
+            6 => 'Junho',
+            7 => 'Julho',
+            8 => 'Agosto',
+            9 => 'Setembro',
+            10 => 'Outubro',
+            11 => 'Novembro',
+            12 => 'Dezembro'
         ];
     }
 
@@ -534,7 +540,7 @@ class EvaluationApprovals extends Component
         }
 
         $avgHours = $totalHours / $approvedEvaluations->count();
-        
+
         if ($avgHours < 24) {
             return round($avgHours, 1) . 'h';
         } else {
@@ -548,17 +554,14 @@ class EvaluationApprovals extends Component
     public function getCurrentStageInfo($evaluation)
     {
 
-        // dd($evaluation->currentStageApproval);
         if ($evaluation->status !== 'in_approval') {
             return null;
         }
 
-        // $currentApproval = $evaluation->currentStageApproval;
         $currentApproval = $evaluation->getCurrentStageApproval();
         if (!$currentApproval) {
             return null;
         }
-        // dd($currentApproval->approver_id, auth()->id());
 
         return [
             'stage_number' => $evaluation->current_stage_number,
@@ -573,8 +576,8 @@ class EvaluationApprovals extends Component
      */
     public function isWaitingForMe($evaluation)
     {
-        return $evaluation->status === 'in_approval' && 
-               $evaluation->canUserApproveCurrentStage(auth()->id());
+        return $evaluation->status === 'in_approval' &&
+            $evaluation->canUserApproveCurrentStage(auth()->id());
     }
     public function render()
     {
@@ -584,13 +587,7 @@ class EvaluationApprovals extends Component
             'evaluations' => $evaluations,
             'months' => $this->getMonthsArray(),
             'years' => $this->getYearsArray(),
-                   'statusOptions' => $this->getStatusOptions(), // NOVO
+            'statusOptions' => $this->getStatusOptions(), // NOVO
         ])->layout('layouts.company');
     }
-
-
-    // public function render()
-    // {
-    //     return view('livewire.company.perfomance.evaluation-approvals');
-    // }
 }
