@@ -643,7 +643,7 @@
                     </div>
 
                     {{-- Progresso Multi-Estágio --}}
-                    @if ($selectedEvaluation->status === 'in_approval' && $selectedEvaluation->approvals->count() > 0)
+                    @if ($selectedEvaluation->approvals->count() > 0)
                         <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6">
                             <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Progresso de Aprovação
                             </h4>
