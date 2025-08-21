@@ -2,6 +2,7 @@
 
 namespace App\Models\Company;
 
+use App\Models\Company\Evaluation\PerformanceEvaluation;
 use App\Models\Company\Evaluation\PerformanceMetric;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,6 +23,20 @@ class Department extends Model
     public function employees()
     {
         return $this->hasMany(Employee::class);
+    }
+     /**
+     * ✅ NOVA RELAÇÃO - Avaliações através dos funcionários
+     */
+    public function evaluations()
+    {
+        return $this->hasManyThrough(
+            PerformanceEvaluation::class,  // Modelo final
+            Employee::class,               // Modelo intermediário
+            'department_id',               // Foreign key na tabela employees (employees.department_id)
+            'employee_id',                 // Foreign key na tabela performance_evaluations (evaluations.employee_id)
+            'id',                         // Local key na tabela departments (departments.id)
+            'id'                          // Local key na tabela employees (employees.id)
+        );
     }
 
     public function scopeActive($query)
