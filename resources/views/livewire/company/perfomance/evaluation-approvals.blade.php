@@ -641,7 +641,7 @@
     {{-- Loading State --}}
     <div wire:loading class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60]">
         <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-2xl max-w-sm w-full mx-4">
-            <div class="flex flex-col items-center gap-4">
+            <div class="flex flex-col items-center gap-4 justify-center">
                 <div class="relative">
                     <div class="w-12 h-12 border-4 border-blue-200 dark:border-blue-800 rounded-full animate-pulse"></div>
                     <div class="absolute top-0 left-0 w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>

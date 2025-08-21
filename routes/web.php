@@ -60,93 +60,6 @@ use App\Models\Company\Evaluation\EvaluationApprovalStage;
 use App\Models\Company\Evaluation\PerformanceEvaluation;
 use Illuminate\Support\Facades\Auth;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// })->name('home');
-
-// WEBSITE ROUTES
-// Route::get('lang/{locale}', function ($locale) {
-//     if (in_array($locale, config('app.available_locales'))) {
-//         session(['locale' => $locale]);
-//     }
-//     return redirect()->back();
-// })->name('lang.switch');
-
-Route::get('/', function () {
-    $locale = session('locale', config('app.locale'));
-    return redirect("/{$locale}");
-})->name('root');
-// Rotas com prefixo de idioma
-Route::group([
-    'prefix' => '{locale}',
-    'middleware' => 'setlocale',
-    'where' => ['locale' => '[a-zA-Z]{2}']
-], function () {
-
-    // Home
-    Route::get('/', Home::class)->name('home');
-
-    // Sobre3
-    Route::get('/sobre', About::class)->name('about');
-
-    // Serviços
-    Route::get('/servicos', Service::class)->name('services');
-
-    Route::get('/servicos/engenharia', function () {
-        return view('website.services.engineering');
-    })->name('services.engineering');
-
-    Route::get('/servicos/manutencao', function () {
-        return view('website.services.maintenance');
-    })->name('services.maintenance');
-
-    Route::get('/servicos/tecnologia', function () {
-        return view('website.services.technology');
-    })->name('services.technology');
-
-    Route::get('/servicos/pecas', function () {
-        return view('website.services.spare-parts');
-    })->name('services.spare_parts');
-
-    // Projetos
-    Route::get('/projetos', Project::class)->name('projects');
-
-    // Contato
-    Route::get('/contacto', Contact::class)->name('contact');
-
-    Route::get('/check-out',CheckOut::class)->name('check-out');
-
-    Route::post('/contacto', function () {
-        // Lógica de envio do formulário
-        return back()->with('success', __('messages.contact.success'));
-    })->name('contact.send');
-});
-
-// Rota para troca de idioma
-Route::get('/lang/{locale}', function ($locale) {
-    if (in_array($locale, config('app.available_locales'))) {
-        session(['locale' => $locale]);
-    }
-
-    // Pegar a URL anterior e adaptar o prefixo
-    $previousUrl = url()->previous();
-    $previousPath = parse_url($previousUrl, PHP_URL_PATH);
-
-    // Remover o prefixo de idioma anterior se existir
-    $availableLocales = config('app.available_locales');
-    foreach ($availableLocales as $lang) {
-        if (str_starts_with($previousPath, "/{$lang}")) {
-            $previousPath = substr($previousPath, 3); // Remove /xx
-            break;
-        }
-    }
-
-    // Redirecionar com novo prefixo
-    return redirect("/{$locale}{$previousPath}");
-})->name('lang.switch');
-
-
-// 
 Route::middleware('guest')->group(function () {
     Route::get('system-auth/forgot-password', ForgotPassword::class)->name('password.request');
     Route::get('system-auth/reset-password/{token}', ResetPassword::class)->name('password.reset');
@@ -163,37 +76,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
-
-/*
-Route::prefix('system')
-    ->middleware(['auth', 'verified', 'role:super_admin'])
-    ->name('system.')
-    ->group(function () {
-        
-        // Dashboard do Sistema
-        Route::get('/dashboard', function () {
-            return view('system.dashboard');
-        })->name('dashboard');
-        
-        // Gestão de Empresas
-        Route::get('/companies', CompanyManagement::class)->name('companies');
-        // Route::get('/companies/{id}', [CompanyController::class, 'show'])->name('companies.show');
-        
-        // Outras rotas do sistema serão adicionadas aqui...
-        Route::get('/plans', PlanManagement::class)->name('plans');
-        Route::get('/subscriptions', SubscriptionManagement::class)->name('subscriptions');
-        Route::get('/users',UserManagement::class)->name('users');
-    });
-    */
-
-// Aplicar middlewares nas rotas do sistema
-// Route::prefix('system')
-//     ->middleware(['auth', 'verified', 'role:super_admin', 'audit', 'security'])
-//     ->name('system.')
-//     ->group(function () {
-//         // Suas rotas...
-//     });
-// System Administration routes (Super Admin only)
 
 
 /*
@@ -252,16 +134,6 @@ Route::get('companies/login', CompanyLogin::class)->name('company.login');
 //Rotas para Admin de Empresa 
 Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,company_user'])->name('company.')->group(function () {
     Route::get('dashboard', Dashboard::class)->name('dashboard');
-
-    Route::get('/debug-stages', function() {
-    $companyId = auth()->user()->company_id;
-    
-    return [
-        'stages' => EvaluationApprovalStage::where('company_id', $companyId)->get(),
-        'departments' => Department::where('company_id', $companyId)->get(),
-        'evaluations' => PerformanceEvaluation::where('company_id', $companyId)->latest()->take(5)->get()
-    ];
-});
     // ===== GESTÃO DE DADOS =====
     Route::prefix('manage')->name('manage.')->group(function () {
 
@@ -497,5 +369,3 @@ Route::post('/company/logout', function () {
     ->name('company.logout');
 
 require __DIR__ . '/portal.php';
-// require __DIR__ . '/auth.php';
-
