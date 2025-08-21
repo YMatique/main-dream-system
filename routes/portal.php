@@ -12,9 +12,15 @@ use Illuminate\Support\Facades\Route;
 // ROTAS DE AUTENTICAÇÃO
 // =============================================
 
-//  Route::get('login', [PortalAuthController::class, 'showLoginForm'])
-//         ->name('login')
-//         ->middleware('guest:employee_portal');
+ Route::get('login', [PortalAuthController::class, 'showLoginForm'])
+        ->name('login')
+        ->middleware('guest:employee_portal');
+        Route::middleware('guest')->group(function () {
+    Route::get('login', [PortalAuthController::class, 'showLoginForm'])->name('login');
+    // Route::get('register', Register::class)->name('register');
+    // Route::get('forgot-password', ForgotPassword::class)->name('password.request');
+    // Route::get('reset-password/{token}', ResetPassword::class)->name('password.reset');
+});
 Route::name('portal.')->group(function () {
     
     Route::get('login', [PortalAuthController::class, 'showLoginForm'])

@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // 'role' => \App\Http\Middleware\EnsureSuperAdmin::class,
             // 'user.type' => CheckUserType::class,
             // 'permission' => CheckPermission::class,
-            'audit' => \App\Http\Middleware\AuditMiddleware::class,
+            // 'audit' => \App\Http\Middleware\AuditMiddleware::class,
             // 'company' => \App\Http\Middleware\CompanyMiddleware::class,
             'security' => \App\Http\Middleware\SecurityMiddleware::class,
             // 'permission' => \App\Http\Middleware\PermissionMiddleware::class, verificar o alias do middleware

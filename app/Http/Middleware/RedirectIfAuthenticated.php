@@ -28,7 +28,7 @@ class RedirectIfAuthenticated
                 }
                 
                 // Se tentar acessar login normal e já está logado
-                if ($request->routeIs('login')) {
+                if ($request->routeIs('portal.login')) {
                     return $this->redirectBasedOnUserType($user);
                 }
                 

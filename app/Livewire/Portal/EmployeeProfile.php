@@ -13,7 +13,7 @@ class EmployeeProfile extends Component
     public $portalUser;
     public function mount()
     {
-        dd('asas');
+        // dd('asas');
         dd(Auth::guard('employee_portal')->user());
        $this->portalUser = Auth::guard('employee_portal')->user();
         $this->employee = $this->portalUser->employee;

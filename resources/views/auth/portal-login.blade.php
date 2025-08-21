@@ -32,7 +32,7 @@
 
             {{-- Login Form --}}
             <div class="bg-white dark:bg-gray-800 py-8 px-6 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700">
-                <form class="space-y-6" method="POST" action="{{ route('portal.login') }}">
+                <form class="space-y-6" method="POST" action="{{ route('portal.login.post') }}">
                     @csrf
 
                     {{-- Email --}}
@@ -49,7 +49,7 @@
                             <input id="email" 
                                    name="email" 
                                    type="email" 
-                                   autocomplete="email" 
+                                   {{-- autocomplete="email"  --}}
                                    required
                                    value="{{ old('email') }}"
                                    class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
