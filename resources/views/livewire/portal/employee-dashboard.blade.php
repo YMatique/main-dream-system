@@ -18,7 +18,138 @@
         </div>
     </div>
 
-    {{-- Estatísticas --}}
+    {{-- Estatísticas de Ordens de Reparação --}}
+    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Minhas Ordens de Reparação
+            </h3>
+        </div>
+        
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {{-- Total de Ordens --}}
+                <div class="bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900 dark:to-purple-800 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-purple-600 dark:text-purple-300 text-sm font-medium">Total de Ordens</p>
+                            <p class="text-2xl font-bold text-purple-900 dark:text-purple-100">{{ $repairOrderStats['total_orders'] }}</p>
+                            <p class="text-xs text-purple-600 dark:text-purple-400">Este ano: {{ $repairOrderStats['current_year_orders'] }}</p>
+                        </div>
+                        <div class="p-2 bg-purple-200 dark:bg-purple-700 rounded-lg">
+                            <svg class="w-6 h-6 text-purple-600 dark:text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Horas Trabalhadas --}}
+                <div class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-600 dark:text-blue-300 text-sm font-medium">Horas Trabalhadas</p>
+                            <p class="text-2xl font-bold text-blue-900 dark:text-blue-100">{{ number_format($repairOrderStats['total_hours'], 1) }}h</p>
+                            <p class="text-xs text-blue-600 dark:text-blue-400">Este mês: {{ number_format($repairOrderStats['current_month_hours'], 1) }}h</p>
+                        </div>
+                        <div class="p-2 bg-blue-200 dark:bg-blue-700 rounded-lg">
+                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Horas Faturadas --}}
+                <div class="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-600 dark:text-green-300 text-sm font-medium">Horas Faturadas</p>
+                            <p class="text-2xl font-bold text-green-900 dark:text-green-100">{{ number_format($repairOrderStats['billed_hours'], 1) }}h</p>
+                            <p class="text-xs text-green-600 dark:text-green-400">
+                                {{ number_format($repairOrderStats['productivity_rate'], 1) }}% produtividade
+                            </p>
+                        </div>
+                        <div class="p-2 bg-green-200 dark:bg-green-700 rounded-lg">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Média por Ordem --}}
+                <div class="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900 dark:to-orange-800 p-4 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-orange-600 dark:text-orange-300 text-sm font-medium">Média por Ordem</p>
+                            <p class="text-2xl font-bold text-orange-900 dark:text-orange-100">{{ number_format($repairOrderStats['average_hours_per_order'], 1) }}h</p>
+                            <p class="text-xs text-orange-600 dark:text-orange-400">Por ordem de reparação</p>
+                        </div>
+                        <div class="p-2 bg-orange-200 dark:bg-orange-700 rounded-lg">
+                            <svg class="w-6 h-6 text-orange-600 dark:text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Ordens Recentes --}}
+    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ordens de Reparação Recentes</h3>
+        </div>
+        
+        <div class="p-6">
+            @if($repairOrderStats['recent_orders']->count() > 0)
+                <div class="space-y-4">
+                    @foreach($repairOrderStats['recent_orders'] as $orderEmployee)
+                        <div class="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            <div class="flex items-center space-x-4">
+                                <div class="p-2 rounded-lg bg-indigo-100 text-indigo-600">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900 dark:text-white">
+                                        {{ $orderEmployee->form2->repairOrder->order_number ?? 'N/D' }}
+                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                        {{ $orderEmployee->form2->location->name ?? 'Localização não definida' }} • 
+                                        {{ $orderEmployee->form2->status->name ?? 'Estado não definido' }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-500">
+                                        {{ $orderEmployee->form2->carimbo ? $orderEmployee->form2->carimbo->diffForHumans() : 'Data não disponível' }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-indigo-600">{{ number_format($orderEmployee->horas_trabalhadas, 1) }}h</p>
+                                <p class="text-xs text-gray-500">Horas Trabalhadas</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-8">
+                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    <p class="text-gray-500 dark:text-gray-400">Nenhuma ordem de reparação encontrada</p>
+                    <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Suas participações aparecerão aqui quando estiverem disponíveis</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- Estatísticas de Performance --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
             <div class="flex items-center">
@@ -57,7 +188,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['current_year_evaluations'] }}</p>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Este Ano</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Avaliações Este Ano</p>
                 </div>
             </div>
         </div>
@@ -156,6 +287,21 @@
             <div>
                 <p class="text-yellow-800 font-medium">Atenção</p>
                 <p class="text-yellow-700 text-sm">Você possui avaliações abaixo do threshold (50%). Consulte com seu gestor para planos de melhoria.</p>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Alerta de Produtividade --}}
+    @if($repairOrderStats['productivity_rate'] < 70)
+    <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 text-orange-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+                <p class="text-orange-800 font-medium">Produtividade</p>
+                <p class="text-orange-700 text-sm">Sua taxa de produtividade está em {{ number_format($repairOrderStats['productivity_rate'], 1) }}%. Considere otimizar seu tempo de trabalho.</p>
             </div>
         </div>
     </div>
