@@ -1,33 +1,35 @@
-<div x-data="{ showFilters: false }">
+<div x-data="{ showFilters: @entangle('showAdvancedFilters') }">
     <!-- Header Melhorado -->
-    <div class="bg-white dark:bg-gray-800 shadow rounded-xl border border-gray-200 dark:border-gray-700">
-        <div class="px-4 sm:px-6 lg:px-8 py-6">
+    <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl border border-gray-200 dark:border-gray-700 mb-6">
+        <div class="px-6 lg:px-8 py-8">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
                         Relatórios de Avaliação
                     </h1>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">
                         Análise detalhada do desempenho dos funcionários
                     </p>
                 </div>
 
                 <!-- Actions Agrupadas -->
-                <div class="flex items-center gap-3 mt-4 lg:mt-0">
+                <div class="flex items-center gap-4 mt-6 lg:mt-0">
                     <!-- Período -->
-                    <select wire:model.live="period" 
-                        class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-sm font-medium">
-                        <option value="last_month">Último Mês</option>
-                        <option value="last_3_months">Últimos 3 Meses</option>
-                        <option value="last_6_months">Últimos 6 Meses</option>
-                        <option value="last_year">Último Ano</option>
-                        <option value="custom">Personalizado</option>
-                    </select>
+                    <div class="min-w-0 flex-1 lg:min-w-48">
+                        <select wire:model.live="period" 
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 dark:text-white">
+                            <option value="last_month">Último Mês</option>
+                            <option value="last_3_months">Últimos 3 Meses</option>
+                            <option value="last_6_months">Últimos 6 Meses</option>
+                            <option value="last_year">Último Ano</option>
+                            <option value="custom">Personalizado</option>
+                        </select>
+                    </div>
 
                     <!-- Export -->
                     <div x-data="{ open: false }" class="relative">
                         <button @click="open = !open" 
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl text-sm font-medium flex items-center gap-2 shadow-lg hover:shadow-xl transition-all">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-4-4m4 4l4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -38,18 +40,18 @@
                              x-transition:enter="transition ease-out duration-200"
                              x-transition:enter-start="opacity-0 transform -translate-y-2"
                              x-transition:enter-end="opacity-100 transform translate-y-0"
-                             class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10">
+                             class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-10">
                             <div class="py-2">
-                                <button wire:click="$set('exportFormat', 'xlsx'); exportReport(); open = false" 
-                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <button wire:click="exportReport('xlsx')" @click="open = false"
+                                    class="block w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                     📊 Excel (.xlsx)
                                 </button>
-                                <button wire:click="$set('exportFormat', 'csv'); exportReport(); open = false" 
-                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <button wire:click="exportReport('csv')" @click="open = false"
+                                    class="block w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                     📄 CSV (.csv)
                                 </button>
-                                <button wire:click="$set('exportFormat', 'pdf'); exportReport(); open = false" 
-                                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <button wire:click="exportReport('pdf')" @click="open = false"
+                                    class="block w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                     📋 PDF (.pdf)
                                 </button>
                             </div>
@@ -61,136 +63,140 @@
     </div>
 
     <!-- Tabs de Tipo de Relatório -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 p-6">
-        <div class="flex flex-wrap bg-gray-100 dark:bg-gray-700 rounded-lg p-1 mb-6">
-            <button wire:click="$set('reportType', 'overview')" 
-                    class="flex-1 min-w-0 px-4 py-3 rounded-md text-sm font-medium transition-colors
-                           {{ $reportType === 'overview' ? 'bg-white dark:bg-gray-800 shadow text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
-                <div class="flex items-center justify-center gap-2">
-                    <span class="text-lg">📋</span>
-                    <span class="hidden sm:inline">Overview</span>
-                </div>
-            </button>
-            
-            <button wire:click="$set('reportType', 'performance')" 
-                    class="flex-1 min-w-0 px-4 py-3 rounded-md text-sm font-medium transition-colors
-                           {{ $reportType === 'performance' ? 'bg-white dark:bg-gray-800 shadow text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
-                <div class="flex items-center justify-center gap-2">
-                    <span class="text-lg">🏆</span>
-                    <span class="hidden sm:inline">Performance</span>
-                </div>
-            </button>
-            
-            <button wire:click="$set('reportType', 'department')" 
-                    class="flex-1 min-w-0 px-4 py-3 rounded-md text-sm font-medium transition-colors
-                           {{ $reportType === 'department' ? 'bg-white dark:bg-gray-800 shadow text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
-                <div class="flex items-center justify-center gap-2">
-                    <span class="text-lg">🏢</span>
-                    <span class="hidden sm:inline">Departamentos</span>
-                </div>
-            </button>
-            
-            <button wire:click="$set('reportType', 'employee')" 
-                    class="flex-1 min-w-0 px-4 py-3 rounded-md text-sm font-medium transition-colors
-                           {{ $reportType === 'employee' ? 'bg-white dark:bg-gray-800 shadow text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
-                <div class="flex items-center justify-center gap-2">
-                    <span class="text-lg">👤</span>
-                    <span class="hidden sm:inline">Funcionário</span>
-                </div>
-            </button>
-            
-            <button wire:click="$set('reportType', 'trends')" 
-                    class="flex-1 min-w-0 px-4 py-3 rounded-md text-sm font-medium transition-colors
-                           {{ $reportType === 'trends' ? 'bg-white dark:bg-gray-800 shadow text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
-                <div class="flex items-center justify-center gap-2">
-                    <span class="text-lg">📈</span>
-                    <span class="hidden sm:inline">Tendências</span>
-                </div>
-            </button>
-        </div>
-
-        <!-- Filtros Secundários (Collapsible) -->
-        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-            <button @click="showFilters = !showFilters" 
-                    class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mb-3">
-                <svg class="w-4 h-4 transition-transform" :class="showFilters ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-                <span x-show="!showFilters">Mostrar Filtros Avançados</span>
-                <span x-show="showFilters">Ocultar Filtros</span>
-            </button>
-            
-            <div x-show="showFilters" 
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 max-h-0"
-                 x-transition:enter-end="opacity-100 max-h-96"
-                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mb-6">
+        <div class="p-6">
+            <div class="flex flex-wrap bg-gray-100 dark:bg-gray-700 rounded-xl p-2 mb-6">
+                <button wire:click="$set('activeTab', 'overview')" 
+                        class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               {{ $activeTab === 'overview' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-lg">📋</span>
+                        <span class="hidden sm:inline">Overview</span>
+                    </div>
+                </button>
                 
-                <!-- Departamento -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Departamento</label>
-                    <select wire:model.live="departmentFilter" 
-                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
-                        <option value="">Todos</option>
-                        @foreach ($departments as $department)
-                            <option value="{{ $department->id }}">{{ $department->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Funcionário -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Funcionário</label>
-                    <select wire:model.live="employeeFilter" 
-                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
-                        <option value="">Todos</option>
-                        @foreach ($employees as $employee)
-                            <option value="{{ $employee->id }}">{{ $employee->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Status -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
-                    <select wire:model.live="statusFilter" 
-                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
-                        <option value="">Todos</option>
-                        <option value="approved">Aprovado</option>
-                        <option value="submitted">Submetido</option>
-                        <option value="rejected">Rejeitado</option>
-                    </select>
-                </div>
-
-                <!-- Performance -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Performance</label>
-                    <select wire:model.live="performanceFilter" 
-                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
-                        <option value="all">Todas</option>
-                        <option value="excellent">Excelente (≥90%)</option>
-                        <option value="good">Bom (70-89%)</option>
-                        <option value="satisfactory">Satisfatório (50-69%)</option>
-                        <option value="poor">Péssimo (<50%)</option>
-                    </select>
-                </div>
+                <button wire:click="$set('activeTab', 'performance')" 
+                        class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               {{ $activeTab === 'performance' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-lg">🏆</span>
+                        <span class="hidden sm:inline">Performance</span>
+                    </div>
+                </button>
+                
+                <button wire:click="$set('activeTab', 'department')" 
+                        class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               {{ $activeTab === 'department' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-lg">🏢</span>
+                        <span class="hidden sm:inline">Departamentos</span>
+                    </div>
+                </button>
+                
+                <button wire:click="$set('activeTab', 'employee')" 
+                        class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               {{ $activeTab === 'employee' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-lg">👤</span>
+                        <span class="hidden sm:inline">Funcionário</span>
+                    </div>
+                </button>
+                
+                <button wire:click="$set('activeTab', 'trends')" 
+                        class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                               {{ $activeTab === 'trends' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-lg">📈</span>
+                        <span class="hidden sm:inline">Tendências</span>
+                    </div>
+                </button>
             </div>
 
-            <!-- Data Customizada (se período = custom) -->
-            @if ($period === 'custom')
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Data Início</label>
-                        <input type="date" wire:model.live="startDate" 
-                            class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
+            <!-- Filtros Secundários (Collapsible) -->
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <button @click="showFilters = !showFilters; $wire.toggleAdvancedFilters()" 
+                        class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mb-4 transition-colors">
+                    <svg class="w-4 h-4 transition-transform duration-200" :class="showFilters ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    <span x-show="!showFilters">Mostrar Filtros Avançados</span>
+                    <span x-show="showFilters">Ocultar Filtros</span>
+                </button>
+                
+                <div x-show="showFilters" 
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 max-h-0"
+                     x-transition:enter-end="opacity-100 max-h-96"
+                     class="overflow-hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-4">
+                        
+                        <!-- Departamento -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Departamento</label>
+                            <select wire:model.live="departmentFilter" 
+                                class="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 dark:text-white">
+                                <option value="">Todos</option>
+                                @foreach ($departments as $department)
+                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Funcionário -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Funcionário</label>
+                            <select wire:model.live="employeeFilter" 
+                                class="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 dark:text-white">
+                                <option value="">Todos</option>
+                                @foreach ($employees as $employee)
+                                    <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
+                            <select wire:model.live="statusFilter" 
+                                class="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 dark:text-white">
+                                <option value="">Todos</option>
+                                <option value="approved">Aprovado</option>
+                                <option value="submitted">Submetido</option>
+                                <option value="rejected">Rejeitado</option>
+                            </select>
+                        </div>
+
+                        <!-- Performance -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Performance</label>
+                            <select wire:model.live="performanceFilter" 
+                                class="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 dark:text-white">
+                                <option value="all">Todas</option>
+                                <option value="excellent">Excelente (≥90%)</option>
+                                <option value="good">Bom (70-89%)</option>
+                                <option value="satisfactory">Satisfatório (50-69%)</option>
+                                <option value="poor">Péssimo (<50%)</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Data Fim</label>
-                        <input type="date" wire:model.live="endDate" 
-                            class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md text-sm">
-                    </div>
+
+                    <!-- Data Customizada (se período = custom) -->
+                    @if ($period === 'custom')
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data Início</label>
+                                <input type="date" wire:model.live="startDate" 
+                                    class="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 dark:text-white">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data Fim</label>
+                                <input type="date" wire:model.live="endDate" 
+                                    class="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-900 dark:text-white">
+                            </div>
+                        </div>
+                    @endif
                 </div>
-            @endif
+            </div>
         </div>
     </div>
 
@@ -210,7 +216,7 @@
     <!-- Content Section -->
     <div wire:loading.remove>
         <!-- OVERVIEW REPORT -->
-        @if ($reportType === 'overview')
+        @if ($activeTab === 'overview')
             <div class="space-y-6">
                 <!-- Statistics Cards Interativas -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -221,23 +227,6 @@
                             <div>
                                 <p class="text-blue-100 text-sm font-medium">Total de Avaliações</p>
                                 <p class="text-3xl font-bold mt-1">{{ $stats['total_evaluations'] ?? 0 }}</p>
-                                @if(isset($stats['growth_rate']))
-                                    <div class="flex items-center mt-2">
-                                        @if($stats['growth_rate'] > 0)
-                                            <svg class="w-3 h-3 text-green-300 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-                                            </svg>
-                                            <span class="text-xs text-green-300">+{{ $stats['growth_rate'] }}%</span>
-                                        @elseif($stats['growth_rate'] < 0)
-                                            <svg class="w-3 h-3 text-red-300 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                                            </svg>
-                                            <span class="text-xs text-red-300">{{ $stats['growth_rate'] }}%</span>
-                                        @else
-                                            <span class="text-xs text-blue-300">Estável</span>
-                                        @endif
-                                    </div>
-                                @endif
                             </div>
                             <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,7 +245,7 @@
                                 <p class="text-3xl font-bold mt-1">{{ $stats['approved_evaluations'] ?? 0 }}</p>
                                 <div class="mt-2">
                                     <span class="text-xs bg-green-400 text-white px-2 py-1 rounded-full">
-                                        {{ $stats['total_evaluations'] > 0 ? round(($stats['approved_evaluations'] / $stats['total_evaluations']) * 100, 1) : 0 }}% do total
+                                        {{ ($stats['total_evaluations'] ?? 0) > 0 ? round((($stats['approved_evaluations'] ?? 0) / ($stats['total_evaluations'] ?? 1)) * 100, 1) : 0 }}% do total
                                     </span>
                                 </div>
                             </div>
@@ -320,8 +309,8 @@
                 </div>
 
                 <!-- Performance Distribution Chart -->
-                @if (isset($chartData['performance_chart']))
-                    <div class="bg-white dark:bg-gray-800 shadow rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                @if (isset($chartData['performance_distribution']))
+                    <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Distribuição de Performance</h3>
                             <div class="flex items-center gap-2 mt-2 sm:mt-0">
@@ -331,15 +320,15 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="h-64">
-                            <canvas id="performanceChart"></canvas>
+                        <div class="h-64 flex items-center justify-center">
+                            <canvas id="performanceChart" class="max-w-full max-h-full"></canvas>
                         </div>
                     </div>
                 @endif
 
-                <!-- Department Performance Table - Responsiva -->
+                <!-- Department Performance Table -->
                 @if (isset($reportData['department_performance']) && $reportData['department_performance']->count() > 0)
-                    <div class="bg-white dark:bg-gray-800 shadow rounded-xl border border-gray-200 dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl border border-gray-200 dark:border-gray-700">
                         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Performance por Departamento</h3>
                         </div>
@@ -365,7 +354,7 @@
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     @foreach ($reportData['department_performance'] as $dept)
-                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer" 
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors" 
                                             wire:click="filterByDepartment('{{ $dept['department'] }}')">
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                                                 {{ $dept['department'] }}
@@ -435,7 +424,7 @@
             </div>
 
         <!-- PERFORMANCE REPORT -->
-        @elseif($reportType === 'performance')
+        @elseif($activeTab === 'performance')
             <div class="space-y-6">
                 <!-- Performance Statistics -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -516,8 +505,7 @@
                             </h3>
                         </div>
                         
-                        <!-- Desktop Table -->
-                        <div class="hidden md:block overflow-x-auto">
+                        <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
                                     <tr>
@@ -555,54 +543,24 @@
                                                         {{ $evaluation->final_percentage }}%
                                                     </span>
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                                                        {{ $evaluation->performance_class }}
+                                                        {{ $evaluation->performance_class ?? 'Excelente' }}
                                                     </span>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $evaluation->evaluation_period->format('m/Y') }}
+                                                {{ $evaluation->evaluation_period ? \Carbon\Carbon::parse($evaluation->evaluation_period)->format('m/Y') : '-' }}
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
-
-                        <!-- Mobile Cards -->
-                        <div class="md:hidden p-4 space-y-4">
-                            @foreach ($reportData['top_performers'] as $index => $evaluation)
-                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <div class="flex items-center gap-3">
-                                            @if ($index < 3)
-                                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold text-sm
-                                                    {{ $index === 0 ? 'bg-yellow-500' : ($index === 1 ? 'bg-gray-400' : 'bg-orange-500') }}">
-                                                    {{ $index + 1 }}
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 font-bold text-sm">
-                                                    {{ $index + 1 }}
-                                                </span>
-                                            @endif
-                                            <div>
-                                                <h4 class="font-semibold text-gray-900 dark:text-white">{{ $evaluation->employee->name }}</h4>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $evaluation->employee->department->name }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <span class="text-lg font-bold text-green-600 dark:text-green-400">{{ $evaluation->final_percentage }}%</span>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $evaluation->evaluation_period->format('m/Y') }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
                     </div>
                 @endif
             </div>
 
         <!-- DEPARTMENT REPORT -->
-        @elseif($reportType === 'department')
+        @elseif($activeTab === 'department')
             <div class="space-y-6">
                 @if (isset($reportData['departments']) && $reportData['departments']->count() > 0)
                     <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700">
@@ -615,8 +573,7 @@
                             </h3>
                         </div>
                         
-                        <!-- Desktop Table -->
-                        <div class="hidden lg:block overflow-x-auto">
+                        <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
                                     <tr>
@@ -660,42 +617,6 @@
                                 </tbody>
                             </table>
                         </div>
-
-                        <!-- Mobile/Tablet Cards -->
-                        <div class="lg:hidden p-4 space-y-4">
-                            @foreach ($reportData['departments'] as $dept)
-                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <h4 class="font-semibold text-gray-900 dark:text-white text-lg">{{ $dept['name'] }}</h4>
-                                        <span class="text-xl font-bold text-blue-600 dark:text-blue-400">{{ $dept['average_performance'] }}%</span>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-2 gap-4 mb-4">
-                                        <div>
-                                            <span class="text-sm text-gray-500 dark:text-gray-400">Funcionários:</span>
-                                            <span class="text-sm font-medium text-gray-900 dark:text-white ml-1">{{ $dept['total_employees'] }}</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-sm text-gray-500 dark:text-gray-400">Avaliações:</span>
-                                            <span class="text-sm font-medium text-gray-900 dark:text-white ml-1">{{ $dept['total_evaluations'] }}</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                                            <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: {{ $dept['average_performance'] }}%"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex flex-wrap gap-2">
-                                        <span class="px-2 py-1 text-xs bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 rounded-full">Excelente: {{ $dept['excellent_count'] }}</span>
-                                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded-full">Bom: {{ $dept['good_count'] }}</span>
-                                        <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 rounded-full">Satisfatório: {{ $dept['satisfactory_count'] }}</span>
-                                        <span class="px-2 py-1 text-xs bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 rounded-full">Péssimo: {{ $dept['poor_count'] }}</span>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
                     </div>
                 @else
                     <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-12 text-center border border-gray-200 dark:border-gray-700">
@@ -709,7 +630,7 @@
             </div>
 
         <!-- EMPLOYEE REPORT -->
-        @elseif($reportType === 'employee')
+        @elseif($activeTab === 'employee')
             <div class="space-y-6">
                 @if (isset($reportData['message']))
                     <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-12 text-center border border-gray-200 dark:border-gray-700">
@@ -718,7 +639,7 @@
                         </svg>
                         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Selecione um Funcionário</h3>
                         <p class="text-gray-500 dark:text-gray-400 mb-4">{{ $reportData['message'] }}</p>
-                        <button @click="showFilters = true" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        <button @click="showFilters = true; $wire.toggleAdvancedFilters()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                             Abrir Filtros
                         </button>
                     </div>
@@ -774,8 +695,7 @@
                                 </h3>
                             </div>
                             
-                            <!-- Desktop Table -->
-                            <div class="hidden md:block overflow-x-auto">
+                            <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead class="bg-gray-50 dark:bg-gray-700">
                                         <tr>
@@ -789,18 +709,25 @@
                                         @foreach ($reportData['evaluations'] as $evaluation)
                                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-medium">
-                                                    {{ $evaluation->evaluation_period->format('m/Y') }}
+                                                    {{ \Carbon\Carbon::parse($evaluation->evaluation_period)->format('m/Y') }}
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                     <span class="text-lg font-bold text-gray-900 dark:text-white">{{ $evaluation->final_percentage }}%</span>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                    @php
+                                                        $class = '';
+                                                        if ($evaluation->final_percentage >= 90) $class = 'Excelente';
+                                                        elseif ($evaluation->final_percentage >= 70) $class = 'Bom';
+                                                        elseif ($evaluation->final_percentage >= 50) $class = 'Satisfatório';
+                                                        else $class = 'Péssimo';
+                                                    @endphp
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        @if ($evaluation->performance_class === 'Excelente') bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
-                                                        @elseif($evaluation->performance_class === 'Bom') bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300
-                                                        @elseif($evaluation->performance_class === 'Satisfatório') bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300
+                                                        @if ($class === 'Excelente') bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
+                                                        @elseif($class === 'Bom') bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300
+                                                        @elseif($class === 'Satisfatório') bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300
                                                         @else bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 @endif">
-                                                        {{ $evaluation->performance_class }}
+                                                        {{ $class }}
                                                     </span>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -811,39 +738,13 @@
                                     </tbody>
                                 </table>
                             </div>
-
-                            <!-- Mobile Cards -->
-                            <div class="md:hidden p-4 space-y-4">
-                                @foreach ($reportData['evaluations'] as $evaluation)
-                                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                                        <div class="flex justify-between items-start mb-3">
-                                            <div>
-                                                <h4 class="font-semibold text-gray-900 dark:text-white">{{ $evaluation->evaluation_period->format('m/Y') }}</h4>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $evaluation->evaluator->name }}</p>
-                                            </div>
-                                            <div class="text-right">
-                                                <span class="text-lg font-bold text-gray-900 dark:text-white">{{ $evaluation->final_percentage }}%</span>
-                                                <div class="mt-1">
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                        @if ($evaluation->performance_class === 'Excelente') bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300
-                                                        @elseif($evaluation->performance_class === 'Bom') bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300
-                                                        @elseif($evaluation->performance_class === 'Satisfatório') bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300
-                                                        @else bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 @endif">
-                                                        {{ $evaluation->performance_class }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
                         </div>
                     @endif
                 @endif
             </div>
 
         <!-- TRENDS REPORT -->
-        @elseif($reportType === 'trends')
+        @elseif($activeTab === 'trends')
             <div class="space-y-6">
                 @if (isset($reportData['monthly_trends']) && $reportData['monthly_trends']->count() > 0)
                     <!-- Trends Chart -->
@@ -872,8 +773,7 @@
                             </h3>
                         </div>
                         
-                        <!-- Desktop Table -->
-                        <div class="hidden lg:block overflow-x-auto">
+                        <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
                                     <tr>
@@ -920,33 +820,6 @@
                                 </tbody>
                             </table>
                         </div>
-
-                        <!-- Mobile Cards -->
-                        <div class="lg:hidden p-4 space-y-4">
-                            @foreach ($reportData['monthly_trends'] as $trend)
-                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                                    <div class="flex justify-between items-start mb-3">
-                                        <h4 class="font-semibold text-gray-900 dark:text-white">{{ $trend['period'] }}</h4>
-                                        <span class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ $trend['avg_performance'] }}%</span>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-3 text-sm mb-3">
-                                        <div>
-                                            <span class="text-gray-500 dark:text-gray-400">Total:</span>
-                                            <span class="font-medium text-gray-900 dark:text-white ml-1">{{ $trend['total_evaluations'] }}</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-gray-500 dark:text-gray-400">Críticas:</span>
-                                            <span class="font-medium ml-1 {{ $trend['below_threshold_count'] > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' }}">
-                                                {{ $trend['below_threshold_count'] }} ({{ $trend['below_threshold_percentage'] }}%)
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: {{ $trend['avg_performance'] }}%"></div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
                     </div>
                 @else
                     <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-12 text-center border border-gray-200 dark:border-gray-700">
@@ -962,19 +835,28 @@
     </div>
 
     <!-- Chart.js Scripts -->
+    @section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            let performanceChart = null;
+            let progressChart = null;
+            let trendsChart = null;
+
             // Performance Chart (Overview)
-            @if ($reportType === 'overview' && isset($chartData['performance_chart']))
+            @if ($activeTab === 'overview' && isset($chartData['performance_distribution']))
                 const performanceCtx = document.getElementById('performanceChart');
                 if (performanceCtx) {
-                    new Chart(performanceCtx, {
+                    if (performanceChart) {
+                        performanceChart.destroy();
+                    }
+                    performanceChart = new Chart(performanceCtx, {
                         type: 'doughnut',
                         data: {
-                            labels: @json($chartData['performance_chart']['labels']),
+                            labels: @json($chartData['performance_distribution']['labels']),
                             datasets: [{
-                                data: @json($chartData['performance_chart']['data']),
-                                backgroundColor: @json($chartData['performance_chart']['colors']),
+                                data: @json($chartData['performance_distribution']['data']),
+                                backgroundColor: @json($chartData['performance_distribution']['colors']),
                                 borderWidth: 3,
                                 borderColor: '#fff',
                                 hoverBorderWidth: 4
@@ -998,7 +880,7 @@
                                     callbacks: {
                                         label: function(context) {
                                             const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
                                             return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
                                         }
                                     }
@@ -1010,18 +892,21 @@
             @endif
 
             // Progress Chart (Employee)
-            @if ($reportType === 'employee' && isset($chartData['progress_chart']))
+            @if ($activeTab === 'employee' && isset($chartData['progress_chart']))
                 const progressCtx = document.getElementById('progressChart');
                 if (progressCtx) {
-                    new Chart(progressCtx, {
+                    if (progressChart) {
+                        progressChart.destroy();
+                    }
+                    progressChart = new Chart(progressCtx, {
                         type: 'line',
                         data: {
                             labels: @json($chartData['progress_chart']['labels']),
                             datasets: [{
                                 label: 'Performance (%)',
                                 data: @json($chartData['progress_chart']['data']),
-                                borderColor: @json($chartData['progress_chart']['borderColor']),
-                                backgroundColor: @json($chartData['progress_chart']['backgroundColor']),
+                                borderColor: '#3B82F6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
                                 borderWidth: 3,
                                 fill: true,
                                 tension: 0.4,
@@ -1067,11 +952,6 @@
                                         display: false
                                     }
                                 }
-                            },
-                            interaction: {
-                                mode: 'nearest',
-                                axis: 'x',
-                                intersect: false
                             }
                         }
                     });
@@ -1079,10 +959,13 @@
             @endif
 
             // Trends Chart
-            @if ($reportType === 'trends' && isset($chartData['trends_chart']))
+            @if ($activeTab === 'trends' && isset($chartData['trends_chart']))
                 const trendsCtx = document.getElementById('trendsChart');
                 if (trendsCtx) {
-                    new Chart(trendsCtx, {
+                    if (trendsChart) {
+                        trendsChart.destroy();
+                    }
+                    trendsChart = new Chart(trendsCtx, {
                         type: 'line',
                         data: {
                             labels: @json($chartData['trends_chart']['labels']),
@@ -1126,7 +1009,6 @@
                                     position: 'right',
                                     beginAtZero: true,
                                     grid: {
-                                        drawOnChartArea: false,
                                     },
                                     ticks: {
                                         callback: function(value) {
@@ -1149,6 +1031,204 @@
                     });
                 }
             @endif
+
+            // Livewire event listeners para recriar gráficos quando tab muda
+            document.addEventListener('livewire:updated', function () {
+                // Destroy existing charts
+                if (performanceChart) {
+                    performanceChart.destroy();
+                    performanceChart = null;
+                }
+                if (progressChart) {
+                    progressChart.destroy();
+                    progressChart = null;
+                }
+                if (trendsChart) {
+                    trendsChart.destroy();
+                    trendsChart = null;
+                }
+
+                // Recreate charts based on active tab
+                setTimeout(() => {
+                    @if ($activeTab === 'overview' && isset($chartData['performance_distribution']))
+                        const performanceCtx = document.getElementById('performanceChart');
+                        if (performanceCtx) {
+                            performanceChart = new Chart(performanceCtx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: @json($chartData['performance_distribution']['labels']),
+                                    datasets: [{
+                                        data: @json($chartData['performance_distribution']['data']),
+                                        backgroundColor: @json($chartData['performance_distribution']['colors']),
+                                        borderWidth: 3,
+                                        borderColor: '#fff',
+                                        hoverBorderWidth: 4
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'bottom',
+                                            labels: {
+                                                padding: 20,
+                                                usePointStyle: true,
+                                                font: {
+                                                    size: 12
+                                                }
+                                            }
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                    const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                                                    return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    @endif
+
+                    @if ($activeTab === 'employee' && isset($chartData['progress_chart']))
+                        const progressCtx = document.getElementById('progressChart');
+                        if (progressCtx) {
+                            progressChart = new Chart(progressCtx, {
+                                type: 'line',
+                                data: {
+                                    labels: @json($chartData['progress_chart']['labels']),
+                                    datasets: [{
+                                        label: 'Performance (%)',
+                                        data: @json($chartData['progress_chart']['data']),
+                                        borderColor: '#3B82F6',
+                                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                        borderWidth: 3,
+                                        fill: true,
+                                        tension: 0.4,
+                                        pointBackgroundColor: '#3B82F6',
+                                        pointBorderColor: '#fff',
+                                        pointBorderWidth: 2,
+                                        pointRadius: 6,
+                                        pointHoverRadius: 8
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: false
+                                        },
+                                        tooltip: {
+                                            mode: 'index',
+                                            intersect: false,
+                                            callbacks: {
+                                                label: function(context) {
+                                                    return 'Performance: ' + context.parsed.y + '%';
+                                                }
+                                            }
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            max: 100,
+                                            grid: {
+                                                color: 'rgba(0, 0, 0, 0.1)'
+                                            },
+                                            ticks: {
+                                                callback: function(value) {
+                                                    return value + '%';
+                                                }
+                                            }
+                                        },
+                                        x: {
+                                            grid: {
+                                                display: false
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    @endif
+
+                    @if ($activeTab === 'trends' && isset($chartData['trends_chart']))
+                        const trendsCtx = document.getElementById('trendsChart');
+                        if (trendsCtx) {
+                            trendsChart = new Chart(trendsCtx, {
+                                type: 'line',
+                                data: {
+                                    labels: @json($chartData['trends_chart']['labels']),
+                                    datasets: @json($chartData['trends_chart']['datasets'])
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            position: 'top',
+                                            labels: {
+                                                usePointStyle: true,
+                                                padding: 20
+                                            }
+                                        },
+                                        tooltip: {
+                                            mode: 'index',
+                                            intersect: false
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            type: 'linear',
+                                            display: true,
+                                            position: 'left',
+                                            beginAtZero: true,
+                                            max: 100,
+                                            grid: {
+                                                color: 'rgba(0, 0, 0, 0.1)'
+                                            },
+                                            ticks: {
+                                                callback: function(value) {
+                                                    return value + '%';
+                                                }
+                                            }
+                                        },
+                                        y1: {
+                                            type: 'linear',
+                                            display: true,
+                                            position: 'right',
+                                            beginAtZero: true,
+                                            grid: {
+                                                drawOnChartArea: false,
+                                            },
+                                            ticks: {
+                                                callback: function(value) {
+                                                    return Math.round(value);
+                                                }
+                                            }
+                                        },
+                                        x: {
+                                            grid: {
+                                                display: false
+                                            }
+                                        }
+                                    },
+                                    interaction: {
+                                        mode: 'nearest',
+                                        axis: 'x',
+                                        intersect: false
+                                    }
+                                }
+                            });
+                        }
+                    @endif
+                }, 100);
+            });
         });
 
         // Export functionality
@@ -1176,4 +1256,5 @@
             });
         });
     </script>
+    @endsection
 </div>
