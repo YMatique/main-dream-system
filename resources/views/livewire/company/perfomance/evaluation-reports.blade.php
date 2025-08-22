@@ -1222,6 +1222,7 @@
 
             // Livewire event listeners para recriar gráficos quando tab muda
             document.addEventListener('livewire:updated', function() {
+                                console.log('updated');
                 // Destroy existing charts
                 if (performanceChart) {
                     performanceChart.destroy();
@@ -1236,7 +1237,7 @@
                     trendsChart = null;
                 }
 
-                console.log('updated');
+
 
                 // Recreate charts based on active tab
                 setTimeout(() => {

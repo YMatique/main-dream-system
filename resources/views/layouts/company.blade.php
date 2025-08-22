@@ -802,7 +802,7 @@
     </script>
 
     @livewireScripts
-    <script src="//unpkg.com/alpinejs" defer></script>
+    {{-- <script src="//unpkg.com/alpinejs" defer></script> --}}
     @yield('scripts')
 </body>
 </html>
