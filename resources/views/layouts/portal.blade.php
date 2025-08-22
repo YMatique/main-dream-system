@@ -70,16 +70,21 @@
                     </div>
 
                     {{-- User dropdown --}}
+                    @php
+                        $portalUser = Auth::guard('portal')->user();
+                        $employeeName = $portalUser->employee_name ?? 'Usuário';
+                    @endphp
+                    
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" 
                                 class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             <div class="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center">
                                 <span class="text-sm font-medium text-white">
-                                    {{ substr(auth()->user()->name, 0, 2) }}
+                                    {{ substr($employeeName, 0, 2) }}
                                 </span>
                             </div>
                             <span class="ml-3 text-gray-700 dark:text-gray-300 font-medium hidden sm:block">
-                                {{ auth()->user()->name }}
+                                {{ $employeeName }}
                             </span>
                             <svg class="ml-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
