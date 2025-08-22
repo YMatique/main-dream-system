@@ -24,7 +24,7 @@ class EmployeeEvaluations extends Component
 
     public function mount($month = null, $year = null)
     {
-       $this->portalUser = Auth::guard('employee_portal')->user();
+       $this->portalUser = Auth::guard('portal')->user();
         $this->employee = $this->portalUser->employee;
 
         if (!$this->employee) {
