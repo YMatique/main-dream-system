@@ -1,4 +1,4 @@
-<div>
+<div >
     <!-- Header Melhorado -->
     <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl border border-gray-200 dark:border-gray-700 mb-6">
         <div class="px-6 lg:px-8 py-8">
@@ -67,7 +67,7 @@
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 mb-6">
         <div class="p-6">
             <div class="flex flex-wrap bg-gray-100 dark:bg-gray-700 rounded-xl p-2 mb-6">
-                <button wire:click="$set('activeTab', 'overview')"
+                {{-- <button wire:click="$set('activeTab', 'overview')" @click="updateCharts()"
                     class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                {{ $activeTab === 'overview' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
                     <div class="flex items-center justify-center gap-2">
@@ -76,7 +76,7 @@
                     </div>
                 </button>
 
-                <button wire:click="$set('activeTab', 'performance')"
+                <button wire:click="$set('activeTab', 'performance')" @click="updateCharts()"
                     class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                {{ $activeTab === 'performance' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
                     <div class="flex items-center justify-center gap-2">
@@ -85,7 +85,7 @@
                     </div>
                 </button>
 
-                <button wire:click="$set('activeTab', 'department')"
+                <button wire:click="$set('activeTab', 'department')" @click="updateCharts()"
                     class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                {{ $activeTab === 'department' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
                     <div class="flex items-center justify-center gap-2">
@@ -94,7 +94,7 @@
                     </div>
                 </button>
 
-                <button wire:click="$set('activeTab', 'employee')"
+                <button wire:click="$set('activeTab', 'employee')" @click="updateCharts()"
                     class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                {{ $activeTab === 'employee' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
                     <div class="flex items-center justify-center gap-2">
@@ -103,9 +103,53 @@
                     </div>
                 </button>
 
-                <button wire:click="$set('activeTab', 'trends')"
+                <button wire:click="$set('activeTab', 'trends')" @click="updateCharts()"
                     class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
                                {{ $activeTab === 'trends' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-lg">📈</span>
+                        <span class="hidden sm:inline">Tendências</span>
+                    </div>
+                </button> --}}
+                <button wire:click="$set('activeTab', 'overview')"
+                    class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                   {{ $activeTab === 'overview' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-lg">📋</span>
+                        <span class="hidden sm:inline">Overview</span>
+                    </div>
+                </button>
+
+                <button wire:click="$set('activeTab', 'performance')"
+                    class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                   {{ $activeTab === 'performance' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-lg">🏆</span>
+                        <span class="hidden sm:inline">Performance</span>
+                    </div>
+                </button>
+
+                <button wire:click="$set('activeTab', 'department')"
+                    class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                   {{ $activeTab === 'department' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-lg">🏢</span>
+                        <span class="hidden sm:inline">Departamentos</span>
+                    </div>
+                </button>
+
+                <button wire:click="$set('activeTab', 'employee')"
+                    class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                   {{ $activeTab === 'employee' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="text-lg">👤</span>
+                        <span class="hidden sm:inline">Funcionário</span>
+                    </div>
+                </button>
+
+                <button wire:click="$set('activeTab', 'trends')"
+                    class="flex-1 min-w-0 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200
+                   {{ $activeTab === 'trends' ? 'bg-white dark:bg-gray-800 shadow-md text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200' }}">
                     <div class="flex items-center justify-center gap-2">
                         <span class="text-lg">📈</span>
                         <span class="hidden sm:inline">Tendências</span>
@@ -225,7 +269,7 @@
     <div wire:loading.remove>
         <!-- OVERVIEW REPORT -->
         @if ($activeTab === 'overview')
-            <div class="space-y-6">
+            <div class="space-y-6"  wire:key="overview-content">
                 <!-- Statistics Cards Interativas -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- Total de Avaliações -->
@@ -611,33 +655,33 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                 <div class="flex items-center">
-                                                    
+
                                                     @if ($evaluation->final_percentage >= 90)
-                                                    <span
-                                                        class="text-lg font-bold text-green-600 dark:text-green-400 mr-2">
-                                                        {{ $evaluation->final_percentage }}%
-                                                    </span>
+                                                        <span
+                                                            class="text-lg font-bold text-green-600 dark:text-green-400 mr-2">
+                                                            {{ $evaluation->final_percentage }}%
+                                                        </span>
                                                         <span
                                                             class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Excelente</span>
                                                     @elseif($evaluation->final_percentage >= 70)
-                                                    <span
-                                                        class="text-lg font-bold text-blue-600 dark:text-blue-400 mr-2">
-                                                        {{ $evaluation->final_percentage }}%
-                                                    </span>
+                                                        <span
+                                                            class="text-lg font-bold text-blue-600 dark:text-blue-400 mr-2">
+                                                            {{ $evaluation->final_percentage }}%
+                                                        </span>
                                                         <span
                                                             class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Bom</span>
                                                     @elseif($evaluation->final_percentage >= 50)
-                                                    <span
-                                                        class="text-lg font-bold text-yellow-600 dark:text-yellow-400 mr-2">
-                                                        {{ $evaluation->final_percentage }}%
-                                                    </span>
+                                                        <span
+                                                            class="text-lg font-bold text-yellow-600 dark:text-yellow-400 mr-2">
+                                                            {{ $evaluation->final_percentage }}%
+                                                        </span>
                                                         <span
                                                             class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Satisfatório</span>
                                                     @else
-                                                    <span
-                                                        class="text-lg font-bold text-red-600 dark:text-red-400 mr-2">
-                                                        {{ $evaluation->final_percentage }}%
-                                                    </span>
+                                                        <span
+                                                            class="text-lg font-bold text-red-600 dark:text-red-400 mr-2">
+                                                            {{ $evaluation->final_percentage }}%
+                                                        </span>
                                                         <span
                                                             class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Péssimo</span>
                                                     @endif
@@ -759,7 +803,7 @@
 
             <!-- EMPLOYEE REPORT -->
         @elseif($activeTab === 'employee')
-            <div class="space-y-6">
+            <div class="space-y-6"  wire:key="overview-content">
                 @if (isset($reportData['message']))
                     <div
                         class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-12 text-center border border-gray-200 dark:border-gray-700">
@@ -902,7 +946,7 @@
 
             <!-- TRENDS REPORT -->
         @elseif($activeTab === 'trends')
-            <div class="space-y-6">
+            <div class="space-y-6"  wire:key="trends-content">
                 @if (isset($reportData['monthly_trends']) && $reportData['monthly_trends']->count() > 0)
                     <!-- Trends Chart -->
                     @if (isset($chartData['trends_chart']))
@@ -1018,29 +1062,55 @@
         @endif
     </div>
 
-    <!-- Chart.js Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let performanceChart = null;
-            let progressChart = null;
-            let trendsChart = null;
 
+
+    <!-- 3. TERCEIRO: JavaScript simplificado que usa eventos do Livewire -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Variáveis globais para os gráficos
+    window.performanceChart = null;
+    window.progressChart = null;
+    window.trendsChart = null;
+
+    // Função para destruir gráficos existentes
+    function destroyAllCharts() {
+        try {
+            if (window.performanceChart) {
+                window.performanceChart.destroy();
+                window.performanceChart = null;
+            }
+            if (window.progressChart) {
+                window.progressChart.destroy();
+                window.progressChart = null;
+            }
+            if (window.trendsChart) {
+                window.trendsChart.destroy();
+                window.trendsChart = null;
+            }
+        } catch (e) {
+            console.warn('Error destroying charts:', e);
+        }
+    }
+
+    // Função para criar gráficos
+    function createCharts() {
+        console.log('Creating charts...');
+        
+        // Aguarda o DOM estar pronto
+        setTimeout(() => {
             // Performance Chart (Overview)
-            @if ($activeTab === 'overview' && isset($chartData['performance_chart']))
-                const performanceCtx = document.getElementById('performanceChart');
-
-                if (performanceCtx) {
-                    if (performanceChart) {
-                        performanceChart.destroy();
-                    }
-                    performanceChart = new Chart(performanceCtx, {
+            const performanceCtx = document.getElementById('performanceChart');
+            if (performanceCtx) {
+                const performanceData = @json($chartData['performance_chart'] ?? null);
+                if (performanceData && performanceData.labels && performanceData.labels.length > 0) {
+                    console.log('Creating performance chart');
+                    window.performanceChart = new Chart(performanceCtx, {
                         type: 'doughnut',
                         data: {
-                            labels: @json($chartData['performance_chart']['labels']),
+                            labels: performanceData.labels,
                             datasets: [{
-                                data: @json($chartData['performance_chart']['data']),
-                                backgroundColor: @json($chartData['performance_chart']['colors']),
+                                data: performanceData.data,
+                                backgroundColor: performanceData.colors || ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'],
                                 borderWidth: 3,
                                 borderColor: '#fff',
                                 hoverBorderWidth: 4
@@ -1055,20 +1125,15 @@
                                     labels: {
                                         padding: 20,
                                         usePointStyle: true,
-                                        font: {
-                                            size: 12
-                                        }
+                                        font: { size: 12 }
                                     }
                                 },
                                 tooltip: {
                                     callbacks: {
                                         label: function(context) {
-                                            const total = context.dataset.data.reduce((a, b) => a + b,
-                                                0);
-                                            const percentage = total > 0 ? ((context.parsed / total) *
-                                                100).toFixed(1) : 0;
-                                            return context.label + ': ' + context.parsed + ' (' +
-                                                percentage + '%)';
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
                                         }
                                     }
                                 }
@@ -1076,22 +1141,21 @@
                         }
                     });
                 }
-            @endif
+            }
 
             // Progress Chart (Employee)
-            @if ($activeTab === 'employee' && isset($chartData['progress_chart']))
-                const progressCtx = document.getElementById('progressChart');
-                if (progressCtx) {
-                    if (progressChart) {
-                        progressChart.destroy();
-                    }
-                    progressChart = new Chart(progressCtx, {
+            const progressCtx = document.getElementById('progressChart');
+            if (progressCtx) {
+                const progressData = @json($chartData['progress_chart'] ?? null);
+                if (progressData && progressData.labels && progressData.labels.length > 0) {
+                    console.log('Creating progress chart');
+                    window.progressChart = new Chart(progressCtx, {
                         type: 'line',
                         data: {
-                            labels: @json($chartData['progress_chart']['labels']),
+                            labels: progressData.labels,
                             datasets: [{
                                 label: 'Performance (%)',
-                                data: @json($chartData['progress_chart']['data']),
+                                data: progressData.data,
                                 borderColor: '#3B82F6',
                                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                                 borderWidth: 3,
@@ -1108,9 +1172,7 @@
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
-                                legend: {
-                                    display: false
-                                },
+                                legend: { display: false },
                                 tooltip: {
                                     mode: 'index',
                                     intersect: false,
@@ -1125,38 +1187,31 @@
                                 y: {
                                     beginAtZero: true,
                                     max: 100,
-                                    grid: {
-                                        color: 'rgba(0, 0, 0, 0.1)'
-                                    },
+                                    grid: { color: 'rgba(0, 0, 0, 0.1)' },
                                     ticks: {
                                         callback: function(value) {
                                             return value + '%';
                                         }
                                     }
                                 },
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                }
+                                x: { grid: { display: false } }
                             }
                         }
                     });
                 }
-            @endif
+            }
 
             // Trends Chart
-            @if ($activeTab === 'trends' && isset($chartData['trends_chart']))
-                const trendsCtx = document.getElementById('trendsChart');
-                if (trendsCtx) {
-                    if (trendsChart) {
-                        trendsChart.destroy();
-                    }
-                    trendsChart = new Chart(trendsCtx, {
+            const trendsCtx = document.getElementById('trendsChart');
+            if (trendsCtx) {
+                const trendsData = @json($chartData['trends_chart'] ?? null);
+                if (trendsData && trendsData.labels && trendsData.labels.length > 0) {
+                    console.log('Creating trends chart');
+                    window.trendsChart = new Chart(trendsCtx, {
                         type: 'line',
                         data: {
-                            labels: @json($chartData['trends_chart']['labels']),
-                            datasets: @json($chartData['trends_chart']['datasets'])
+                            labels: trendsData.labels,
+                            datasets: trendsData.datasets
                         },
                         options: {
                             responsive: true,
@@ -1164,15 +1219,9 @@
                             plugins: {
                                 legend: {
                                     position: 'top',
-                                    labels: {
-                                        usePointStyle: true,
-                                        padding: 20
-                                    }
+                                    labels: { usePointStyle: true, padding: 20 }
                                 },
-                                tooltip: {
-                                    mode: 'index',
-                                    intersect: false
-                                }
+                                tooltip: { mode: 'index', intersect: false }
                             },
                             scales: {
                                 y: {
@@ -1181,9 +1230,7 @@
                                     position: 'left',
                                     beginAtZero: true,
                                     max: 100,
-                                    grid: {
-                                        color: 'rgba(0, 0, 0, 0.1)'
-                                    },
+                                    grid: { color: 'rgba(0, 0, 0, 0.1)' },
                                     ticks: {
                                         callback: function(value) {
                                             return value + '%';
@@ -1195,20 +1242,14 @@
                                     display: true,
                                     position: 'right',
                                     beginAtZero: true,
-                                    grid: {
-                                        drawOnChartArea: false,
-                                    },
+                                    grid: { drawOnChartArea: false },
                                     ticks: {
                                         callback: function(value) {
                                             return Math.round(value);
                                         }
                                     }
                                 },
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                }
+                                x: { grid: { display: false } }
                             },
                             interaction: {
                                 mode: 'nearest',
@@ -1218,240 +1259,27 @@
                         }
                     });
                 }
-            @endif
+            }
+        }, 100);
+    }
 
-            // Livewire event listeners para recriar gráficos quando tab muda
-            document.addEventListener('livewire:updated', function() {
-                                console.log('updated');
-                // Destroy existing charts
-                if (performanceChart) {
-                    performanceChart.destroy();
-                    performanceChart = null;
-                }
-                if (progressChart) {
-                    progressChart.destroy();
-                    progressChart = null;
-                }
-                if (trendsChart) {
-                    trendsChart.destroy();
-                    trendsChart = null;
-                }
-
-
-
-                // Recreate charts based on active tab
-                setTimeout(() => {
-                    @if ($activeTab === 'overview' && isset($chartData['performance_chart']))
-                        const performanceCtx = document.getElementById('performanceChart');
-                        if (performanceCtx) {
-                            performanceChart = new Chart(performanceCtx, {
-                                type: 'doughnut',
-                                data: {
-                                    labels: @json($chartData['performance_chart']['labels']),
-                                    datasets: [{
-                                        data: @json($chartData['performance_chart']['data']),
-                                        backgroundColor: @json($chartData['performance_chart']['colors']),
-                                        borderWidth: 3,
-                                        borderColor: '#fff',
-                                        hoverBorderWidth: 4
-                                    }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            position: 'bottom',
-                                            labels: {
-                                                padding: 20,
-                                                usePointStyle: true,
-                                                font: {
-                                                    size: 12
-                                                }
-                                            }
-                                        },
-                                        tooltip: {
-                                            callbacks: {
-                                                label: function(context) {
-                                                    const total = context.dataset.data
-                                                        .reduce((a, b) => a + b, 0);
-                                                    const percentage = total > 0 ? ((
-                                                        context.parsed / total
-                                                    ) * 100).toFixed(1) : 0;
-                                                    return context.label + ': ' +
-                                                        context.parsed + ' (' +
-                                                        percentage + '%)';
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    @endif
-
-                    @if ($activeTab === 'employee' && isset($chartData['progress_chart']))
-                        const progressCtx = document.getElementById('progressChart');
-                        if (progressCtx) {
-                            progressChart = new Chart(progressCtx, {
-                                type: 'line',
-                                data: {
-                                    labels: @json($chartData['progress_chart']['labels']),
-                                    datasets: [{
-                                        label: 'Performance (%)',
-                                        data: @json($chartData['progress_chart']['data']),
-                                        borderColor: '#3B82F6',
-                                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                                        borderWidth: 3,
-                                        fill: true,
-                                        tension: 0.4,
-                                        pointBackgroundColor: '#3B82F6',
-                                        pointBorderColor: '#fff',
-                                        pointBorderWidth: 2,
-                                        pointRadius: 6,
-                                        pointHoverRadius: 8
-                                    }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            display: false
-                                        },
-                                        tooltip: {
-                                            mode: 'index',
-                                            intersect: false,
-                                            callbacks: {
-                                                label: function(context) {
-                                                    return 'Performance: ' + context
-                                                        .parsed.y + '%';
-                                                }
-                                            }
-                                        }
-                                    },
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true,
-                                            max: 100,
-                                            grid: {
-                                                color: 'rgba(0, 0, 0, 0.1)'
-                                            },
-                                            ticks: {
-                                                callback: function(value) {
-                                                    return value + '%';
-                                                }
-                                            }
-                                        },
-                                        x: {
-                                            grid: {
-                                                display: false
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    @endif
-
-                    @if ($activeTab === 'trends' && isset($chartData['trends_chart']))
-                        const trendsCtx = document.getElementById('trendsChart');
-                        if (trendsCtx) {
-                            trendsChart = new Chart(trendsCtx, {
-                                type: 'line',
-                                data: {
-                                    labels: @json($chartData['trends_chart']['labels']),
-                                    datasets: @json($chartData['trends_chart']['datasets'])
-                                },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            position: 'top',
-                                            labels: {
-                                                usePointStyle: true,
-                                                padding: 20
-                                            }
-                                        },
-                                        tooltip: {
-                                            mode: 'index',
-                                            intersect: false
-                                        }
-                                    },
-                                    scales: {
-                                        y: {
-                                            type: 'linear',
-                                            display: true,
-                                            position: 'left',
-                                            beginAtZero: true,
-                                            max: 100,
-                                            grid: {
-                                                color: 'rgba(0, 0, 0, 0.1)'
-                                            },
-                                            ticks: {
-                                                callback: function(value) {
-                                                    return value + '%';
-                                                }
-                                            }
-                                        },
-                                        y1: {
-                                            type: 'linear',
-                                            display: true,
-                                            position: 'right',
-                                            beginAtZero: true,
-                                            grid: {
-                                                drawOnChartArea: false,
-                                            },
-                                            ticks: {
-                                                callback: function(value) {
-                                                    return Math.round(value);
-                                                }
-                                            }
-                                        },
-                                        x: {
-                                            grid: {
-                                                display: false
-                                            }
-                                        }
-                                    },
-                                    interaction: {
-                                        mode: 'nearest',
-                                        axis: 'x',
-                                        intersect: false
-                                    }
-                                }
-                            });
-                        }
-                    @endif
-                }, 100);
-            });
+    // Event listeners para Livewire
+    document.addEventListener('livewire:init', () => {
+        // Criar gráficos na primeira carga
+        createCharts();
+        
+        // Escutar atualizações do Livewire
+        Livewire.on('tab-changed', () => {
+            console.log('Tab changed - recreating charts');
+            destroyAllCharts();
+            createCharts();
         });
+    });
 
-        // Export functionality
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('export-started', (event) => {
-                // Show export notification
-                const notification = document.createElement('div');
-                notification.className =
-                    'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-                notification.innerHTML = `
-                    <div class="flex items-center">
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Preparando exportação...
-                    </div>`;
-                document.body.appendChild(notification);
-
-                // Remove notification after 3 seconds
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 3000);
-            });
-        });
-    </script>
+    // Também executar quando o DOM for atualizado pelo Livewire
+    document.addEventListener('livewire:navigated', () => {
+        destroyAllCharts();
+        createCharts();
+    });
+</script>
 </div>

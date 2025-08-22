@@ -795,18 +795,33 @@ class EvaluationReports extends Component
     public function updatedActiveTab()
     {
         // Reset filtros específicos quando mudar tipo
+        
         if ($this->activeTab === 'employee' && !$this->employeeFilter) {
-            // Não gerar relatório até selecionar funcionário
-            $this->reportData = ['message' => 'Selecione um funcionário para ver o relatório detalhado.'];
-            return;
-        }
+        $this->reportData = ['message' => 'Selecione um funcionário para ver o relatório detalhado.'];
+        $this->chartData = [];
+        return;
+    }
 
         $this->generateReport();
 
         // Dispatch evento para animações
-        $this->dispatch('report-type-changed', ['type' => $this->activeTab]);
+        // $this->dispatch('report-type-changed', ['type' => $this->activeTab]);
+        //   $this->dispatch('charts-update');
+        // $this->dispatch('tab-changed', [
+        //     'activeTab' => $this->activeTab,
+        //     'chartData' => $this->chartData
+        // ]);
+         $this->dispatch('tab-changed');
     }
 
+    // Adicione este método para forçar atualização dos gráficos
+public function refreshCharts()
+{
+    $this->dispatch('charts-updated', [
+        'activeTab' => $this->activeTab,
+        'chartData' => $this->chartData
+    ]);
+}
     public function updatedPeriod()
     {
         $this->setPeriodDates();
