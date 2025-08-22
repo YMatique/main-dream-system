@@ -299,124 +299,127 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     @if(count($chartData) > 0)
-    const chartElement = document.getElementById('performanceTrendChart');
-    
-    if (chartElement) {
-        const ctx = chartElement.getContext('2d');
-        
-        // Dados do gráfico
-        const chartData = @json($chartData);
-        console.log('Chart Data:', chartData); // Debug
-        
-        // Preparar cores dos pontos
-        const pointColors = chartData.map(function(item) {
-            switch(item.color) {
-                case 'green': return '#22c55e';
-                case 'blue': return '#3b82f6';
-                case 'yellow': return '#eab308';
-                case 'red': return '#ef4444';
-                default: return '#6b7280';
-            }
-        });
 
-        // Preparar cores de fundo dos pontos
-        const pointBackgroundColors = chartData.map(function(item) {
-            switch(item.color) {
-                case 'green': return 'rgba(34, 197, 94, 0.1)';
-                case 'blue': return 'rgba(59, 130, 246, 0.1)';
-                case 'yellow': return 'rgba(234, 179, 8, 0.1)';
-                case 'red': return 'rgba(239, 68, 68, 0.1)';
-                default: return 'rgba(107, 114, 128, 0.1)';
-            }
-        });
+    setTimeout(function() {
+        const chartElement = document.getElementById('performanceTrendChart');
         
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: chartData.map(item => item.date),
-                datasets: [{
-                    label: 'Performance (%)',
-                    data: chartData.map(item => parseFloat(item.percentage)),
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    borderWidth: 4,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: pointColors,
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 3,
-                    pointRadius: 8,
-                    pointHoverRadius: 12,
-                    pointHoverBorderWidth: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#3b82f6',
-                        borderWidth: 1,
-                        cornerRadius: 8,
-                        displayColors: false,
-                        callbacks: {
-                            title: function(context) {
-                                return 'Período: ' + context[0].label;
-                            },
-                            label: function(context) {
-                                const dataIndex = context.dataIndex;
-                                const item = chartData[dataIndex];
-                                return [
-                                    'Performance: ' + context.parsed.y + '%',
-                                    'Classificação: ' + item.class,
-                                    'Pontuação: ' + item.total_score
-                                ];
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: true,
-                            color: 'rgba(0, 0, 0, 0.1)'
-                        },
-                        ticks: {
-                            font: {
-                                size: 12,
-                                weight: '500'
-                            },
-                            callback: function(value) {
-                                return value + '%';
-                            }
-                        }
-                    }
-                },
-                elements: {
-                    line: {
-                        borderCapStyle: 'round',
-                        borderJoinStyle: 'round'
-                    }
-                },
-                animation: {
-                    duration: 2000,
-                    easing: 'easeInOutQuart'
+        if (chartElement) {
+            const ctx = chartElement.getContext('2d');
+            
+            // Dados do gráfico
+            const chartData = @json($chartData);
+            console.log('Chart Data:', chartData); // Debug
+            
+            // Preparar cores dos pontos
+            const pointColors = chartData.map(function(item) {
+                switch(item.color) {
+                    case 'green': return '#22c55e';
+                    case 'blue': return '#3b82f6';
+                    case 'yellow': return '#eab308';
+                    case 'red': return '#ef4444';
+                    default: return '#6b7280';
                 }
-            }
-        });
-    } else {
-        console.error('Canvas element not found!');
-    }
+            });
+
+            // Preparar cores de fundo dos pontos
+            const pointBackgroundColors = chartData.map(function(item) {
+                switch(item.color) {
+                    case 'green': return 'rgba(34, 197, 94, 0.1)';
+                    case 'blue': return 'rgba(59, 130, 246, 0.1)';
+                    case 'yellow': return 'rgba(234, 179, 8, 0.1)';
+                    case 'red': return 'rgba(239, 68, 68, 0.1)';
+                    default: return 'rgba(107, 114, 128, 0.1)';
+                }
+            });
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.map(item => item.date),
+                    datasets: [{
+                        label: 'Performance (%)',
+                        data: chartData.map(item => parseFloat(item.percentage)),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 4,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: pointColors,
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 3,
+                        pointRadius: 8,
+                        pointHoverRadius: 12,
+                        pointHoverBorderWidth: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                title: function(context) {
+                                    return 'Período: ' + context[0].label;
+                                },
+                                label: function(context) {
+                                    const dataIndex = context.dataIndex;
+                                    const item = chartData[dataIndex];
+                                    return [
+                                        'Performance: ' + context.parsed.y + '%',
+                                        'Classificação: ' + item.class,
+                                        'Pontuação: ' + item.total_score
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    elements: {
+                        line: {
+                            borderCapStyle: 'round',
+                            borderJoinStyle: 'round'
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        } else {
+            console.error('Canvas element not found!');
+        }
+    }, 500)
     @else
     console.log('No chart data available');
     @endif
