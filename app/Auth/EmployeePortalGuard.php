@@ -1,4 +1,5 @@
-<?
+<?php
+
 namespace App\Auth;
 
 use Illuminate\Auth\GuardHelpers;
@@ -12,6 +13,21 @@ class EmployeePortalGuard implements Guard
 
     protected $request;
     protected $lastAttempted;
+    
+    /**
+     * The name of the query string item from the "intended" URL.
+     *
+     * @var string
+     */
+    protected $inputKey = 'intended';
+
+    /**
+     * Get the URL the user should be redirected to when they are not authenticated.
+     */
+    public function redirectTo()
+    {
+        return route('portal.login');
+    }
 
     public function __construct(UserProvider $provider, Request $request)
     {
@@ -26,8 +42,8 @@ class EmployeePortalGuard implements Guard
         }
 
         $user = null;
-
         $token = $this->getTokenForRequest();
+
         if (!empty($token)) {
             $user = $this->provider->retrieveByToken(null, $token);
         }
@@ -38,7 +54,6 @@ class EmployeePortalGuard implements Guard
     public function validate(array $credentials = [])
     {
         $this->lastAttempted = $user = $this->provider->retrieveByCredentials($credentials);
-
         return $this->hasValidCredentials($user, $credentials);
     }
 
@@ -46,7 +61,6 @@ class EmployeePortalGuard implements Guard
     {
         $this->lastAttempted = $user = $this->provider->retrieveByCredentials($credentials);
 
-        // dd($user);
         if ($this->hasValidCredentials($user, $credentials)) {
             $this->login($user, $remember);
             return true;
@@ -57,15 +71,25 @@ class EmployeePortalGuard implements Guard
 
     protected function hasValidCredentials($user, $credentials)
     {
-        return $user !== null && 
-               $user->is_active && 
+        return $user !== null &&
+               $user->is_active &&
                $this->provider->validateCredentials($user, $credentials);
     }
 
     public function login($user, $remember = false)
     {
+        // Gerar token se não existir
+        if (empty($user->access_token)) {
+            $user->generateAccessToken();
+        }
+        
         $this->updateSession($user->access_token);
-        $user->recordLogin();
+        
+        // Registrar login se o método existir
+        if (method_exists($user, 'recordLogin')) {
+            $user->recordLogin();
+        }
+        
         $this->setUser($user);
     }
 
@@ -89,5 +113,23 @@ class EmployeePortalGuard implements Guard
     protected function getTokenForRequest()
     {
         return $this->request->session()->get('employee_portal_token');
+    }
+
+    // Métodos adicionais necessários para a interface Guard
+    public function check()
+    {
+        return !is_null($this->user());
+    }
+
+    public function guest()
+    {
+        return !$this->check();
+    }
+
+    public function id()
+    {
+        if ($user = $this->user()) {
+            return $user->getAuthIdentifier();
+        }
     }
 }

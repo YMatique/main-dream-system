@@ -1,4 +1,5 @@
-<?
+<?php
+
 namespace App\Auth;
 
 use App\Models\Company\EmployeePortalAccess;
@@ -39,5 +40,10 @@ class EmployeePortalUserProvider implements UserProvider
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
         return Hash::check($credentials['password'], $user->password);
+    }
+
+    public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false)
+    {
+        // Não implementado para este provider
     }
 }

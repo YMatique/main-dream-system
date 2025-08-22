@@ -16,7 +16,7 @@ class EmployeeDashboard extends Component
 
     public function mount()
     {
-        $this->portalUser = Auth::guard('employee_portal')->user();
+        $this->portalUser = Auth::guard('portal')->user();
         $this->employee = $this->portalUser->employee;
 
         if (!$this->employee) {

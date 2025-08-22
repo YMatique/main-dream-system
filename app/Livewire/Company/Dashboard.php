@@ -21,7 +21,7 @@ use Livewire\Component;
 
 class Dashboard extends Component
 {
- 
+
     // Propriedades para filtros avançados
     public $selectedPeriod = 'current_month';
     public $customStartDate = '';
@@ -74,7 +74,7 @@ class Dashboard extends Component
     private function getAdvancedDateRange()
     {
         $now = Carbon::now();
-        
+
         return match ($this->selectedPeriod) {
             'today' => [
                 'start' => $now->copy()->startOfDay(),
@@ -159,7 +159,7 @@ class Dashboard extends Component
             // Ordens por estágio
             $ordersByStage = [];
             $forms = ['form1', 'form2', 'form3', 'form4', 'form5'];
-            
+
             foreach ($forms as $form) {
                 $ordersByStage[$form] = RepairOrder::where('company_id', $companyId)
                     ->where('current_form', $form)
@@ -184,13 +184,13 @@ class Dashboard extends Component
                 'orders_by_stage' => $ordersByStage,
                 'avg_completion_time' => round($avgCompletionTime, 1),
                 'orders_created_today' => $ordersCreatedToday,
-                'completion_rate' => $ordersPending > 0 
+                'completion_rate' => $ordersPending > 0
                     ? round(($ordersCompleted / ($ordersCompleted + $ordersPending)) * 100, 1)
                     : 100,
             ];
         } catch (\Exception $e) {
             \Log::warning('Erro ao buscar métricas de workflow: ' . $e->getMessage());
-            
+
             return [
                 'orders_completed' => 0,
                 'orders_pending' => 0,
@@ -206,15 +206,15 @@ class Dashboard extends Component
     {
         return Department::where('company_id', $companyId)
             ->where('is_active', true)
-            ->withCount(['employees as total_employees' => function($query) {
+            ->withCount(['employees as total_employees' => function ($query) {
                 $query->where('is_active', true);
             }])
             ->get()
-            ->map(function($dept) use ($dateRange, $companyId) {
+            ->map(function ($dept) use ($dateRange, $companyId) {
                 // Performance média do departamento
-                $avgPerformance = PerformanceEvaluation::whereHas('employee', function($query) use ($dept) {
-                        $query->where('department_id', $dept->id);
-                    })
+                $avgPerformance = PerformanceEvaluation::whereHas('employee', function ($query) use ($dept) {
+                    $query->where('department_id', $dept->id);
+                })
                     ->where('status', 'approved')
                     ->whereBetween('evaluation_period', [$dateRange['start'], $dateRange['end']])
                     ->avg('final_percentage') ?? 0;
@@ -243,9 +243,9 @@ class Dashboard extends Component
                 if ($dept->total_employees > 0) {
                     $hoursPerEmployee = $totalHours / $dept->total_employees;
                     $ordersPerEmployee = $ordersWorked / $dept->total_employees;
-                    $productivityScore = ($avgPerformance * 0.4) + 
-                                       (min($hoursPerEmployee * 2, 100) * 0.3) + 
-                                       (min($ordersPerEmployee * 10, 100) * 0.3);
+                    $productivityScore = ($avgPerformance * 0.4) +
+                        (min($hoursPerEmployee * 2, 100) * 0.3) +
+                        (min($ordersPerEmployee * 10, 100) * 0.3);
                 }
 
                 return [
@@ -256,8 +256,8 @@ class Dashboard extends Component
                     'total_hours' => round($totalHours, 1),
                     'orders_worked' => $ordersWorked,
                     'productivity_score' => round($productivityScore, 1),
-                    'hours_per_employee' => $dept->total_employees > 0 
-                        ? round($totalHours / $dept->total_employees, 1) 
+                    'hours_per_employee' => $dept->total_employees > 0
+                        ? round($totalHours / $dept->total_employees, 1)
                         : 0,
                 ];
             })
@@ -271,13 +271,13 @@ class Dashboard extends Component
         // Materiais cadastrados utilizados
         $registeredMaterials = collect();
         $additionalMaterials = collect();
-        
+
         // Verificar se as tabelas existem antes de fazer query
         try {
-            $registeredMaterials = RepairOrderForm2Material::whereHas('form2.repairOrder', function($query) use ($companyId, $dateRange) {
-                    $query->where('company_id', $companyId)
-                          ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']]);
-                })
+            $registeredMaterials = RepairOrderForm2Material::whereHas('form2.repairOrder', function ($query) use ($companyId, $dateRange) {
+                $query->where('company_id', $companyId)
+                    ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']]);
+            })
                 ->join('materials', 'repair_order_form2_materials.material_id', '=', 'materials.id')
                 ->selectRaw('
                     materials.name,
@@ -297,10 +297,10 @@ class Dashboard extends Component
 
         // Materiais adicionais (não cadastrados)
         try {
-            $additionalMaterials = RepairOrderForm2AdditionalMaterial::whereHas('form2.repairOrder', function($query) use ($companyId, $dateRange) {
-                    $query->where('company_id', $companyId)
-                          ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']]);
-                })
+            $additionalMaterials = RepairOrderForm2AdditionalMaterial::whereHas('form2.repairOrder', function ($query) use ($companyId, $dateRange) {
+                $query->where('company_id', $companyId)
+                    ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']]);
+            })
                 ->selectRaw('
                     nome_material,
                     SUM(quantidade) as total_qty,
@@ -350,8 +350,8 @@ class Dashboard extends Component
             ->whereBetween('repair_orders.created_at', [$dateRange['previous_start'], $dateRange['previous_end']])
             ->count();
 
-        $ordersPercentageChange = $previousOrders > 0 
-            ? (($currentOrders - $previousOrders) / $previousOrders) * 100 
+        $ordersPercentageChange = $previousOrders > 0
+            ? (($currentOrders - $previousOrders) / $previousOrders) * 100
             : 0;
 
         // Status das ordens
@@ -368,7 +368,7 @@ class Dashboard extends Component
         $billingHH = $this->getBillingData(BillingHH::class, $companyId, $dateRange);
         $billingEstimated = $this->getBillingData(BillingEstimated::class, $companyId, $dateRange);
         $billingReal = $this->getBillingData(BillingReal::class, $companyId, $dateRange);
-        
+
         // ===== FUNCIONÁRIOS =====
         $employeesActive = Employee::where('employees.company_id', $companyId)
             ->where('is_active', true)
@@ -424,7 +424,7 @@ class Dashboard extends Component
 
     private function getBillingData($model, $companyId, $dateRange)
     {
-          $data = $model::where('company_id', $companyId)
+        $data = $model::where('company_id', $companyId)
             ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
             ->selectRaw('
                 COUNT(*) as count,
@@ -488,7 +488,7 @@ class Dashboard extends Component
             ->orderBy('orders', 'desc')
             ->limit(5)
             ->get()
-            ->map(function($client) {
+            ->map(function ($client) {
                 return [
                     'name' => $client->name,
                     'orders' => $client->orders,
@@ -510,7 +510,7 @@ class Dashboard extends Component
             ->orderBy('repair_orders.created_at', 'desc')
             ->limit(5)
             ->get()
-            ->map(function($order) {
+            ->map(function ($order) {
                 return [
                     'id' => $order->order_number ?? 'ORD-' . $order->id,
                     'client' => $order->form1->client->name ?? 'N/A',
@@ -528,7 +528,7 @@ class Dashboard extends Component
 
         // Ordens com prazo vencendo
         $ordersOverdue = RepairOrder::where('company_id', $companyId)
-            ->whereHas('form3', function($query) {
+            ->whereHas('form3', function ($query) {
                 $query->where('data_faturacao', '<', now()->subDays(7));
             })
             ->whereDoesntHave('billingReal')
@@ -577,12 +577,96 @@ class Dashboard extends Component
 
     public function exportReport()
     {
-        $this->dispatch('show-notification', [
-            'type' => 'info',
-            'message' => 'Funcionalidade de exportação será implementada em breve.'
-        ]);
+        // $this->dispatch('show-notification', [
+        //     'type' => 'info',
+        //     'message' => 'Funcionalidade de exportação será implementada em breve.'
+        // ]);
+        try {
+            // Verificar se PDFShift está habilitado
+            if (env('PDFSHIFT_ENABLED', false) && env('PDFSHIFT_API_KEY')) {
+                return $this->exportViaPDFShift();
+            } else {
+                return $this->exportViaMPDF();
+            }
+        } catch (\Exception $e) {
+            \Log::error('Erro na exportação PDF: ' . $e->getMessage());
+
+            $this->dispatch('show-notification', [
+                'type' => 'error',
+                'message' => 'Erro ao gerar PDF. Tente novamente em alguns minutos.'
+            ]);
+        }
     }
 
+    private function getPeriodLabel()
+    {
+        return match ($this->selectedPeriod) {
+            'today' => 'Hoje',
+            'last_7_days' => 'Últimos 7 dias',
+            'last_30_days' => 'Últimos 30 dias',
+            'current_month' => 'Mês Atual',
+            'custom' => "De {$this->customStartDate} até {$this->customEndDate}",
+            default => 'Período Atual'
+        };
+    }
+    private function exportViaPDFShift()
+    {
+        $client = new \GuzzleHttp\Client();
+
+        // ✅ GARANTIR QUE DADOS ESTÃO CARREGADOS
+        if (empty($this->dashboardData)) {
+            $this->loadDashboardData();
+        }
+
+        // ✅ PREPARAR DADOS CORRETOS PARA O PDF
+        $pdfData = [
+            'company' => [
+                'name' => auth()->user()->company->name ?? 'Empresa',
+                'period' => $this->getPeriodLabel(),
+                'generated_at' => now()->format('d/m/Y H:i')
+            ],
+            // ⚡ PASSAR OS DADOS EXATAMENTE COMO A DASHBOARD USA
+            'dashboardData' => $this->dashboardData
+        ];
+
+        // Renderizar HTML otimizado para PDF
+        $html = view('exports.dashboard-pdfshift', $pdfData)->render();
+
+
+        try {
+            $response = $client->post('https://api.pdfshift.io/v3/convert/pdf', [
+                'headers' => [
+                    'X-API-Key' => env('PDFSHIFT_API_KEY'),
+                    'Content-Type' => 'application/json'
+                ],
+                'json' => [
+                    'source' => $html,
+                    // 'landscape' => false,
+                    // 'use_print' => false,
+                    'format' => 'A4',
+                    // 'margin' => '20mm',
+                    // 'wait_for' => 3000,
+                    // 'javascript' => true 
+                ],
+                'timeout' => 30
+            ]);
+            $pdfContent = $response->getBody()->getContents();
+
+            $filename = 'dashboard-' . now()->format('Y-m-d-H-i') . '.pdf';
+
+            return response()->streamDownload(function () use ($pdfContent) {
+                echo $pdfContent;
+            }, $filename, [
+                'Content-Type' => 'application/pdf',
+                'Content-Length' => strlen($pdfContent),
+            ]);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            \Log::error('PDFShift API Error: ' . $e->getMessage());
+
+            // Se API falhar, usar fallback
+            // return $this->exportViaLocalPDF();
+        }
+    }
 
     #[Layout('layouts.company')]
     #[Title('Dashboard')]

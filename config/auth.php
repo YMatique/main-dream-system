@@ -41,9 +41,14 @@ return [
             'provider' => 'users',
         ],
         // ADICIONAR ESTE GUARD:
-        'employee_portal' => [
+        // 'employee_portal' => [
+        //     'driver' => 'session',
+        //     'provider' => 'employee_portal_users',
+        // ],
+        // Guard simples usando session padrão
+        'portal' => [
             'driver' => 'session',
-            'provider' => 'employee_portal_users',
+            'provider' => 'portal_users',
         ],
     ],
 
@@ -75,7 +80,12 @@ return [
         //     'table' => 'users',
         // ],
         // ADICIONAR ESTE PROVIDER:
-        'employee_portal_users' => [
+        // 'employee_portal_users' => [
+        //     'driver' => 'eloquent',
+        //     'model' => App\Models\Company\EmployeePortalAccess::class,
+        // ],
+         // Provider padrão do Eloquent
+        'portal_users' => [
             'driver' => 'eloquent',
             'model' => App\Models\Company\EmployeePortalAccess::class,
         ],

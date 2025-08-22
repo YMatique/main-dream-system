@@ -1,4 +1,4 @@
-<?
+<?php
 namespace App\Http\Middleware;
 
 use Closure;
@@ -9,33 +9,26 @@ class PortalEmployeeMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        // dd('asas');
-        // Verificar se está autenticado no guard do portal
-        if (!Auth::guard('employee_portal')->check()) {
+    // Verificar se está logado no guard portal
+        if (!Auth::guard('portal')->check()) {
             return redirect()->route('portal.login');
         }
 
-        $portalUser = Auth::guard('employee_portal')->user();
+        $user = Auth::guard('portal')->user();
 
-        // Verificar se o acesso está ativo
-        if (!$portalUser->is_active) {
-            Auth::guard('employee_portal')->logout();
-            return redirect()->route('portal.access-denied')
-                ->with('reason', 'Conta de acesso ao portal desativada');
+        // Verificar se está ativo
+        if (!$user->is_active) {
+            Auth::guard('portal')->logout();
+            return redirect()->route('portal.login')
+                ->withErrors(['email' => 'Conta desativada.']);
         }
 
-        // Verificar se o funcionário ainda está ativo
-        if (!$portalUser->employee || !$portalUser->employee->is_active) {
-            Auth::guard('employee_portal')->logout();
-            return redirect()->route('portal.access-denied')
-                ->with('reason', 'Funcionário não encontrado ou inativo');
+        // Verificar se o funcionário está ativo
+        if (!$user->employee || !$user->employee->is_active) {
+            Auth::guard('portal')->logout();
+            return redirect()->route('portal.login')
+                ->withErrors(['email' => 'Funcionário inativo.']);
         }
-
-        // Adicionar dados à request
-        $request->merge([
-            'current_portal_user' => $portalUser,
-            'current_employee' => $portalUser->employee
-        ]);
 
         return $next($request);
     }

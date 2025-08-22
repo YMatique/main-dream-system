@@ -44,45 +44,30 @@ class AppServiceProvider extends ServiceProvider
         RepairOrderForm2::observe(RepairOrderForm2Observer::class);
         RepairOrderForm3::observe(RepairOrderForm3Observer::class);
 
-         Event::listen(Login::class, function (Login $event) {
-            app(AuditService::class)->logLogin($event->user);
-        });
-         Event::listen(Logout::class, function (Logout $event) {
-            if ($event->user) {
-                app(AuditService::class)->logLogout($event->user);
-            }
-        });
+        //  Event::listen(Login::class, function (Login $event) {
+        //     app(AuditService::class)->logLogin($event->user);
+        // });
+        //  Event::listen(Logout::class, function (Logout $event) {
+        //     if ($event->user) {
+        //         app(AuditService::class)->logLogout($event->user);
+        //     }
+        // });
 
-        Event::listen(Failed::class, function (Failed $event) {
-            app(AuditService::class)->logFailedLogin($event->credentials['email'] ?? 'unknown');
-        });
+        // Event::listen(Failed::class, function (Failed $event) {
+        //     app(AuditService::class)->logFailedLogin($event->credentials['email'] ?? 'unknown');
+        // });
 
+           // Registrar User Provider personalizado para o portal
+        // Auth::provider('employee_portal_provider', function ($app, array $config) {
+        //     return new EmployeePortalUserProvider();
+        // });
 
-
-         // Registrar helper global
-        if (!function_exists('locale_route')) {
-            function locale_route($name, $parameters = [], $locale = null) {
-                return \App\Helpers\LocaleHelper::route($name, $parameters, $locale);
-            }
-        }
-        
-        if (!function_exists('alternate_urls')) {
-            function alternate_urls() {
-                return \App\Helpers\LocaleHelper::getAlternateUrls();
-            }
-        }
-
-        // Registrar User Provider personalizado
-        Auth::provider('employee_portal', function ($app, array $config) {
-            return new EmployeePortalUserProvider();
-        });
-
-        // Registrar Guard personalizado
-        Auth::extend('employee_portal', function ($app, $name, array $config) {
-            return new EmployeePortalGuard(
-                Auth::createUserProvider($config['provider']),
-                $app['request']
-            );
-        });
+        // // Registrar Guard personalizado para o portal
+        // Auth::extend('employee_portal', function ($app, $name, array $config) {
+        //     return new EmployeePortalGuard(
+        //         Auth::createUserProvider($config['provider']),
+        //         $app['request']
+        //     );
+        // });
     }
 }

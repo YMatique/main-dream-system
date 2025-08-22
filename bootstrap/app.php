@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CheckPermission;
 use App\Http\Middleware\CheckUserType;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -28,11 +29,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'user.type' => \App\Http\Middleware\UserTypeMiddleware::class,
             'form.access'=>\App\Http\Middleware\System\CheckFormAccess::class,
             'permission'=> \App\Http\Middleware\CheckPermission::class,
-            'portal.employee'=> \App\Http\Middleware\PortalEmployeeMiddleware::class,
+            'portal.auth'=> \App\Http\Middleware\PortalEmployeeMiddleware::class,
             
         ]);
         // $middleware->append(\App\Http\Middleware\LogActivity::class,);ss
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+      
     })->create();

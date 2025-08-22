@@ -54,7 +54,7 @@ class PortalAuthController extends Controller
         }
 
         // Tentar fazer login usando o guard do portal
-        if (Auth::guard('employee_portal')->attempt($credentials, $remember)) {
+        if (Auth::guard('portal')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
             
             // Registrar login
@@ -84,7 +84,7 @@ class PortalAuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $portalUser = Auth::guard('employee_portal')->user();
+        $portalUser = Auth::guard('portal')->user();
         
         // Log do logout
         if ($portalUser) {
@@ -95,7 +95,7 @@ class PortalAuthController extends Controller
             ]);
         }
 
-        Auth::guard('employee_portal')->logout();
+        Auth::guard('portal')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
