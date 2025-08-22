@@ -20,11 +20,11 @@ class EmployeeEvaluations extends Component
     public $monthFilter = '';
     public $statusFilter = '';
     public $perPage = 10;
-    public $portalUser ;
+    public $portalUser;
 
     public function mount($month = null, $year = null)
     {
-       $this->portalUser = Auth::guard('portal')->user();
+        $this->portalUser = Auth::guard('portal')->user();
         $this->employee = $this->portalUser->employee;
 
         if (!$this->employee) {
@@ -43,7 +43,14 @@ class EmployeeEvaluations extends Component
     public function getEvaluationsProperty()
     {
         $query = PerformanceEvaluation::forEmployee($this->employee->id)
-            ->with(['evaluator', 'responses.metric', 'employee.department'])
+            ->with([
+                'evaluator', 
+                'responses.metric', 
+                'employee.department',
+                'approvals.approver',
+                'approvedBy',
+                'rejectedBy'
+            ])
             ->orderBy('evaluation_period', 'desc');
 
         // Aplicar filtros
@@ -68,6 +75,7 @@ class EmployeeEvaluations extends Component
             'evaluator', 
             'responses.metric', 
             'employee.department',
+            'approvals.approver',
             'approvedBy',
             'rejectedBy'
         ])->find($evaluationId);
@@ -87,12 +95,28 @@ class EmployeeEvaluations extends Component
         $this->selectedEvaluation = null;
     }
 
+    public function resetFilters()
+    {
+        $this->yearFilter = '';
+        $this->monthFilter = '';
+        $this->statusFilter = '';
+        $this->perPage = 10;
+        $this->resetPage();
+        
+        session()->flash('success', 'Filtros limpos com sucesso.');
+    }
+
     public function downloadEvaluation($evaluationId)
     {
         $evaluation = PerformanceEvaluation::find($evaluationId);
         
         if (!$evaluation || $evaluation->employee_id !== $this->employee->id) {
             session()->flash('error', 'Avaliação não encontrada.');
+            return;
+        }
+
+        if ($evaluation->status !== 'approved') {
+            session()->flash('error', 'Apenas avaliações aprovadas podem ser baixadas.');
             return;
         }
 
@@ -106,6 +130,11 @@ class EmployeeEvaluations extends Component
         
         if (!$evaluation || $evaluation->employee_id !== $this->employee->id) {
             session()->flash('error', 'Avaliação não encontrada.');
+            return;
+        }
+
+        if ($evaluation->status !== 'approved') {
+            session()->flash('error', 'Apenas avaliações aprovadas podem ser impressas.');
             return;
         }
 
@@ -125,6 +154,11 @@ class EmployeeEvaluations extends Component
     }
 
     public function updatingStatusFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage()
     {
         $this->resetPage();
     }
