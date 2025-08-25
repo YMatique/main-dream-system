@@ -129,7 +129,9 @@ Route::middleware(['auth.unified', 'user.type:super_admin'])->prefix('system')->
 | Área das Empresas
 |--------------------------------------------------------------------------
 */
-
+Route::get('/', function(){
+    return redirect(route('company.login'));
+});
 Route::get('companies/login', CompanyLogin::class)->name('company.login');
 //Rotas para Admin de Empresa 
 Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,company_user'])->name('company.')->group(function () {
