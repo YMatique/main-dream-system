@@ -210,6 +210,7 @@ class EvaluationApprovals extends Component
         $this->selectedEvaluation = PerformanceEvaluation::with([
             'employee',
             'employee.department',
+            'employee.repairOrderForm2Employees',
             'evaluator',
             'responses.metric',
             // 'currentStageApproval',

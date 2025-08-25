@@ -618,6 +618,8 @@
                                     {{ $selectedEvaluation->employee->department->name ?? 'N/A' }}</div>
                                 <div><span class="font-medium">Período:</span>
                                     {{ $selectedEvaluation->evaluation_period_formatted }}</div>
+                                     {{-- <div><span class="font-medium">Horas Trabalhadas: </span>
+                                    {{ $selectedEvaluation->employee->repairOrderForm2Employees }}</div> --}}
                             </div>
                         </div>
 
