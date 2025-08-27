@@ -55,6 +55,7 @@ class RepairOrderForm3 extends Component
         if ($repairOrder) {
             $this->selectedOrderId = $repairOrder->id;
             $this->loadSelectedOrder();
+            // dd($repairOrder);
         }
     }
 
@@ -96,7 +97,8 @@ class RepairOrderForm3 extends Component
         
         // Buscar todas as ordens que tenham Form2 completado
         $this->availableOrders = RepairOrder::where('company_id', $companyId)
-            ->whereHas('form2') // Só ordens que tenham Form2
+            ->whereHas('form4') // Só ordens que tenham Form4
+            ->whereDoesntHave('form3')
             ->with(['form1.client', 'form2', 'form3'])
             ->orderBy('created_at', 'desc')
             ->get(['id', 'order_number', 'created_at']);
@@ -118,11 +120,12 @@ class RepairOrderForm3 extends Component
         $this->repairOrder = RepairOrder::where('company_id', $companyId)
             ->where('id', $this->selectedOrderId)
             ->whereHas('form2') // Garantir que tem Form2
+            ->wherehas('form4')
             ->with(['form1', 'form2', 'form3.materials'])
             ->first();
 
         if (!$this->repairOrder) {
-            session()->flash('error', 'Ordem de reparação não encontrada ou sem Formulário 2 completo.');
+            session()->flash('error', 'Ordem de reparação não encontrada ou sem Formulário 4 completo.');
             $this->selectedOrderId = '';
             return;
         }
