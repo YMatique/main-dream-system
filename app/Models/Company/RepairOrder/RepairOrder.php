@@ -212,7 +212,7 @@ class RepairOrder extends Model
      */
     public function advanceToNextForm(): bool
     {
-        $formSequence = ['form1', 'form2', 'form3', 'form4', 'form5'];
+        $formSequence = ['form1', 'form2', 'form4', 'form3', 'form5'];
         $currentIndex = array_search($this->current_form, $formSequence);
         
         if ($currentIndex !== false && $currentIndex < count($formSequence) - 1) {

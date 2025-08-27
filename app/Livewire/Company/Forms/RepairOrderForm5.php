@@ -77,7 +77,7 @@ class RepairOrderForm5 extends Component
         
         // Buscar todas as ordens que tenham Form4 completado
         $this->availableOrders = RepairOrder::where('company_id', $companyId)
-            ->whereHas('form4') // Só ordens que tenham Form4
+            ->whereHas('form3') // Só ordens que tenham Form4
             ->with(['form1.client', 'form1.machineNumber', 'form4', 'form5'])
             ->orderBy('created_at', 'desc')
             ->get(['id', 'order_number', 'created_at']);
@@ -133,7 +133,7 @@ class RepairOrderForm5 extends Component
         
         $this->repairOrder = RepairOrder::where('company_id', $companyId)
             ->where('id', $this->selectedOrderId)
-            ->whereHas('form4') // Garantir que tem Form4
+            ->whereHas('form3') // Garantir que tem Form4
             ->with(['form1.client', 'form1.machineNumber', 'form2', 'form3', 'form4', 'form5'])
             ->first();
 
@@ -242,7 +242,7 @@ class RepairOrderForm5 extends Component
                 : 'Formulário 5 concluído com sucesso! Ordem FINALIZADA!';
 
             // Marcar ordem como completa
-            if (!$this->isEditing && $this->repairOrder->current_form === 'form4') {
+            if (!$this->isEditing && $this->repairOrder->current_form === 'form3') {
                 $this->repairOrder->advanceToNextForm(); // vai para form5
                 $this->repairOrder->is_completed = true;
                 $this->repairOrder->save();

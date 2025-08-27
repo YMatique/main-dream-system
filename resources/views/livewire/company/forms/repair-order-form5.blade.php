@@ -151,7 +151,7 @@
                         <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
-                        <p class="text-gray-500 text-sm">Nenhuma ordem disponível. Complete o Formulário 4 primeiro.</p>
+                        <p class="text-gray-500 text-sm">Nenhuma ordem disponível. Complete o Formulário 3 primeiro.</p>
                     </div>
                 @endif
             </div>
@@ -434,8 +434,8 @@
                 <h3 class="text-lg font-medium text-gray-900 mb-2">Selecione uma ordem para finalizar</h3>
                 <p class="text-gray-600 mb-6">Para concluir o processo, selecione uma ordem de reparação que já passou por todos os formulários anteriores.</p>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="{{ route('company.repair-orders.form4') }}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors">
-                        Ir para Formulário 4
+                    <a href="{{ route('company.repair-orders.form3') }}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors">
+                        Ir para Formulário 3
                     </a>
                     <button wire:click="loadAvailableOrders" class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium transition-colors">
                         Atualizar Lista
