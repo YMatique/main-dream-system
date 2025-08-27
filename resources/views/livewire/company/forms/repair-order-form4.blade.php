@@ -135,13 +135,13 @@
                         <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
-                        <p class="text-gray-500 text-sm">Nenhuma ordem disponível. Complete o Formulário 3 primeiro.</p>
-                        <a href="{{ route('company.repair-orders.form3') }}" 
+                        <p class="text-gray-500 text-sm">Nenhuma ordem disponível. Complete o Formulário 2 primeiro.</p>
+                        <a href="{{ route('company.repair-orders.form2') }}" 
                            class="mt-2 inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
-                            Ir para Formulário 3
+                            Ir para Formulário 2
                         </a>
                     </div>
                 @else
@@ -150,8 +150,8 @@
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            {{ count($availableOrders) }} ordem(ns) com faturação concluída. 
-                            <span class="ml-1">✅ = Já processada</span>
+                            {{ count($availableOrders) }} ordem(ns) a serem processadas. 
+                            {{-- <span class="ml-1">✅ = Já processada</span> --}}
                         </div>
                     </div>
                 @endif
@@ -399,7 +399,7 @@
                         {{-- Formulário 3 --}}
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border-l-4 border-orange-500">
                             <div class="flex items-center justify-between mb-2">
-                                <h4 class="text-sm font-medium text-orange-600 dark:text-orange-400">Form 3 ✅</h4>
+                                <h4 class="text-sm font-medium text-orange-600 dark:text-orange-400">Form 3 (Próximo)</h4>
                                 <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                                 </svg>
@@ -439,12 +439,12 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 {{-- Botões de navegação --}}
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <a href="{{ route('company.repair-orders.form3') }}"
+                    <a href="{{ route('company.repair-orders.form2') }}"
                        class="px-6 py-3 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 font-medium transition-all duration-200 flex items-center justify-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
                         </svg>
-                        Ir para Formulário 3
+                        Ir para Formulário 2
                     </a>
                 </div>
 
@@ -472,9 +472,9 @@
 
                     {{-- Botão Prosseguir (só aparece se já salvou) --}}
                     @if($repairOrder && $repairOrder->form4)
-                        <a href="{{ route('company.repair-orders.form5', $repairOrder->id) }}"
+                        <a href="{{ route('company.repair-orders.form3', $repairOrder->id) }}"
                            class="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 font-medium transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center">
-                            <span class="mr-2">Prosseguir para Formulário 5</span>
+                            <span class="mr-2">Prosseguir para Formulário 3</span>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                             </svg>
@@ -507,15 +507,15 @@
                 </svg>
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Selecione uma ordem para processar</h3>
                 <p class="text-gray-600 dark:text-gray-400 mb-6">
-                    Para registrar a máquina no Formulário 4, selecione uma ordem de reparação que já possui faturação concluída (Formulário 3).
+                    Para registrar a máquina no Formulário 4, selecione uma ordem de reparação que já possui faturação concluída (Formulário 2).
                 </p>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="{{ route('company.repair-orders.form3') }}" 
+                    <a href="{{ route('company.repair-orders.form2') }}" 
                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors flex items-center justify-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
-                        Ir para Formulário 3
+                        Ir para Formulário 2
                     </a>
                     <button wire:click="loadAvailableOrders" 
                             class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium transition-colors flex items-center justify-center">
