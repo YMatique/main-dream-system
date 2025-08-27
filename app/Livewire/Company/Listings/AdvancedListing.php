@@ -310,6 +310,7 @@ class AdvancedListing extends Component
         }
 
         if (!empty($this->filterTechnicians)) {
+            // dd($this->filterTechnicians);
             $query->whereHas('form2.employees', function ($q) {
                 $q->whereIn('employee_id', $this->filterTechnicians);
             });
@@ -389,7 +390,7 @@ class AdvancedListing extends Component
                 case 'form2':
                     if (in_array('technicians', $fields) || in_array('technicians_hours', $fields)) {
                         $relationships[] = 'form2.employees';
-                        $relationships[] = 'form2.employees.department';
+                        $relationships[] = 'form2.employees.employee.department';
                     }
                     if (in_array('materials', $fields) || in_array('materials_quantity', $fields)) {
                         $relationships[] = 'form2.materials';
@@ -513,10 +514,10 @@ class AdvancedListing extends Component
             case 'tempo_total':
                 return $formData->tempo_total_horas ? number_format($formData->tempo_total_horas, 1) . 'h' : '-';
             case 'technicians':
-                return $formData->employees->pluck('name')->implode(', ') ?: '-';
+                return $formData->employees->pluck('employee.name')->implode(', ') ?: '-';
             case 'technicians_hours':
                 $hours = $formData->employees->map(function ($emp) {
-                    return $emp->name . ': ' . ($emp->pivot->horas_trabalhadas ?? 0) . 'h';
+                    return $emp->employee->name . ': ' . ($emp->horas_trabalhadas ?? 0) . 'h';
                 });
                 return $hours->implode('; ') ?: '-';
             case 'materials':
