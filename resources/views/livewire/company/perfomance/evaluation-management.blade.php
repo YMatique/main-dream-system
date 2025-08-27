@@ -43,7 +43,7 @@
                         </svg>
                     </div>
                     <div class="ml-3">
-                        <p class="text-sm text-gray-600">Este Mês</p>
+                        <p class="text-sm text-gray-600">Aprovados</p>
                         <p class="text-xl font-bold">{{ $stats['this_month'] }}</p>
                     </div>
                 </div>
