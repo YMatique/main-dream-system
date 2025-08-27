@@ -73,6 +73,7 @@ class RepairOrderForm2 extends Component
         // Buscar todas as ordens que tenham Form1 completado
         $this->availableOrders = RepairOrder::where('company_id', $companyId)
             ->whereHas('form1') // Só ordens que tenham Form1
+            ->whereDoesntHave('form2')
             ->with(['form1.client', 'form1.maintenanceType', 'form2'])
             ->orderBy('created_at', 'desc')
             ->get(['id', 'order_number', 'created_at']);
@@ -454,7 +455,7 @@ class RepairOrderForm2 extends Component
             return;
         }
 
-        return redirect()->route('company.repair-orders.form3', $this->repairOrder->id);
+        return redirect()->route('company.repair-orders.form4', $this->repairOrder->id);
     }
 
     public function backToForm1()

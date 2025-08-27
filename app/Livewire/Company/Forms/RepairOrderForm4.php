@@ -64,7 +64,7 @@ class RepairOrderForm4 extends Component
         
         // Buscar todas as ordens que tenham Form3 completado
         $this->availableOrders = RepairOrder::where('company_id', $companyId)
-            ->whereHas('form3') // Só ordens que tenham Form3
+            ->whereHas('form2') // Só ordens que tenham Form3
             ->with(['form1.client', 'form1.machineNumber', 'form3', 'form4'])
             ->orderBy('created_at', 'desc')
             ->get(['id', 'order_number', 'created_at']);
