@@ -281,8 +281,9 @@
                 <div class="flex items-center justify-center min-h-screen px-4">
                     <div class="fixed inset-0 bg-zinc-900 opacity-75" wire:click="closeEvaluationModal"></div>
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-               
-                    <div class="relative bg-white rounded-lg shadow-xl w-full max-w-4xl relative max-h-screen overflow-y-auto">
+
+                    <div
+                        class="relative bg-white rounded-lg shadow-xl w-full max-w-4xl relative max-h-screen overflow-y-auto">
                         <form wire:submit.prevent="saveEvaluation">
                             <div class="p-6 border-b">
                                 <h3 class="text-lg font-medium">
@@ -321,6 +322,16 @@
                                     </div>
                                 </div>
 
+                                @if ($selectedEmployeeId && $evaluationPeriod)
+                                    <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-sm text-blue-700">Horas trabalhadas em
+                                                {{ \Carbon\Carbon::parse($evaluationPeriod)->format('m/Y') }}:</span>
+                                            <span
+                                                class="font-bold text-blue-800">{{ number_format($employeeMonthlyHours, 1) }}h</span>
+                                        </div>
+                                    </div>
+                                @endif
                                 <!-- Métricas de Avaliação -->
                                 @if ($metrics && $metrics->count() > 0)
                                     <div class="space-y-6">
@@ -548,6 +559,7 @@
                                     </div>
                                 @endif
                             </div>
+
 
                             <div class="px-6 py-4 bg-gray-50 flex justify-end space-x-3">
                                 <button type="button" wire:click="closeEvaluationModal"

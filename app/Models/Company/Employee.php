@@ -7,8 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Employee extends Model
 {
     protected $fillable = [
-        'company_id', 'department_id', 'name', 'code', 
-        'email', 'phone', 'is_active'
+        'company_id',
+        'department_id',
+        'name',
+        'code',
+        'email',
+        'phone',
+        'is_active'
     ];
 
     protected function casts(): array
@@ -31,7 +36,7 @@ class Employee extends Model
         return $query->where('is_active', true);
     }
 
-     /**
+    /**
      * Avaliações de desempenho do funcionário
      */
     public function evaluations()
@@ -85,11 +90,11 @@ class Employee extends Model
     public function getAveragePerformance($startDate = null, $endDate = null): float
     {
         $query = $this->evaluations()->where('status', 'approved');
-        
+
         if ($startDate && $endDate) {
             $query->whereBetween('evaluation_period', [$startDate, $endDate]);
         }
-        
+
         return round($query->avg('final_percentage') ?? 0, 2);
     }
 
@@ -101,11 +106,11 @@ class Employee extends Model
         $query = $this->evaluations()
             ->where('status', 'approved')
             ->where('is_below_threshold', true);
-        
+
         if ($startDate && $endDate) {
             $query->whereBetween('evaluation_period', [$startDate, $endDate]);
         }
-        
+
         return $query->exists();
     }
 
@@ -127,13 +132,13 @@ class Employee extends Model
     public function getTotalHoursWorked($startDate = null, $endDate = null): float
     {
         $query = $this->repairOrderForm2Employees();
-        
+
         if ($startDate && $endDate) {
-            $query->whereHas('form2', function($q) use ($startDate, $endDate) {
+            $query->whereHas('form2', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('carimbo', [$startDate, $endDate]);
             });
         }
-        
+
         return round($query->sum('horas_trabalhadas') ?? 0, 2);
     }
 
@@ -143,13 +148,13 @@ class Employee extends Model
     public function getRepairOrdersCount($startDate = null, $endDate = null): int
     {
         $query = $this->repairOrderForm2Employees();
-        
+
         if ($startDate && $endDate) {
-            $query->whereHas('form2', function($q) use ($startDate, $endDate) {
+            $query->whereHas('form2', function ($q) use ($startDate, $endDate) {
                 $q->whereBetween('carimbo', [$startDate, $endDate]);
             });
         }
-        
+
         return $query->distinct('form2_id')->count();
     }
 
@@ -164,12 +169,12 @@ class Employee extends Model
         if ($user->isCompanyAdmin()) {
             return true;
         }
-        
+
         // Usuário com permissão para o departamento específico
         if ($user->hasPermission("evaluation.department.{$this->department_id}")) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -188,7 +193,7 @@ class Employee extends Model
      */
     public function getStatusBadge(): string
     {
-        return $this->is_active 
+        return $this->is_active
             ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Ativo</span>'
             : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Inativo</span>';
     }
@@ -199,11 +204,11 @@ class Employee extends Model
     public function getPerformanceClass(): string
     {
         $latestEvaluation = $this->getLatestEvaluation();
-        
+
         if (!$latestEvaluation) {
             return 'Não Avaliado';
         }
-        
+
         return $latestEvaluation->performance_class;
     }
 
@@ -213,7 +218,48 @@ class Employee extends Model
     public function getPerformancePercentage(): float
     {
         $latestEvaluation = $this->getLatestEvaluation();
-        
+
         return $latestEvaluation ? $latestEvaluation->final_percentage : 0;
+    }
+
+
+    // metodos estatísticos
+    public function getHoursForMonth($year, $month): array
+    {
+        $query = $this->repairOrderForm2Employees()
+            ->whereHas('form2', function ($q) use ($year, $month) {
+                $q->whereYear('carimbo', $year)
+                    ->whereMonth('carimbo', $month);
+            });
+
+        return [
+            'total' => $query->sum('horas_trabalhadas') ?? 0,
+            'count' => $query->count(),
+            'average' => $query->avg('horas_trabalhadas') ?? 0
+        ];
+    }
+
+    // Método mais específico se quiser só a soma
+    public function getTotalHoursForMonth($year, $month): float
+    {
+        return $this->repairOrderForm2Employees()
+            ->whereHas('form2', function ($q) use ($year, $month) {
+                $q->whereYear('carimbo', $year)
+                    ->whereMonth('carimbo', $month);
+            })
+            ->sum('horas_trabalhadas') ?? 0;
+    }
+
+    // Para o mês atual
+    public function getHoursThisMonth(): float
+    {
+        return $this->getTotalHoursForMonth(now()->year, now()->month);
+    }
+
+    // Para o mês anterior
+    public function getHoursLastMonth(): float
+    {
+        $lastMonth = now()->subMonth();
+        return $this->getTotalHoursForMonth($lastMonth->year, $lastMonth->month);
     }
 }

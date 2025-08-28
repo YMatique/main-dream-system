@@ -51,6 +51,13 @@ class EvaluationManagement extends Component
 
     protected $evaluationService;
 
+    // new
+    public $employeeHours = [];
+    public $suggestedHours = [];
+    public $employeeStats = [];
+    public $employeeMonthlyHours = 0;
+
+
     public function boot(PerformanceEvaluationService $evaluationService)
     {
         $this->evaluationService = $evaluationService;
@@ -106,23 +113,23 @@ class EvaluationManagement extends Component
             ->layout('layouts.company');
     }
 
-  /**
+    /**
      * Verificar permissões do usuário - REGRA CORRETA
      */
     public function checkPermissions()
     {
         $user = auth()->user();
-        
+
         // ✅ Company Admin tem acesso total
         if ($user->user_type === 'company_admin') {
             return; // Admin pode avaliar qualquer funcionário
         }
-        
+
         // ✅ Company User precisa de permissão de avaliação
         if (!$user->hasPermission('evaluation.create')) {
             abort(403, 'Sem permissão para criar avaliações de desempenho');
         }
-        
+
         // Verificar se tem pelo menos um departamento atribuído para avaliação
         $accessibleDepartments = $this->getAccessibleDepartments();
         if (empty($accessibleDepartments)) {
@@ -136,7 +143,7 @@ class EvaluationManagement extends Component
     public function getAccessibleDepartments()
     {
         $user = auth()->user();
-        
+
         if ($user->user_type === 'company_admin') {
             // ✅ Admin pode avaliar funcionários de todos os departamentos
             return Department::where('company_id', $user->company_id)
@@ -146,18 +153,18 @@ class EvaluationManagement extends Component
         }
 
         // ✅ Company User: Verificar departamentos específicos atribuídos via permissões
-        
+
         if (!$user->hasPermission('evaluation.create')) {
             return []; // Sem permissão, sem acesso
         }
-        
-         // Buscar departamentos atribuídos na tabela department_evaluators
+
+        // Buscar departamentos atribuídos na tabela department_evaluators
         $departmentIds = \App\Models\DepartmentEvaluator::where('user_id', $user->id)
             ->where('company_id', $user->company_id)
             ->where('is_active', true)
             ->pluck('department_id')
             ->toArray();
-        
+
         return $departmentIds;
         /*
         // Verificar se tem permissões específicas de departamento
@@ -198,7 +205,7 @@ class EvaluationManagement extends Component
     {
         $user = auth()->user();
         $this->accessibleDepartments = $this->getAccessibleDepartments();
-        
+
         if (empty($this->accessibleDepartments)) {
             $this->employees = collect();
             $this->departments = collect();
@@ -225,21 +232,21 @@ class EvaluationManagement extends Component
     public function getEvaluations()
     {
         $user = auth()->user();
-        
+
         // Se não tem departamentos acessíveis, retorna vazio
         if (empty($this->accessibleDepartments)) {
             return collect()->paginate($this->perPage);
         }
 
         $query = PerformanceEvaluation::where('company_id', $user->company_id)
-            ->whereHas('employee', function($q) {
+            ->whereHas('employee', function ($q) {
                 $q->whereIn('department_id', $this->accessibleDepartments);
             })
-            ->with(['employee.department', 'evaluator','approvedBy', 'rejectedBy'])
+            ->with(['employee.department', 'evaluator', 'approvedBy', 'rejectedBy'])
             ->when($this->search, function ($q) {
                 $q->whereHas('employee', function ($query) {
                     $query->where('name', 'like', '%' . $this->search . '%')
-                          ->orWhere('code', 'like', '%' . $this->search . '%');
+                        ->orWhere('code', 'like', '%' . $this->search . '%');
                 });
             })
             ->when($this->departmentFilter, function ($q) {
@@ -256,18 +263,18 @@ class EvaluationManagement extends Component
             ->when($this->periodFilter, function ($q) {
                 $date = Carbon::parse($this->periodFilter);
                 $q->whereYear('evaluation_period', $date->year)
-                  ->whereMonth('evaluation_period', $date->month);
+                    ->whereMonth('evaluation_period', $date->month);
             });
 
         return $query->orderBy('evaluation_period', 'desc')
-                    ->orderBy('created_at', 'desc')
-                    ->paginate($this->perPage);
+            ->orderBy('created_at', 'desc')
+            ->paginate($this->perPage);
     }
 
     public function getStats()
     {
         $user = auth()->user();
-        
+
         // Se não tem departamentos acessíveis, retorna zeros
         if (empty($this->accessibleDepartments)) {
             return [
@@ -278,12 +285,12 @@ class EvaluationManagement extends Component
                 'average_performance' => 0
             ];
         }
-        
+
         $baseQuery = PerformanceEvaluation::where('company_id', $user->company_id)
-            ->whereHas('employee', function($q) {
+            ->whereHas('employee', function ($q) {
                 $q->whereIn('department_id', $this->accessibleDepartments);
             });
-            
+
         return [
             'total_evaluations' => (clone $baseQuery)->count(),
             'this_month' => (clone $baseQuery)
@@ -314,7 +321,7 @@ class EvaluationManagement extends Component
             session()->flash('error', 'Sem permissão para criar avaliações. Contacte o administrador.');
             return;
         }
-        
+
         $this->resetEvaluationForm();
         $this->showEvaluationModal = true;
     }
@@ -326,19 +333,30 @@ class EvaluationManagement extends Component
         }
 
         $employee = Employee::findOrFail($this->selectedEmployeeId);
-        
-         // ✅ RECARREGAR departamentos acessíveis ANTES da verificação
+
+        // // new 
+        // $thisMonth = $employee->getHoursThisMonth();
+        // $lastMonth = $employee->getHoursLastMonth();
+
+        // $this->suggestedHours[$employee->id] = [
+        //     'this_month' => $thisMonth,
+        //     'last_month' => $lastMonth,
+        //     'average' => $employee->getAverageHoursWorked(),
+        //     'last_work' => $employee->getLastWorkedHours()
+        // ];
+        // $this->employeeHours[$employee->id] = $lastMonth > 0 ? $lastMonth : $employee->getAverageHoursWorked();
+
+        // ✅ RECARREGAR departamentos acessíveis ANTES da verificação
         $this->accessibleDepartments = $this->getAccessibleDepartments();
         // Verificar se o usuário pode avaliar este funcionário
         if (!$this->canEvaluateEmployee($employee)) {
-            dd('ásasas');
             session()->flash('error', 'Sem permissão para avaliar funcionários deste departamento.');
             $this->selectedEmployeeId = null;
             return;
         }
-        
+
         $this->selectedDepartmentId = $employee->department_id;
-        
+
         // Verificar se já existe avaliação para este período
         $period = Carbon::parse($this->evaluationPeriod);
         $existing = PerformanceEvaluation::where('company_id', auth()->user()->company_id)
@@ -354,6 +372,12 @@ class EvaluationManagement extends Component
 
         // Carregar métricas do departamento
         $this->loadDepartmentMetrics();
+        $this->loadEmployeeMonthlyHours($employee);
+    }
+    private function loadEmployeeMonthlyHours($employee)
+    {
+        $period = Carbon::parse($this->evaluationPeriod);
+        $this->employeeMonthlyHours = $employee->getTotalHoursForMonth($period->year, $period->month);
     }
 
     /**
@@ -362,20 +386,20 @@ class EvaluationManagement extends Component
     public function canEvaluateEmployee($employee)
     {
         $user = auth()->user();
-        
+
         // ✅ Admin pode avaliar qualquer funcionário da empresa
         if ($user->user_type === 'company_admin' && $user->company_id === $employee->company_id) {
             return true;
         }
 
         // ✅ Company User: verificar se tem permissão para o departamento do funcionário
-        
+
 
         if (!$user->hasPermission('evaluation.create')) {
             return false;
         }
         // Verificar se o departamento do funcionário está nos departamentos acessíveis
-        return in_array($employee->department_id, $this->accessibleDepartments) 
+        return in_array($employee->department_id, $this->accessibleDepartments)
             && $employee->company_id === $user->company_id;
     }
 
@@ -386,7 +410,7 @@ class EvaluationManagement extends Component
         if (!$this->selectedDepartmentId) {
             return;
         }
-         // ✅ GARANTIR que accessibleDepartments está atualizado
+        // ✅ GARANTIR que accessibleDepartments está atualizado
         if (empty($this->accessibleDepartments)) {
             $this->accessibleDepartments = $this->getAccessibleDepartments();
         }
@@ -407,7 +431,7 @@ class EvaluationManagement extends Component
 
         // Validar se as métricas estão configuradas corretamente
         $validation = $this->evaluationService->validateDepartmentMetrics(
-            $this->selectedDepartmentId, 
+            $this->selectedDepartmentId,
             auth()->user()->company_id
         );
 
@@ -454,10 +478,10 @@ class EvaluationManagement extends Component
 
                 // Calcular score individual da métrica
                 $score = $this->calculateMetricScore($metric, $value);
-                
+
                 // Aplicar peso
                 $weightedScore = ($score * $metric->weight) / 100;
-                
+
                 $totalScore += $weightedScore;
                 $totalWeight += $metric->weight;
             }
@@ -465,7 +489,7 @@ class EvaluationManagement extends Component
 
         $this->totalScore = $totalScore;
 
-        
+
         // ✅ CORREÇÃO: totalScore já está ponderado pelo peso
         // Se peso total for 100%, totalScore será o percentual final
         // if ($totalWeight > 0) {
@@ -473,20 +497,20 @@ class EvaluationManagement extends Component
         // } else {
         //     $this->finalPercentage = 0;
         // }
-             $this->finalPercentage = min(100, $totalScore);
+        $this->finalPercentage = min(100, $totalScore);
 
         // Debug para verificar
         \Log::info('Score Calculation Debug', [
             'total_score' => $totalScore,
             'total_weight' => $totalWeight,
             'final_percentage' => $this->finalPercentage,
-            'responses' => array_map(function($response) {
+            'responses' => array_map(function ($response) {
                 return array_filter($response);
             }, $this->responses)
         ]);
     }
 
-    
+
     /**
      * Calcular score de uma métrica individual
      */
@@ -496,28 +520,28 @@ class EvaluationManagement extends Component
             case 'numeric':
                 // Score = (valor / valor_máximo) * 100
                 return min(100, ($value / $metric->max_value) * 100);
-                
+
             case 'rating':
                 // Usar rating_scale se disponível
                 if ($metric->rating_scale) {
                     $scale = json_decode($metric->rating_scale, true);
                     return $scale[$value] ?? 0;
                 }
-                
+
                 // Fallback para rating_options
                 // dd($metric->rating_options);
                 $options = json_decode(json_encode($metric->rating_options), true);
                 $optionCount = count($options);
                 $optionIndex = array_search($value, $options);
-                
+
                 if ($optionIndex !== false) {
                     return (($optionIndex + 1) / $optionCount) * 100;
                 }
                 return 0;
-                
+
             case 'boolean':
                 return $value ? 100 : 0;
-                
+
             default:
                 return 0;
         }
@@ -530,7 +554,7 @@ class EvaluationManagement extends Component
             session()->flash('error', 'Funcionário não selecionado.');
             return;
         }
-        
+
         $employee = Employee::findOrFail($this->selectedEmployeeId);
         if (!$this->canEvaluateEmployee($employee)) {
             session()->flash('error', 'Sem permissão para avaliar este funcionário.');
@@ -549,7 +573,7 @@ class EvaluationManagement extends Component
                 //     $this->evaluationPeriod
                 // );
 
-                 // Criar avaliação
+                // Criar avaliação
                 $evaluation = PerformanceEvaluation::create([
                     'company_id' => auth()->user()->company_id,
                     'employee_id' => $this->selectedEmployeeId,
@@ -565,14 +589,14 @@ class EvaluationManagement extends Component
                 ]);
 
 
-                    // Salvar respostas
+                // Salvar respostas
                 foreach ($this->responses as $metricId => $response) {
                     $metric = $this->metrics->find($metricId);
                     if (!$metric) continue;
 
                     $value = null;
                     $ratingValue = null;
-                    
+
                     if ($metric->type === 'numeric' || $metric->type === 'boolean') {
                         $value = $response['numeric_value'];
                     } elseif ($metric->type === 'rating') {
@@ -581,7 +605,7 @@ class EvaluationManagement extends Component
 
                     if ($value !== null || $ratingValue !== null) {
                         $calculatedScore = $this->calculateMetricScore($metric, $value ?? $ratingValue);
-                        
+
                         EvaluationResponse::create([
                             'evaluation_id' => $evaluation->id,
                             'metric_id' => $metricId,
@@ -611,7 +635,6 @@ class EvaluationManagement extends Component
 
             session()->flash('success', 'Avaliação criada e submetida para aprovação com sucesso!');
             $this->closeEvaluationModal();
-
         } catch (\Exception $e) {
             session()->flash('error', 'Erro ao criar avaliação: ' . $e->getMessage());
         }
@@ -644,7 +667,7 @@ class EvaluationManagement extends Component
         $this->showViewModal = false;
         $this->viewingEvaluationId = null;
     }
-public function viewEvaluation($evaluationId)
+    public function viewEvaluation($evaluationId)
     {
         $this->viewingEvaluationId = $evaluationId;
         $this->showViewModal = true;
@@ -656,7 +679,7 @@ public function viewEvaluation($evaluationId)
         }
 
         return PerformanceEvaluation::where('company_id', auth()->user()->company_id)
-            ->whereHas('employee', function($q) {
+            ->whereHas('employee', function ($q) {
                 $q->whereIn('department_id', $this->accessibleDepartments);
             })
             ->with(['employee.department', 'evaluator', 'responses.metric'])
@@ -673,6 +696,10 @@ public function viewEvaluation($evaluationId)
     {
         if ($this->selectedEmployeeId) {
             $this->selectEmployee();
+        }
+        if ($this->selectedEmployeeId) {
+            $employee = Employee::findOrFail($this->selectedEmployeeId);
+            $this->loadEmployeeMonthlyHours($employee);
         }
     }
 
