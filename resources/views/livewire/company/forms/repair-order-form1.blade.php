@@ -500,7 +500,7 @@
                     @if ($repairOrder && $repairOrder->form1)
                         <button type="button" wire:click="proceedToForm2"
                             class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 font-medium transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center">
-                            <span class="mr-2">Prosseguir para Formulário 2</span>
+                            <span class="mr-2">Prosseguir para Técnicos e Materiais</span>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
