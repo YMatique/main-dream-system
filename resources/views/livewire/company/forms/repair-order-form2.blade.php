@@ -153,7 +153,7 @@
                                 d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
                             </path>
                         </svg>
-                        <p class="text-gray-500 text-sm">Nenhuma ordem disponível. Complete o Formulário 1 primeiro.</p>
+                        <p class="text-gray-500 text-sm">Nenhuma ordem disponível. Complete o Formulário de Dados Iniciais.</p>
                         <a href="{{ route('company.repair-orders.form1') }}"
                             class="mt-2 inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -171,7 +171,7 @@
                                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                             {{ count($availableOrders) }} ordem(ns) disponível(eis).
-                            <span class="ml-1">✓ = Já possui Formulário 2</span>
+                            {{-- <span class="ml-1">✓ = Já possui Formulário 2</span> --}}
                         </div>
                     </div>
                 @endif
@@ -822,7 +822,7 @@
                         @if ($repairOrder && $repairOrder->form2)
                             <button type="button" wire:click="proceedToForm3"
                                 class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 font-medium transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center">
-                                <span class="mr-2">Prosseguir para Formulário 3</span>
+                                <span class="mr-2">Prosseguir para Gestão de Máquina</span>
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
