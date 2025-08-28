@@ -643,6 +643,23 @@
                                     </div>
                                 </div>
 
+                                <!-- Horas Trabalhadas no Período -->
+                                <div class="bg-blue-50 rounded p-4">
+                                    <h5 class="font-medium mb-2">Horas Trabalhadas no Período</h5>
+                                    @php
+                                        $period = $viewEvaluation->evaluation_period;
+                                        $monthlyHours = $viewEvaluation->employee->getTotalHoursForMonth(
+                                            $period->year,
+                                            $period->month,
+                                        );
+                                    @endphp
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-blue-700">{{ $period->format('m/Y') }}:</span>
+                                        <span
+                                            class="text-xl font-bold text-blue-800">{{ number_format($monthlyHours, 1) }}h</span>
+                                    </div>
+                                </div>
+
                                 <!-- Respostas por Métrica -->
                                 <div>
                                     <h4 class="text-lg font-medium mb-4">Avaliação por Métricas</h4>
