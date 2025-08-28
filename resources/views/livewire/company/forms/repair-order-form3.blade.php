@@ -135,13 +135,13 @@
                         <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
-                        <p class="text-gray-500 text-sm">Nenhuma ordem disponível. Complete o Formulário 4 primeiro.</p>
+                        <p class="text-gray-500 text-sm">Nenhuma ordem disponível. Complete o Formulário de Gestão de Máquina primeiro.</p>
                         <a href="{{ route('company.repair-orders.form2') }}" 
                            class="mt-2 inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
-                            Ir para Formulário 4
+                            Ir para Gestão de Máquina
                         </a>
                     </div>
                 @else
@@ -527,7 +527,7 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
                         </svg>
-                        Ir para Formulário 2
+                        Ir para Formulário de Técnicos e Materiais
                     </a>
                 </div>
 
@@ -576,7 +576,7 @@
                 </svg>
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Selecione uma ordem para faturar</h3>
                 <p class="text-gray-600 dark:text-gray-400 mb-6">
-                    Para gerar a faturação real, selecione uma ordem de reparação que já tenha passado do Formulário 4.
+                    Para gerar a faturação real, selecione uma ordem de reparação que já tenha passado do Formulário de Gestão de Máquina.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center">
                     <a href="{{ route('company.repair-orders.form4') }}" 
@@ -584,7 +584,7 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
-                        Ir para Formulário 4
+                        Ir para Gestão de Máquina
                     </a>
                     <button wire:click="loadAvailableOrders" 
                             class="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium transition-colors flex items-center justify-center">
