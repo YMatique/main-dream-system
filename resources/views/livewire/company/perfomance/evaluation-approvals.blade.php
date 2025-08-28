@@ -377,7 +377,7 @@
 
                 {{-- Content --}}
                 <div class="p-6">
-                    <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-6">
+                    {{-- <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-6">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
@@ -402,8 +402,43 @@
                                 @endif
                             </div>
                         </div>
+                    </div> --}}
+                    <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-green-900 dark:text-green-200">
+                                    Performance: {{ number_format($selectedEvaluation->final_percentage, 1) }}% -
+                                    {{ $selectedEvaluation->performance_class }}
+                                </p>
+                                <p class="text-sm text-green-700 dark:text-green-300">
+                                    @php
+                                        $period = $selectedEvaluation->evaluation_period;
+                                        $monthlyHours = $selectedEvaluation->employee->getTotalHoursForMonth(
+                                            $period->year,
+                                            $period->month,
+                                        );
+                                    @endphp
+                                    Horas trabalhadas no período: {{ number_format($monthlyHours, 1) }}h
+                                </p>
+                                @if ($selectedEvaluation->status === 'in_approval')
+                                    @php $stageInfo = $this->getCurrentStageInfo($selectedEvaluation); @endphp
+                                    @if ($stageInfo)
+                                        <p class="text-sm text-green-700 dark:text-green-300">
+                                            Aprovando: {{ $stageInfo['stage_name'] }} (Estágio
+                                            {{ $stageInfo['stage_number'] }})
+                                        </p>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
                     </div>
-
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                             Comentários (Opcional)
@@ -618,8 +653,18 @@
                                     {{ $selectedEvaluation->employee->department->name ?? 'N/A' }}</div>
                                 <div><span class="font-medium">Período:</span>
                                     {{ $selectedEvaluation->evaluation_period_formatted }}</div>
-                                     {{-- <div><span class="font-medium">Horas Trabalhadas: </span>
-                                    {{ $selectedEvaluation->employee->repairOrderForm2Employees }}</div> --}}
+                                <div>
+                                    <span class="font-medium">Horas Trabalhadas:</span>
+                                    @php
+                                        $period = $selectedEvaluation->evaluation_period;
+                                        $monthlyHours = $selectedEvaluation->employee->getTotalHoursForMonth(
+                                            $period->year,
+                                            $period->month,
+                                        );
+                                    @endphp
+                                    <span
+                                        class="font-bold text-blue-600">{{ number_format($monthlyHours, 1) }}h</span>
+                                </div>
                             </div>
                         </div>
 
