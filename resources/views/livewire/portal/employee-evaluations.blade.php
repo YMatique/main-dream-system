@@ -270,7 +270,7 @@
 
     {{-- Modal de Detalhes --}}
     @if($showDetailsModal && $selectedEvaluation)
-    <div class="fixed inset-0 bg-zinc-800/90  backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="fixed inset-0 bg-zinc-800/75   flex items-center justify-center p-4 z-50">
         <div class="bg-white dark:bg-zinc-800 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div class="sticky top-0 bg-white dark:bg-gray-800 p-6 border-b border-gray-200 dark:border-gray-700 rounded-t-2xl">
                 <div class="flex items-center justify-between">
@@ -288,6 +288,7 @@
             <div class="p-6 space-y-8">
                 {{-- Resumo da Avaliação --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
                     <div class="text-center p-6 bg-gradient-to-r from-{{ $selectedEvaluation->performance_color }}-50 to-{{ $selectedEvaluation->performance_color }}-100 dark:from-{{ $selectedEvaluation->performance_color }}-900/20 dark:to-{{ $selectedEvaluation->performance_color }}-800/20 rounded-xl">
                         <div class="text-4xl font-bold text-{{ $selectedEvaluation->performance_color }}-600 mb-2">
                             {{ number_format($selectedEvaluation->final_percentage, 1) }}%
@@ -306,8 +307,33 @@
                         </div>
                         <div class="text-sm font-medium text-gray-600 dark:text-gray-400">Status</div>
                     </div>
-                </div>
 
+                      <div>
+        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Avaliado por:</span>
+        <span class="block text-lg font-semibold text-gray-900 dark:text-white mt-1">
+            {{ $selectedEvaluation->evaluator->name ?? 'N/A' }}
+        </span>
+    </div>
+    <div>
+        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Horas Trabalhadas no Período:</span>
+        <span class="block text-lg font-semibold text-blue-600 dark:text-blue-400 mt-1">
+            @php
+                $period = $selectedEvaluation->evaluation_period;
+                $monthlyHours = $selectedEvaluation->employee->getTotalHoursForMonth($period->year, $period->month);
+            @endphp
+            {{ number_format($monthlyHours, 1) }}h
+        </span>
+    </div>
+    <div>
+        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Data de Submissão:</span>
+        <span class="block text-lg font-semibold text-gray-900 dark:text-white mt-1">
+            {{ $selectedEvaluation->submitted_at?->format('d/m/Y H:i') ?? 'N/A' }}
+        </span>
+    </div>
+                </div>
+                {{-- HORAS TRABALHADAS --}}
+
+                
                 {{-- Métricas Detalhadas --}}
                 <div>
                     <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Avaliação por Métrica</h4>
