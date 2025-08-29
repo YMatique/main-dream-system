@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Middleware\System;
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckFormAccess
+class CheckManagerAccess
 {
     /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, int $formNumber): Response
+    public function handle(Request $request, Closure $next, string $name): Response
     {
         if (!Auth::check()) {
             return redirect()->route('company.login');
@@ -28,12 +28,11 @@ class CheckFormAccess
         }
 
         // Verificar permissão do formulário para company_user
-        $permission = "forms.form{$formNumber}.access";
+        $permission = "masters.{$name}.manage";
         
-
         if ($user->user_type === 'company_user' && !$user->hasPermission($permission)) {
             return redirect()->route('company.dashboard')
-                ->with('error', "Sem acesso ao Formulário {$formNumber}. Contacte o administrador.");
+                ->with('error', "Sem acesso ao Formulário {$name}. Contacte o administrador.");
         }
         return $next($request);
     }

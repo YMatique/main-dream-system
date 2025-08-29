@@ -38,15 +38,15 @@ class CheckPermission
         // Check if user has the required permission usando o trait HasPermissions
         if (!$user->hasPermission($permission)) {
             // Log da negação de permissão
-            if (class_exists('\App\Services\ActivityLoggerService')) {
-                $logger = app(\App\Services\ActivityLoggerService::class);
-                $logger->log(
-                    'permission_denied',
-                    "Usuário {$user->name} tentou acessar {$request->route()->getName()} sem permissão: {$permission}",
-                    'security',
-                    'warning'
-                );
-            }
+            // if (class_exists('\App\Services\ActivityLoggerService')) {
+            //     $logger = app(\App\Services\ActivityLoggerService::class);
+            //     $logger->log(
+            //         'permission_denied',
+            //         "Usuário {$user->name} tentou acessar {$request->route()->getName()} sem permissão: {$permission}",
+            //         'security',
+            //         'warning'
+            //     );
+            // }
 
             if ($request->expectsJson()) {
                 return response()->json([

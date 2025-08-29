@@ -717,7 +717,6 @@
                                     'company.performance.metrics' => [['Avaliação', null], ['Gestão de Métricas', null]],
                                     'company.performance.perform' => [['Avaliação', null], ['Avaliar Funcionários', null]],
                                     'company.evaluation.reports' => [['Avaliação', null], ['Relatórios', null]],
-                                    'employee.portal' => [['Portal do Funcionário', null]],
                                 ];
                                 $currentBreadcrumbs = $breadcrumbMap[$routeName] ?? [];
                             @endphp

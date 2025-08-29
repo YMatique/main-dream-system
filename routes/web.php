@@ -140,22 +140,22 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
     Route::prefix('manage')->name('manage.')->group(function () {
 
         // Funcionários
-        Route::get('/employees', EmployeeManagement::class)->name('employees');
+        Route::get('/employees', EmployeeManagement::class)->name('employees')->middleware('manager.access:employees');
 
         // Clientes
-        Route::get('/clients', ClientManagement::class)->name('clients');
+        Route::get('/clients', ClientManagement::class)->name('clients')->middleware('manager.access:clients');;
 
         // Materiais
-        Route::get('/materials', MaterialManagement::class)->name('materials');
+        Route::get('/materials', MaterialManagement::class)->name('materials')->middleware('manager.access:materials');;
 
         // Departamentos
-        Route::get('/departments', DepartmentManagement::class)->name('departments');
+        Route::get('/departments', DepartmentManagement::class)->name('departments')->middleware('manager.access:departments');;
 
         // Tipos de Manutenção
-        Route::get('/maintenance-types', MaintenanceTypeManagement::class)->name('maintenance-types');
+        Route::get('/maintenance-types', MaintenanceTypeManagement::class)->name('maintenance-types')->middleware('manager.access:maintenance_types');;
 
         // Estados
-        Route::get('/statuses-locations', StatusLocationManagement::class)->name('statuses');
+        Route::get('/statuses-locations', StatusLocationManagement::class)->name('statuses')->middleware('manager.access:statuses');
 
         // Localizações
         Route::get('/locations', function () {
@@ -164,16 +164,16 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                 'company' => auth()->user()->company,
                 'locations_count' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->count()
             ]);
-        })->name('locations');
+        })->name('locations')->middleware('manager.access:locations');;
 
         // Números de Máquina
-        Route::get('/machine-numbers', MachineNumberManagement::class)->name('machine-numbers');
+        Route::get('/machine-numbers', MachineNumberManagement::class)->name('machine-numbers')->middleware('manager.access:machines');;
 
         // Solicitantes
-        Route::get('/requesters', RequesterManagement::class)->name('requesters');
+        Route::get('/requesters', RequesterManagement::class)->name('requesters')->middleware('manager.access:requesters');;
 
         // Custos por Cliente
-        Route::get('/client-costs', ClientCostManagement::class)->name('client-costs');
+        Route::get('/client-costs', ClientCostManagement::class)->name('client-costs')->middleware('manager.access:locations:costs');;
 
         // Usuários e Permissões
         Route::get('/users-permissions', UserPermissionManagement::class)->name('users-permissions');
