@@ -237,15 +237,15 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
         ->group(function () {
 
             // Gestão de Métricas
-            Route::get('/metrics', MetricsManagement::class)->name('metrics');
+            Route::get('/metrics', MetricsManagement::class)->name('metrics')->middleware('evaluation.access:metrics');
 
             // Avaliações
-            Route::get('/evaluations', EvaluationManagement::class)->name('evaluations')->middleware('permission:evaluation.create');
-            Route::get('/evaluations-stages-management', ApprovalStageManagement::class)->name('evaluations.stages');
+            Route::get('/evaluations', EvaluationManagement::class)->name('evaluations')->middleware('evaluation.access:create');
+            Route::get('/evaluations-stages-management', ApprovalStageManagement::class)->name('evaluations.stages')->middleware('evaluation.access:stages');;
 
-            Route::get('/evaluations/approvals', EvaluationApprovals::class)->name('evaluations.approvals');
+            Route::get('/evaluations/approvals', EvaluationApprovals::class)->name('evaluations.approvals')->middleware('evaluation.access:approve');;
             // Relatórios de Desempenho
-            Route::get('/reports', EvaluationReports::class)->name('reports');
+            Route::get('/reports', EvaluationReports::class)->name('reports')->middleware('evaluation.access:reports');
         });
     // ===== RELATÓRIOS E EXPORTAÇÕES =====
     Route::prefix('reports')->name('reports.')->group(function () {

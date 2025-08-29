@@ -28,7 +28,7 @@ class CheckEvaluationAccess
         }
 
         // Verificar permissão do formulário para company_user
-        $permission = "users.{$name}";
+        $permission = "evaluation.{$name}";
         
         if ($user->user_type === 'company_user' && !$user->hasPermission($permission)) {
             return redirect()->route('company.dashboard')

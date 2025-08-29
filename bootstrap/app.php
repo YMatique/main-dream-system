@@ -30,7 +30,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'form.access'=>\App\Http\Middleware\System\CheckFormAccess::class,
             'permission'=> \App\Http\Middleware\CheckPermission::class,
             'portal.auth'=> \App\Http\Middleware\PortalEmployeeMiddleware::class,
-            'manager.access'=>\App\Http\Middleware\CheckManagerAccess::class
+            'manager.access'=>\App\Http\Middleware\CheckManagerAccess::class,
+            'evaluation.access'=>\App\Http\Middleware\CheckEvaluationAccess::class
             
         ]);
         // $middleware->append(\App\Http\Middleware\LogActivity::class,);ss
