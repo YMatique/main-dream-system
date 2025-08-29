@@ -60,11 +60,12 @@ class EvaluationApprovals extends Component
     public function mount()
     {
         // Verificar permissões
-        abort_unless(
-            auth()->user()->isCompanyAdmin() || auth()->user()->hasPermission('evaluation.approve'),
-            403,
-            'Sem permissão para aprovar avaliações'
-        );
+        // abort_unless(
+        //     auth()->user()->isCompanyAdmin() || auth()->user()->hasPermission('evaluation.approve'),
+        //     403,
+        //     'Sem permissão para aprovar avaliações'
+        // );
+
 
         $this->loadInitialData();
     }

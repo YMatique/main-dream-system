@@ -31,8 +31,8 @@ class CheckManagerAccess
         $permission = "masters.{$name}.manage";
         
         if ($user->user_type === 'company_user' && !$user->hasPermission($permission)) {
-            return redirect()->route('company.dashboard')
-                ->with('error', "Sem acesso ao Formulário {$name}. Contacte o administrador.");
+            return redirect()->route('company.my-permissions')
+                ->with('error', "Sem acesso Gestão de  {$name}. Contacte o administrador.");
         }
         return $next($request);
     }

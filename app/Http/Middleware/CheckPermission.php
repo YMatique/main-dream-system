@@ -58,7 +58,9 @@ class CheckPermission
             }
 
             // dd($user->permissions);
-            abort(403, "Você não tem permissão para realizar esta ação. Permissão necessária: {$permission}");
+            return redirect()->route('company.my-permissions')
+                ->with('error', "Você não tem permissão para realizar esta ação. Permissão necessária: {$permission}");
+            // abort(403, "Você não tem permissão para realizar esta ação. Permissão necessária: {$permission}");
         }
 
         return $next($request);

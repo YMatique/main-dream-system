@@ -136,7 +136,7 @@ Route::get('/', function(){
 Route::get('companies/login', CompanyLogin::class)->name('company.login');
 //Rotas para Admin de Empresa 
 Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,company_user'])->name('company.')->group(function () {
-    Route::get('dashboard', Dashboard::class)->name('dashboard');
+    Route::get('dashboard', Dashboard::class)->name('dashboard')->middleware('permission:dashboard');
 
     // PAGINA DE LISTAR PERMISSÕES
     Route::get('minhas-permissoes', HasPermission::class)->name('my-permissions');
