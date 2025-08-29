@@ -21,6 +21,7 @@ use App\Livewire\Company\Forms\RepairOrderForm2;
 use App\Livewire\Company\Forms\RepairOrderForm3;
 use App\Livewire\Company\Forms\RepairOrderForm4;
 use App\Livewire\Company\Forms\RepairOrderForm5;
+use App\Livewire\Company\HasPermission;
 use App\Livewire\Company\Listings\AdvancedListing;
 use App\Livewire\Company\Listings\RepairOrdersForm1List;
 use App\Livewire\Company\Listings\RepairOrdersForm2List;
@@ -136,6 +137,9 @@ Route::get('companies/login', CompanyLogin::class)->name('company.login');
 //Rotas para Admin de Empresa 
 Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,company_user'])->name('company.')->group(function () {
     Route::get('dashboard', Dashboard::class)->name('dashboard');
+
+    // PAGINA DE LISTAR PERMISSÕES
+    Route::get('minhas-permissoes', HasPermission::class)->name('my-permissions');
     // ===== GESTÃO DE DADOS =====
     Route::prefix('manage')->name('manage.')->group(function () {
 
