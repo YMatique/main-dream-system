@@ -180,7 +180,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
         Route::get('/client-costs', ClientCostManagement::class)->name('client-costs')->middleware('manager.access:locations:costs');;
 
         // Usuários e Permissões
-        Route::get('/users-permissions', UserPermissionManagement::class)->name('users-permissions');
+        Route::get('/users-permissions', UserPermissionManagement::class)->name('users-permissions')->middleware('manager.access:users');
     });
 
     // ===== FORMULÁRIOS DE ORDENS DE REPARAÇÃO =====
@@ -222,16 +222,16 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
     });
 
     // ===== SISTEMA DE FATURAÇÃO =====
-    Route::prefix('billing')->name('billing.')->middleware('permission:billing.view_all')->group(function () {
+    Route::prefix('billing')->name('billing.')/*->middleware('permission:billing.view_all')*/->group(function () {
 
         // Faturação Real
         Route::get('/real', BillingRealManagement::class)->name('real')->middleware('permission:billing.real.manage');
 
         // Faturação Estimada
-        Route::get('/estimated', BillingEstimatedManagement::class)->name('estimated');
+        Route::get('/estimated', BillingEstimatedManagement::class)->name('estimated')->middleware('permission:billing.estimated.manage');
 
         // Faturação HH (Preços do Sistema)
-        Route::get('/hh', BillingHHManagement::class)->name('hh');
+        Route::get('/hh', BillingHHManagement::class)->name('hh')->middleware('permission:billing.hh.manage');
     });
 
     // ===== AVALIAÇÃO DE DESEMPENHO (apenas Company Admin) =====

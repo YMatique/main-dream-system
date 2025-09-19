@@ -50,10 +50,10 @@ class PermissionGroupSeeder extends Seeder
                     'billing.hh.manage',
                     'billing.estimated.manage',
                     'billing.real.manage',
-                    'billing.currency.change',
+                    // 'billing.currency.change',
                     'billing.view_all',
-                    'repair_orders.view_all',
-                    'evaluation.view_own',
+                    // 'repair_orders.view_all',
+                    // 'evaluation.view_own',
                 ],
             ],
 
@@ -67,7 +67,7 @@ class PermissionGroupSeeder extends Seeder
                 'sort_order' => 30,
                 'permissions' => [
                     'evaluation.create',
-                    'evaluation.view_own',
+                    'evaluation.approve',
                     'repair_orders.view_all', // Para contexto das avaliações
                     'reports.view',
                 ],
@@ -83,23 +83,23 @@ class PermissionGroupSeeder extends Seeder
                 'sort_order' => 40,
                 'permissions' => [
                     // Formulários
-                    'forms.form1.access',
-                    'forms.form2.access',
-                    'forms.form3.access',
-                    'forms.form4.access',
-                    'forms.form5.access',
+                    // 'forms.form1.access',
+                    // 'forms.form2.access',
+                    // 'forms.form3.access',
+                    // 'forms.form4.access',
+                    // 'forms.form5.access',
                     // Ordens
-                    'repair_orders.create',
-                    'repair_orders.edit',
-                    'repair_orders.view_all',
-                    'repair_orders.delete',
-                    'repair_orders.export',
+                    // 'repair_orders.create',
+                    // 'repair_orders.edit',
+                    // 'repair_orders.view_all',
+                    // 'repair_orders.delete',
+                    // 'repair_orders.export',
                     // Faturação
-                    'billing.hh.manage',
-                    'billing.estimated.manage',
-                    'billing.real.manage',
-                    'billing.currency.change',
-                    'billing.view_all',
+                    // 'billing.hh.manage',
+                    // 'billing.estimated.manage',
+                    // 'billing.real.manage',
+                    // 'billing.currency.change',
+                    // 'billing.view_all',
                     // Dados Mestres
                     'masters.clients.manage',
                     'masters.employees.manage',
@@ -107,12 +107,13 @@ class PermissionGroupSeeder extends Seeder
                     'masters.maintenance_types.manage',
                     'masters.costs.manage',
                     'masters.statuses.manage',
+                    'masters.users.manage'
                     // Avaliação
-                    'evaluation.create',
-                    'evaluation.view_own',
+                    // 'evaluation.create',
+                    // 'evaluation.view_own',
                     // Relatórios
-                    'reports.view',
-                    'exports.data',
+                    // 'reports.view',
+                    // 'exports.data',
                 ],
             ],
 

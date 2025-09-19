@@ -57,7 +57,8 @@ class RepairOrdersList extends Component
     {
         // Verificar permissões básicas
         if (!auth()->user()->can('repair_orders.view_all') && !auth()->user()->can('repair_orders.view_own') && !auth()->user()->isCompanyAdmin()) {
-            abort(403, 'Sem permissão para visualizar ordens de reparação.');
+           return  redirect()->route('company.my-permissions')->with('error', "Sem acesso a listagem de Formulários.");
+            // abort(403, 'Sem permissão para visualizar ordens de reparação.');
         }
 
         $this->loadFilterData();

@@ -503,6 +503,12 @@
 
                     <!-- Logout Button -->
                     <div class="p-6 border-t border-gray-200 dark:border-gray-600">
+                        <a href="{{ route('company.my-permissions') }}" class="w-full mb-4 group flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-xl hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:border-red-200">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                                    </svg>
+                                                    Permissões
+                        </a>
                         <form method="POST" action="{{ route('company.logout') }}" class="w-full">
                             @csrf
                             <button type="submit" class="w-full group flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-xl hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20 transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:border-red-200">

@@ -17,8 +17,8 @@ class HasPermission extends Component
     }
     public function render()
     {
-        $userPermissions = User::where('email', 'joao.ordens@1.com')->first()->userPermissions;//Auth::user()->userPermissions;
-        $userPermissionGroups = User::where('email', 'carlos.view@1.com')->first()->permissionGroups;
+        $userPermissions = /*User::where('email', 'joao.ordens@1.com')->first()*/Auth::user()->userPermissions;//Auth::user()->userPermissions;
+        $userPermissionGroups = /*User::where('email', 'carlos.view@1.com')->first()*/Auth::user()->permissionGroups;
         $permissions = new Collection();
         $permissionGroups = new Collection();
         foreach($userPermissions as $permission)
