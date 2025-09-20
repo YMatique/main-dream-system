@@ -14,50 +14,31 @@ use Livewire\WithPagination;
 
 class RepairOrdersForm5List extends Component
 {
-    use WithPagination;
+      use WithPagination;
 
     public $search = '';
-
     public $filterByOrderNumber = '';
-
     public $filterByMachineNumber = '';
-
     public $filterByClient = '';
-
     public $filterByTechnician = '';
-
     public $filterByMaintenanceType = '';
-
     public $filterByStatus = '';
-
     public $filterByLocation = '';
-
     public $filterByDescription = '';
-
     public $filterStartDate = '';
-
     public $filterEndDate = '';
-
     public $perPage = 15;
-
     public $sortField = 'created_at';
-
     public $sortDirection = 'desc';
-
     public $viewMode = 'table';
 
     public $clients = [];
-
     public $technicians = [];
-
     public $maintenanceTypes = [];
-
     public $statuses = [];
-
     public $locations = [];
 
     public $metrics = [];
-
     public $showMetrics = true;
 
     protected $queryString = [
@@ -79,16 +60,16 @@ class RepairOrdersForm5List extends Component
     ];
 
     public function mount()
-    {
-        if (! auth()->user()->can('repair_orders.form5.view') && ! auth()->user()->isCompanyAdmin()) {
+    {   
+        if (!auth()->user()->can('repair_orders.form5.view') && !auth()->user()->isCompanyAdmin()) {
             // abort(403, 'Sem permissão para visualizar ordens do Formulário 5.');
-            return redirect()->route('company.my-permissions')->with('error', 'Sem permissão para visualizar ordens do Formulário 5.');
+                        return  redirect()->route('company.my-permissions')->with('error', "Sem permissão para visualizar ordens do Formulário 5.");
         }
 
         $this->loadFilterData();
         $this->calculateMetrics();
 
-        if (! $this->filterStartDate && ! $this->filterEndDate) {
+        if (!$this->filterStartDate && !$this->filterEndDate) {
             $this->filterStartDate = Carbon::now()->subDays(30)->format('Y-m-d');
             $this->filterEndDate = Carbon::now()->format('Y-m-d');
         }
@@ -148,12 +129,12 @@ class RepairOrdersForm5List extends Component
         $companyId = auth()->user()->company_id;
         $user = auth()->user();
 
-        $query = RepairOrderForm5::with(['repairOrder', 'client', 'employee'])
+        $query = RepairOrderForm5::with(['repairOrder', 'client', 'employee', ])
             ->whereHas('repairOrder', function ($q) use ($companyId) {
                 $q->where('company_id', $companyId);
             });
 
-        if (! $user->can('repair_orders.view_all')) {
+        if (!$user->can('repair_orders.view_all')) {
             if ($user->can('repair_orders.view_own')) {
                 $query->where('employee_id', $user->employee_id);
             } elseif ($user->can('repair_orders.view_department')) {
@@ -225,7 +206,7 @@ class RepairOrdersForm5List extends Component
             'employee',
             'repairOrder.form1.maintenanceType',
             'repairOrder.form1.status',
-            'repairOrder.location',
+            'repairOrder.location'
         ])->findOrFail($form5Id);
         $this->dispatch('show-order-details', [
             'form5Id' => $form5Id,
@@ -235,9 +216,8 @@ class RepairOrdersForm5List extends Component
 
     public function exportOrders($format = 'excel')
     {
-        if (! auth()->user()->can('repair_orders.export')) {
+        if (!auth()->user()->can('repair_orders.export')) {
             session()->flash('error', 'Sem permissão para exportar dados.');
-
             return;
         }
 
@@ -247,22 +227,22 @@ class RepairOrdersForm5List extends Component
             if ($this->search) {
                 $query->where(function ($q) {
                     $q->whereHas('repairOrder', function ($subQ) {
-                        $subQ->where('order_number', 'like', '%'.$this->search.'%')
-                            ->orWhere('machine_number', 'like', '%'.$this->search.'%')
-                            ->orWhere('description', 'like', '%'.$this->search.'%');
+                        $subQ->where('order_number', 'like', '%' . $this->search . '%')
+                             ->orWhere('machine_number', 'like', '%' . $this->search . '%')
+                             ->orWhere('description', 'like', '%' . $this->search . '%');
                     })
-                        ->orWhere('activity_description', 'like', '%'.$this->search.'%');
+                    ->orWhere('activity_description', 'like', '%' . $this->search . '%');
                 });
             }
 
             if ($this->filterByOrderNumber) {
                 $query->whereHas('repairOrder', function ($q) {
-                    $q->where('order_number', 'like', '%'.$this->filterByOrderNumber.'%');
+                    $q->where('order_number', 'like', '%' . $this->filterByOrderNumber . '%');
                 });
             }
 
             if ($this->filterByMachineNumber) {
-                $query->where('machine_number', 'like', '%'.$this->filterByMachineNumber.'%');
+                $query->where('machine_number', 'like', '%' . $this->filterByMachineNumber . '%');
             }
 
             if ($this->filterByClient) {
@@ -293,10 +273,10 @@ class RepairOrdersForm5List extends Component
 
             if ($this->filterByDescription) {
                 $query->where(function ($q) {
-                    $q->where('activity_description', 'like', '%'.$this->filterByDescription.'%')
-                        ->orWhereHas('repairOrder', function ($subQ) {
-                            $subQ->where('description', 'like', '%'.$this->filterByDescription.'%');
-                        });
+                    $q->where('activity_description', 'like', '%' . $this->filterByDescription . '%')
+                      ->orWhereHas('repairOrder', function ($subQ) {
+                          $subQ->where('description', 'like', '%' . $this->filterByDescription . '%');
+                      });
                 });
             }
 
@@ -305,7 +285,6 @@ class RepairOrdersForm5List extends Component
             $exportData = $form5s->map(function ($form5) {
                 $totalHours = ($form5->billed_hours_1 ?? 0) + ($form5->billed_hours_2 ?? 0);
                 $estimatedCost = $form5->repairOrder?->maintenanceType?->cost_per_hour * $totalHours ?? 0;
-
                 return [
                     'Ordem' => $form5->repairOrder?->order_number ?? '',
                     'Data' => $form5->carimbo?->format('d/m/Y H:i') ?? '',
@@ -318,10 +297,10 @@ class RepairOrdersForm5List extends Component
                 ];
             })->toArray();
 
-            $filename = 'ordens-form5-'.date('Y-m-d-H-i-s').'.'.$format;
-            $filePath = storage_path('app/temp/'.$filename);
+            $filename = 'ordens-form5-' . date('Y-m-d-H-i-s') . '.' . $format;
+            $filePath = storage_path('app/temp/' . $filename);
 
-            if (! file_exists(storage_path('app/temp'))) {
+            if (!file_exists(storage_path('app/temp'))) {
                 mkdir(storage_path('app/temp'), 0755, true);
             }
 
@@ -329,7 +308,7 @@ class RepairOrdersForm5List extends Component
                 case 'excel':
                 case 'csv':
                     $handle = fopen($filePath, 'w');
-                    if (! empty($exportData)) {
+                    if (!empty($exportData)) {
                         fputcsv($handle, array_keys($exportData[0]));
                         foreach ($exportData as $row) {
                             fputcsv($handle, $row);
@@ -340,18 +319,18 @@ class RepairOrdersForm5List extends Component
                 case 'pdf':
                     $html = '<html><body>';
                     $html .= '<h1>Ordens de Reparação - Formulário 5</h1>';
-                    $html .= '<p>Gerado em: '.date('d/m/Y H:i:s').'</p>';
-                    if (! empty($exportData)) {
+                    $html .= '<p>Gerado em: ' . date('d/m/Y H:i:s') . '</p>';
+                    if (!empty($exportData)) {
                         $html .= '<table border="1" cellpadding="5">';
                         $html .= '<tr>';
                         foreach (array_keys($exportData[0]) as $header) {
-                            $html .= '<th>'.htmlspecialchars($header).'</th>';
+                            $html .= '<th>' . htmlspecialchars($header) . '</th>';
                         }
                         $html .= '</tr>';
                         foreach ($exportData as $row) {
                             $html .= '<tr>';
                             foreach ($row as $cell) {
-                                $html .= '<td>'.htmlspecialchars($cell).'</td>';
+                                $html .= '<td>' . htmlspecialchars($cell) . '</td>';
                             }
                             $html .= '</tr>';
                         }
@@ -366,8 +345,8 @@ class RepairOrdersForm5List extends Component
 
             return response()->download($filePath, $filename)->deleteFileAfterSend();
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao exportar dados: '.$e->getMessage());
-            \Log::error('Erro na exportação Form5: '.$e->getMessage());
+            session()->flash('error', 'Erro ao exportar dados: ' . $e->getMessage());
+            \Log::error('Erro na exportação Form5: ' . $e->getMessage());
         }
     }
 
@@ -378,22 +357,22 @@ class RepairOrdersForm5List extends Component
         if ($this->search) {
             $query->where(function ($q) {
                 $q->whereHas('repairOrder', function ($subQ) {
-                    $subQ->where('order_number', 'like', '%'.$this->search.'%')
-                        ->orWhere('machine_number', 'like', '%'.$this->search.'%')
-                        ->orWhere('description', 'like', '%'.$this->search.'%');
+                    $subQ->where('order_number', 'like', '%' . $this->search . '%')
+                         ->orWhere('machine_number', 'like', '%' . $this->search . '%')
+                         ->orWhere('description', 'like', '%' . $this->search . '%');
                 })
-                    ->orWhere('activity_description', 'like', '%'.$this->search.'%');
+                ->orWhere('activity_description', 'like', '%' . $this->search . '%');
             });
         }
 
         if ($this->filterByOrderNumber) {
             $query->whereHas('repairOrder', function ($q) {
-                $q->where('order_number', 'like', '%'.$this->filterByOrderNumber.'%');
+                $q->where('order_number', 'like', '%' . $this->filterByOrderNumber . '%');
             });
         }
 
         if ($this->filterByMachineNumber) {
-            $query->where('machine_number', 'like', '%'.$this->filterByMachineNumber.'%');
+            $query->where('machine_number', 'like', '%' . $this->filterByMachineNumber . '%');
         }
 
         if ($this->filterByClient) {
@@ -424,28 +403,28 @@ class RepairOrdersForm5List extends Component
 
         if ($this->filterByDescription) {
             $query->where(function ($q) {
-                $q->where('activity_description', 'like', '%'.$this->filterByDescription.'%')
-                    ->orWhereHas('repairOrder', function ($subQ) {
-                        $subQ->where('description', 'like', '%'.$this->filterByDescription.'%');
-                    });
+                $q->where('activity_description', 'like', '%' . $this->filterByDescription . '%')
+                  ->orWhereHas('repairOrder', function ($subQ) {
+                      $subQ->where('description', 'like', '%' . $this->filterByDescription . '%');
+                  });
             });
         }
 
         if ($this->sortField === 'repairOrder.order_number') {
             $query->join('repair_orders', 'repair_order_form5.repair_order_id', '=', 'repair_orders.id')
-                ->orderBy('repair_orders.order_number', $this->sortDirection);
+                  ->orderBy('repair_orders.order_number', $this->sortDirection);
         } elseif ($this->sortField === 'client.name') {
             $query->join('clients', 'repair_order_form5.client_id', '=', 'clients.id')
-                ->orderBy('clients.name', $this->sortDirection);
+                  ->orderBy('clients.name', $this->sortDirection);
         } elseif ($this->sortField === 'employee.name') {
             $query->join('employees', 'repair_order_form5.employee_id', '=', 'employees.id')
-                ->orderBy('employees.name', $this->sortDirection);
+                  ->orderBy('employees.name', $this->sortDirection);
         } elseif ($this->sortField === 'repairOrder.maintenanceType.name') {
             $query->join('repair_orders', 'repair_order_form5.repair_order_id', '=', 'repair_orders.id')
-                ->join('maintenance_types', 'repair_orders.maintenance_type_id', '=', 'maintenance_types.id')
-                ->orderBy('maintenance_types.name', $this->sortDirection);
+                  ->join('maintenance_types', 'repair_orders.maintenance_type_id', '=', 'maintenance_types.id')
+                  ->orderBy('maintenance_types.name', $this->sortDirection);
         } else {
-            $query->orderBy('repair_order_form5.'.$this->sortField, $this->sortDirection);
+            $query->orderBy('repair_order_form5.' . $this->sortField, $this->sortDirection);
         }
 
         return $query->select('repair_order_form5.*')->paginate($this->perPage);
@@ -477,7 +456,6 @@ class RepairOrdersForm5List extends Component
     {
         return auth()->user()->can('repair_orders.create');
     }
-
     public function render()
     {
         return view('livewire.company.listings.repair-orders-form5-list', [

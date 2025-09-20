@@ -1,12 +1,12 @@
 <?php
+
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\DepartmentEvaluator;
 use App\Models\Permission;
 use App\Models\PermissionGroup;
+use App\Models\User;
 use App\Models\UserPermission;
-use App\Models\DepartmentEvaluator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
 class PermissionService
@@ -17,8 +17,8 @@ class PermissionService
     public function grantPermission(User $user, string $permissionName, ?User $grantedBy = null): bool
     {
         $permission = Permission::where('name', $permissionName)->first();
-        
-        if (!$permission) {
+
+        if (! $permission) {
             return false;
         }
 
@@ -33,7 +33,7 @@ class PermissionService
 
         // Limpar cache de permissões
         $this->clearUserPermissionCache($user);
-        
+
         return true;
     }
 
@@ -43,8 +43,8 @@ class PermissionService
     public function revokePermission(User $user, string $permissionName): bool
     {
         $permission = Permission::where('name', $permissionName)->first();
-        
-        if (!$permission) {
+
+        if (! $permission) {
             return false;
         }
 
@@ -65,8 +65,8 @@ class PermissionService
     public function assignPermissionGroup(User $user, int $groupId, ?User $assignedBy = null): bool
     {
         $group = PermissionGroup::find($groupId);
-        
-        if (!$group || !$group->is_active) {
+
+        if (! $group || ! $group->is_active) {
             return false;
         }
 
@@ -74,10 +74,13 @@ class PermissionService
             $groupId => [
                 'assigned_at' => now(),
                 'assigned_by' => $assignedBy?->id,
-            ]
+            ],
         ]);
 
         $this->clearUserPermissionCache($user);
+        $user->clearPermissionCache();
+        $user->refreshPermissionCache();
+
         return true;
     }
 
@@ -97,6 +100,7 @@ class PermissionService
         ]);
 
         $this->clearUserPermissionCache($user);
+
         return true;
     }
 

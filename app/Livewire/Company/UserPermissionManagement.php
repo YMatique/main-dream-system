@@ -262,10 +262,25 @@ class UserPermissionManagement extends Component
         
         // Carregar permissões atuais
         $this->selectedGroups = $user->permissionGroups()->pluck('permission_groups.id')->toArray();
-        $this->selectedPermissions = $user->userPermissions()
-            ->whereNull('department_id')
-            ->pluck('permission_id')
-            ->toArray();
+        $groupPermissionIds = $user->permissionGroups()
+        ->where('is_active', true)
+        ->with('permissions')
+        ->get()
+        ->pluck('permissions')
+        ->flatten()
+        ->pluck('id')
+        ->toArray();
+
+        // $this->selectedPermissions = $user->userPermissions()
+        //     ->whereNull('department_id')
+        //     ->pluck('permission_id')
+        //     ->toArray();
+         $this->selectedPermissions = $user->userPermissions()
+        ->whereNull('department_id')
+        ->pluck('permission_id')
+        ->diff($groupPermissionIds) // Remove permissões que já estão nos grupos
+        ->toArray();
+    
         
         $this->showPermissionsModal = true;
     }
@@ -290,6 +305,7 @@ class UserPermissionManagement extends Component
                 );
             }
 
+             $user->refreshPermissionCache();
             session()->flash('success', 'Permissões atualizadas com sucesso!');
             $this->closePermissionsModal();
 

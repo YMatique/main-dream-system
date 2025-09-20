@@ -516,7 +516,7 @@
     @endif
 
     <!-- Modal Manage Permissions -->
-    @if($showPermissionsModal)
+    {{-- @if($showPermissionsModal)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <!-- Background overlay -->
@@ -597,7 +597,173 @@
                 </div>
             </div>
         </div>
-    @endif
+    @endif --}}
+    <!-- Substitua o modal de permissões no seu arquivo Blade por este: -->
+
+@if($showPermissionsModal)
+<div x-data="{
+        groupPermissions: [],
+        groupMap: {},
+        
+        init() {
+            this.groupMap = {{ json_encode($availableGroups->mapWithKeys(fn($g) => [$g->id => ['id' => $g->id, 'permissions' => $g->permissions->pluck('id')->toArray()]])) }};
+            this.updateGroupPermissions({{ json_encode($selectedGroups) }});
+        },
+        
+        toggleGroup(groupId, isChecked) {
+            let selectedGroups = @this.get('selectedGroups');
+            
+            if (isChecked) {
+                if (!selectedGroups.includes(groupId)) {
+                    selectedGroups.push(groupId);
+                }
+            } else {
+                selectedGroups = selectedGroups.filter(id => id !== groupId);
+            }
+            
+            @this.set('selectedGroups', selectedGroups);
+            this.updateGroupPermissions(selectedGroups);
+        },
+        
+        updateGroupPermissions(selectedGroups) {
+            this.groupPermissions = [];
+            selectedGroups.forEach(groupId => {
+                if (this.groupMap[groupId]) {
+                    this.groupPermissions.push(...this.groupMap[groupId].permissions);
+                }
+            });
+            this.groupPermissions = [...new Set(this.groupPermissions)];
+        }
+    }"
+     x-init="init()"
+     class="fixed inset-0 z-50 overflow-y-auto" 
+     aria-labelledby="modal-title" 
+     role="dialog" 
+     aria-modal="true">
+    
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-zinc-900 opacity-75 backdrop-blur-sm transition-opacity" 
+             wire:click="closePermissionsModal"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        
+        <!-- Modal panel -->
+        <div class="relative inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+            <form wire:submit.prevent="savePermissions">
+                <div class="bg-white dark:bg-zinc-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-zinc-900 dark:text-white mb-6">
+                                Gerir Permissões do Usuário
+                            </h3>
+
+                            <div class="space-y-6">
+                                <!-- Grupos de Permissões -->
+                                <div>
+                                    <h4 class="text-md font-medium text-zinc-900 dark:text-white mb-4">
+                                        Grupos de Permissões
+                                    </h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        @foreach($availableGroups as $group)
+                                        <label class="flex items-start space-x-3 p-3 border border-zinc-200 dark:border-zinc-600 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 cursor-pointer transition-colors">
+                                            <input wire:model="selectedGroups" 
+                                                   type="checkbox" 
+                                                   value="{{ $group->id }}"
+                                                   @change="toggleGroup({{ $group->id }}, $event.target.checked)"
+                                                   class="mt-1 rounded border-zinc-300 dark:border-zinc-600 text-blue-600 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                            <div class="flex-1">
+                                                <div class="text-sm font-medium text-zinc-900 dark:text-white">
+                                                    {{ $group->name }}
+                                                </div>
+                                                <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                                                    {{ $group->description }}
+                                                </div>
+                                                <div class="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                                                    {{ $group->permissions->count() }} permissões incluídas
+                                                </div>
+                                            </div>
+                                        </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                <!-- Legenda -->
+                                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                                    <div class="flex items-start space-x-2">
+                                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <div class="text-sm text-blue-700 dark:text-blue-300">
+                                            <strong>Dica:</strong> Permissões <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-800 rounded">destacadas</span> fazem parte dos grupos selecionados acima.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Permissões Individuais -->
+                                <div>
+                                    <h4 class="text-md font-medium text-zinc-900 dark:text-white mb-4">
+                                        Permissões Individuais Adicionais
+                                    </h4>
+                                    <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
+                                        Selecione permissões extras além dos grupos escolhidos
+                                    </p>
+                                    @foreach($availablePermissions->groupBy('category') as $category => $categoryPermissions)
+                                    <div class="mb-4">
+                                        <h5 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2 capitalize">
+                                            {{ str_replace('_', ' ', $category) }}
+                                        </h5>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                            @foreach($categoryPermissions as $permission)
+                                            <label class="flex items-center space-x-3 p-2 rounded cursor-pointer transition-colors"
+                                                   :class="{
+                                                       'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800': groupPermissions.includes({{ $permission->id }}),
+                                                       'hover:bg-zinc-50 dark:hover:bg-zinc-700': !groupPermissions.includes({{ $permission->id }})
+                                                   }">
+                                                <input wire:model="selectedPermissions" 
+                                                       type="checkbox" 
+                                                       value="{{ $permission->id }}"
+                                                       :checked="groupPermissions.includes({{ $permission->id }})"
+                                                       :disabled="groupPermissions.includes({{ $permission->id }})"
+                                                       class="rounded border-zinc-300 dark:border-zinc-600 text-blue-600 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                <div class="flex-1">
+                                                    <div class="text-sm text-zinc-900 dark:text-white flex items-center">
+                                                        {{ $permission->description }}
+                                                        <span x-show="groupPermissions.includes({{ $permission->id }})"
+                                                              class="ml-2 px-1.5 py-0.5 text-xs bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300 rounded">
+                                                            via grupo
+                                                        </span>
+                                                    </div>
+                                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                                                        {{ $permission->name }}
+                                                    </div>
+                                                </div>
+                                            </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-zinc-50 dark:bg-zinc-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit" 
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Salvar Permissões
+                    </button>
+                    <button type="button" 
+                            wire:click="closePermissionsModal"
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-zinc-300 dark:border-zinc-600 shadow-sm px-4 py-2 bg-white dark:bg-zinc-800 text-base font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@endif
 
     <!-- Modal Manage Departments -->
     @if($showDepartmentModal)
