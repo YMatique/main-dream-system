@@ -12,44 +12,57 @@ use Livewire\WithPagination;
 
 class RepairOrdersForm1List extends Component
 {
-      use WithPagination;
+    use WithPagination;
 
     // Propriedades de Filtros
     public $search = '';
+
     public $filterByClient = '';
+
     public $filterByMaintenanceType = '';
+
     public $filterByMonthYear = '';
+
     public $filterByMachine = '';
+
     public $filterStartDate = '';
+
     public $filterEndDate = '';
 
     // Propriedades de Configuração
     public $perPage = 15;
+
     public $sortField = 'created_at';
+
     public $sortDirection = 'desc';
+
     public $viewMode = 'table'; // table ou cards
 
     // Dados para Dropdowns
     public $clients = [];
+
     public $maintenanceTypes = [];
+
     public $machineNumbers = [];
 
     // Métricas
     public $metrics = [];
+
     public $showMetrics = true;
 
     public function mount()
     {
         // Verificar permissões
-        if (!auth()->user()->can('repair_orders.form1.view') && !auth()->user()->isCompanyAdmin()) {
-            abort(403, 'Sem permissão para visualizar ordens do Formulário 1.');
+        if (! auth()->user()->can('repair_orders.form1.view') && ! auth()->user()->isCompanyAdmin()) {
+            // abort(403, 'Sem permissão para visualizar ordens do Formulário 1.');
+            return redirect()->route('company.my-permissions')->with('error', 'Sem permissão para visualizar ordens do Formulário 1.');
         }
 
         $this->loadFilterData();
         $this->calculateMetrics();
 
         // Configurar período padrão
-        if (!$this->filterStartDate && !$this->filterEndDate) {
+        if (! $this->filterStartDate && ! $this->filterEndDate) {
             $this->filterStartDate = Carbon::now()->subDays(30)->format('Y-m-d');
             $this->filterEndDate = Carbon::now()->format('Y-m-d');
         }
@@ -135,7 +148,7 @@ class RepairOrdersForm1List extends Component
             ->with(['form1.client', 'form1.maintenanceType', 'form1.machineNumber']);
 
         // Aplicar permissões
-        if (!$user->can('repair_orders.view_all')) {
+        if (! $user->can('repair_orders.view_all')) {
             if ($user->can('repair_orders.view_own')) {
                 $query->whereHas('form2.employees', function ($q) use ($user) {
                     $q->where('employee_id', $user->employee_id);
@@ -151,7 +164,7 @@ class RepairOrdersForm1List extends Component
         if ($this->filterStartDate && $this->filterEndDate) {
             $query->whereBetween('created_at', [
                 Carbon::parse($this->filterStartDate)->startOfDay(),
-                Carbon::parse($this->filterEndDate)->endOfDay()
+                Carbon::parse($this->filterEndDate)->endOfDay(),
             ]);
         }
 
@@ -202,8 +215,9 @@ class RepairOrdersForm1List extends Component
             ->where('id', $orderId)
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             session()->flash('error', 'Ordem não encontrada.');
+
             return;
         }
 
@@ -217,22 +231,24 @@ class RepairOrdersForm1List extends Component
             ->with(['form1.client', 'form1.maintenanceType', 'form1.machineNumber'])
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             session()->flash('error', 'Ordem não encontrada.');
+
             return;
         }
 
         $this->dispatch('show-order-details', [
             'orderId' => $orderId,
-            'orderData' => $order->getFullSummary()
+            'orderData' => $order->getFullSummary(),
         ]);
     }
 
     public function exportOrders($format = 'excel')
     {
 
-        if (!auth()->user()->can('repair_orders.export') || !auth()->user()->isCompanyAdmin()) {
+        if (! auth()->user()->can('repair_orders.export') || ! auth()->user()->isCompanyAdmin()) {
             session()->flash('error', 'Sem permissão para exportar dados.');
+
             return;
         }
 
@@ -281,10 +297,10 @@ class RepairOrdersForm1List extends Component
                 ];
             })->toArray();
 
-            $filename = 'ordens-form1-' . date('Y-m-d-H-i-s') . '.' . $format;
-            $filePath = storage_path('app/temp/' . $filename);
+            $filename = 'ordens-form1-'.date('Y-m-d-H-i-s').'.'.$format;
+            $filePath = storage_path('app/temp/'.$filename);
 
-            if (!file_exists(storage_path('app/temp'))) {
+            if (! file_exists(storage_path('app/temp'))) {
                 mkdir(storage_path('app/temp'), 0755, true);
             }
 
@@ -292,7 +308,7 @@ class RepairOrdersForm1List extends Component
                 case 'excel':
                 case 'csv':
                     $handle = fopen($filePath, 'w');
-                    if (!empty($exportData)) {
+                    if (! empty($exportData)) {
                         fputcsv($handle, array_keys($exportData[0]));
                         foreach ($exportData as $row) {
                             fputcsv($handle, $row);
@@ -303,18 +319,18 @@ class RepairOrdersForm1List extends Component
                 case 'pdf':
                     $html = '<html><body>';
                     $html .= '<h1>Ordens de Reparação - Formulário 1</h1>';
-                    $html .= '<p>Gerado em: ' . date('d/m/Y H:i:s') . '</p>';
-                    if (!empty($exportData)) {
+                    $html .= '<p>Gerado em: '.date('d/m/Y H:i:s').'</p>';
+                    if (! empty($exportData)) {
                         $html .= '<table border="1" cellpadding="5">';
                         $html .= '<tr>';
                         foreach (array_keys($exportData[0]) as $header) {
-                            $html .= '<th>' . htmlspecialchars($header) . '</th>';
+                            $html .= '<th>'.htmlspecialchars($header).'</th>';
                         }
                         $html .= '</tr>';
                         foreach ($exportData as $row) {
                             $html .= '<tr>';
                             foreach ($row as $cell) {
-                                $html .= '<td>' . htmlspecialchars($cell) . '</td>';
+                                $html .= '<td>'.htmlspecialchars($cell).'</td>';
                             }
                             $html .= '</tr>';
                         }
@@ -324,14 +340,14 @@ class RepairOrdersForm1List extends Component
                     file_put_contents($filePath, $html);
                     break;
                 default:
-                session()->flash('error', 'Formato de exportação não suportado.');
+                    session()->flash('error', 'Formato de exportação não suportado.');
                     throw new \Exception('Formato de exportação não suportado.');
             }
 
             return response()->download($filePath, $filename)->deleteFileAfterSend();
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao exportar dados: ' . $e->getMessage());
-            \Log::error('Erro na exportação Form1: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao exportar dados: '.$e->getMessage());
+            \Log::error('Erro na exportação Form1: '.$e->getMessage());
         }
     }
 
@@ -342,16 +358,16 @@ class RepairOrdersForm1List extends Component
 
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('order_number', 'like', '%' . $this->search . '%')
-                  ->orWhereHas('form1.client', function ($subQ) {
-                      $subQ->where('name', 'like', '%' . $this->search . '%');
-                  })
-                  ->orWhereHas('form1.machineNumber', function ($subQ) {
-                      $subQ->where('number', 'like', '%' . $this->search . '%');
-                  })
-                  ->orWhereHas('form1', function ($subQ) {
-                      $subQ->where('descricao_avaria', 'like', '%' . $this->search . '%');
-                  });
+                $q->where('order_number', 'like', '%'.$this->search.'%')
+                    ->orWhereHas('form1.client', function ($subQ) {
+                        $subQ->where('name', 'like', '%'.$this->search.'%');
+                    })
+                    ->orWhereHas('form1.machineNumber', function ($subQ) {
+                        $subQ->where('number', 'like', '%'.$this->search.'%');
+                    })
+                    ->orWhereHas('form1', function ($subQ) {
+                        $subQ->where('descricao_avaria', 'like', '%'.$this->search.'%');
+                    });
             });
         }
 
@@ -381,18 +397,29 @@ class RepairOrdersForm1List extends Component
         }
 
         return $query->orderBy($this->sortField, $this->sortDirection)
-                    ->paginate($this->perPage);
+            ->paginate($this->perPage);
     }
 
     // Contagem de filtros ativos
     public function getActiveFiltersCountProperty()
     {
         $count = 0;
-        if ($this->search) $count++;
-        if ($this->filterByClient) $count++;
-        if ($this->filterByMaintenanceType) $count++;
-        if ($this->filterByMonthYear) $count++;
-        if ($this->filterByMachine) $count++;
+        if ($this->search) {
+            $count++;
+        }
+        if ($this->filterByClient) {
+            $count++;
+        }
+        if ($this->filterByMaintenanceType) {
+            $count++;
+        }
+        if ($this->filterByMonthYear) {
+            $count++;
+        }
+        if ($this->filterByMachine) {
+            $count++;
+        }
+
         return $count;
     }
 
@@ -405,13 +432,14 @@ class RepairOrdersForm1List extends Component
     {
         return auth()->user()->can('repair_orders.create') || auth()->user()->isCompanyAdmin();
     }
+
     public function render()
     {
         return view('livewire.company.listings.repair-orders-form1-list', [
             'orders' => $this->orders,
             'metrics' => $this->metrics,
         ])->layout('layouts.company', [
-            'title' => 'Ordens de Reparação - Formulário 1'
+            'title' => 'Ordens de Reparação - Formulário 1',
         ]);
     }
 }

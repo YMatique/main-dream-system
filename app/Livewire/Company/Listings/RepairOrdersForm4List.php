@@ -48,7 +48,9 @@ class RepairOrdersForm4List extends Component
     public function mount()
     {
         if (!auth()->user()->can('repair_orders.form4.view') && !auth()->user()->isCompanyAdmin()) {
-            abort(403, 'Sem permissão para visualizar ordens do Formulário 4.');
+            // abort(403, 'Sem permissão para visualizar ordens do Formulário 4.');
+            return  redirect()->route('company.my-permissions')->with('error', "Sem permissão para visualizar ordens do Formulário 4.");
+           
         }
 
         $this->loadFilterData();
