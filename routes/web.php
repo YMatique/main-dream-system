@@ -189,7 +189,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
     Route::prefix('repair-orders')->name('repair-orders.')->group(function () {
 
         // Formulário 1 - Inicial
-        Route::get('/form1', RepairOrderForm1::class)
+        Route::get('/form1/{order?}', RepairOrderForm1::class)
             ->name('form1')
             ->middleware('form.permission:1,access');
 

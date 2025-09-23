@@ -31,16 +31,22 @@ class RepairOrderForm4 extends Component
     public $showSuccessMessage = false;
     public $successMessage = '';
 
-    public function mount($repairOrder = null)
+    public function mount($order = null)
     {
         $this->loadFormData();
-        $this->loadAvailableOrders();
+
         
         // Se veio com uma ordem específica (do Form3)
-        if ($repairOrder) {
-            $this->selectedOrderId = $repairOrder->id;
+        // if ($repairOrder) {
+        //     $this->selectedOrderId = $repairOrder->id;
+        //     $this->loadSelectedOrder();
+        // }
+        if ($order != null) {
+            $this->selectedOrderId = RepairOrder::findOrFail($order)->id;
             $this->loadSelectedOrder();
+            $this->isEditing = true;
         }
+                $this->loadAvailableOrders();
     }
 
     public function loadFormData()
@@ -63,7 +69,7 @@ class RepairOrderForm4 extends Component
         $companyId = auth()->user()->company_id;
         
         // Buscar todas as ordens que tenham Form3 completado
-        $this->availableOrders = RepairOrder::where('company_id', $companyId)
+        $this->availableOrders = $this->isEditing ? RepairOrder::where('id', $this->selectedOrderId)->get() : RepairOrder::where('company_id', $companyId)
             ->whereHas('form2') // Só ordens que tenham Form3
             ->whereDoesntHave('form3')
             ->with(['form1.client', 'form1.machineNumber', 'form3', 'form4'])

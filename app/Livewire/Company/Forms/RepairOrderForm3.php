@@ -43,20 +43,27 @@ class RepairOrderForm3 extends Component
     public $showSuccessMessage = false;
     public $successMessage = '';
 
-    public function mount($repairOrder = null)
+    public function mount($order = null)
     {
         // Definir data padrão como hoje
         $this->data_faturacao = date('Y-m-d');
         
         $this->loadFormData();
-        $this->loadAvailableOrders();
+
         
         // Se veio com uma ordem específica (do Form2)
-        if ($repairOrder) {
-            $this->selectedOrderId = $repairOrder->id;
+        // if ($order) {
+        //     $this->selectedOrderId = RepairOrder::find($order)->id;
+        //     $this->loadSelectedOrder();
+
+        // }
+            // dd('asasa');
+        if ($order != null) {
+            $this->selectedOrderId = RepairOrder::findOrFail($order)->id;
             $this->loadSelectedOrder();
-            // dd($repairOrder);
+            $this->isEditing = true;
         }
+        $this->loadAvailableOrders();
     }
 
     public function loadFormData()
@@ -95,8 +102,9 @@ class RepairOrderForm3 extends Component
     {
         $companyId = auth()->user()->company_id;
         
+        // dd($this->selectedOrderId);
         // Buscar todas as ordens que tenham Form2 completado
-        $this->availableOrders = RepairOrder::where('company_id', $companyId)
+        $this->availableOrders = $this->isEditing ? RepairOrder::where('id', $this->selectedOrderId)->get() : RepairOrder::where('company_id', $companyId)
             ->whereHas('form4') // Só ordens que tenham Form4
             ->whereDoesntHave('form3')
             ->with(['form1.client', 'form2', 'form3'])

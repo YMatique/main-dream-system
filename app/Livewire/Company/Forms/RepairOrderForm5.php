@@ -43,7 +43,7 @@ class RepairOrderForm5 extends Component
     public $successMessage = '';
     public $dateValidationError = '';
 
-    public function mount($repairOrder = null)
+    public function mount($order = null)
     {
         // Definir data padrão como hoje para primeira data
         $this->data_faturacao_1 = date('Y-m-d');
@@ -51,13 +51,19 @@ class RepairOrderForm5 extends Component
         $this->data_faturacao_2 = date('Y-m-d', strtotime('+2 days'));
         
         $this->loadFormData();
-        $this->loadAvailableOrders();
+
         
         // Se veio com uma ordem específica (do Form4)
-        if ($repairOrder) {
-            $this->selectedOrderId = $repairOrder->id;
+        // if ($repairOrder) {
+        //     $this->selectedOrderId = $repairOrder->id;
+        //     $this->loadSelectedOrder();
+        // }
+        if ($order != null) {
+            $this->selectedOrderId = RepairOrder::findOrFail($order)->id;
             $this->loadSelectedOrder();
+            $this->isEditing = true;
         }
+                $this->loadAvailableOrders();
     }
 
     public function loadFormData()
@@ -76,7 +82,7 @@ class RepairOrderForm5 extends Component
         $companyId = auth()->user()->company_id;
         
         // Buscar todas as ordens que tenham Form4 completado
-        $this->availableOrders = RepairOrder::where('company_id', $companyId)
+        $this->availableOrders = $this->isEditing ? RepairOrder::where('id', $this->selectedOrderId)->get() :RepairOrder::where('company_id', $companyId)
             ->whereHas('form3') // Só ordens que tenham Form4
             ->with(['form1.client', 'form1.machineNumber', 'form4', 'form5'])
             ->orderBy('created_at', 'desc')

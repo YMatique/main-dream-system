@@ -79,7 +79,7 @@ class RepairOrderForm1 extends Component
     ];
 
 
-    public function mount($repairOrder = null)
+    public function mount($order = null)
     {
         $this->currentYear = date('Y');
         $this->ano = $this->currentYear;
@@ -89,10 +89,11 @@ class RepairOrderForm1 extends Component
         $this->loadFormData();
 
         // Se está editando uma ordem existente
-        if ($repairOrder) {
-            $this->repairOrder = $repairOrder;
-            $this->isEditing = true;
+        if ($order != null) {
+            // dd($order);
+            $this->repairOrder = RepairOrder::find($order);
             $this->loadExistingData();
+            $this->isEditing = true;
         }
     }
 

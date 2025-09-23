@@ -7,14 +7,16 @@ use App\Models\Company\Location;
 use App\Models\Company\Material;
 use App\Models\Company\RepairOrder\RepairOrder;
 use App\Models\Company\Status;
-use Livewire\Component;
 use Livewire\Attributes\Rule;
+use Livewire\Component;
 
 class RepairOrderForm2 extends Component
 {
     // Propriedades do formulário
     public $repairOrder;
+
     public $form2Data;
+
     public $selectedOrderId = ''; // Para seleção de ordem
 
     #[Rule('required|exists:locations,id')]
@@ -28,26 +30,35 @@ class RepairOrderForm2 extends Component
 
     // Técnicos
     public $numero_tecnicos = 1;
+
     public $tecnicos = [];
 
     // Materiais cadastrados
     public $materiaisDisponiveis = [];
+
     public $materiaisSelecionados = [];
 
     // Materiais adicionais
     public $numero_materiais_adicionais = 0;
+
     public $materiaisAdicionais = [];
 
     // Dados para os selects
     public $employees = [];
+
     public $materials = [];
+
     public $statuses = [];
+
     public $locations = [];
+
     public $availableOrders = []; // Ordens disponíveis para seleção
 
     // Estado do componente
     public $isEditing = false;
+
     public $showSuccessMessage = false;
+
     public $successMessage = '';
 
     // Computed properties
@@ -56,14 +67,16 @@ class RepairOrderForm2 extends Component
     public function mount($order = null)
     {
         $this->loadFormData();
-        $this->loadAvailableOrders();
         $this->initializeTechnicians();
-        
+
         // Se veio com uma ordem específica (do Form1)
-        if ($order) {
+        // dd($order);
+        if ($order != null) {
             $this->selectedOrderId = RepairOrder::find($order)->id;
             $this->loadSelectedOrder();
+            $this->isEditing = true;
         }
+        $this->loadAvailableOrders();
     }
 
     public function loadAvailableOrders()
@@ -71,7 +84,7 @@ class RepairOrderForm2 extends Component
         $companyId = auth()->user()->company_id;
         
         // Buscar todas as ordens que tenham Form1 completado
-        $this->availableOrders = RepairOrder::where('company_id', $companyId)
+        $this->availableOrders = $this->isEditing ? RepairOrder::where('id', $this->selectedOrderId)->get() : RepairOrder::where('company_id', $companyId)
             ->whereHas('form1') // Só ordens que tenham Form1
             ->whereDoesntHave('form2')
             ->with(['form1.client', 'form1.maintenanceType', 'form2'])
@@ -91,16 +104,17 @@ class RepairOrderForm2 extends Component
     public function loadSelectedOrder()
     {
         $companyId = auth()->user()->company_id;
-        
+
         $this->repairOrder = RepairOrder::where('company_id', $companyId)
             ->where('id', $this->selectedOrderId)
             ->whereHas('form1') // Garantir que tem Form1
             ->with(['form1', 'form2.employees', 'form2.materials', 'form2.additionalMaterials'])
             ->first();
 
-        if (!$this->repairOrder) {
+        if (! $this->repairOrder) {
             session()->flash('error', 'Ordem de reparação não encontrada ou sem Formulário 1.');
             $this->selectedOrderId = '';
+
             return;
         }
 
@@ -112,7 +126,7 @@ class RepairOrderForm2 extends Component
             $this->isEditing = false;
             $this->resetFormFields();
         }
-        
+
         $this->calculateTotalHours();
     }
 
@@ -176,8 +190,8 @@ class RepairOrderForm2 extends Component
                 'unit' => $material->unit,
                 'cost' => $material->cost_per_unit_mzn,
                 'selected' => false,
-                'quantidade' => 0
-            ]
+                'quantidade' => 0,
+            ],
             ];
         })->toArray();
     }
@@ -188,8 +202,8 @@ class RepairOrderForm2 extends Component
         $this->tecnicos = [
             [
                 'employee_id' => '',
-                'horas_trabalhadas' => 0
-            ]
+                'horas_trabalhadas' => 0,
+            ],
         ];
     }
 
@@ -197,23 +211,23 @@ class RepairOrderForm2 extends Component
     {
         if ($this->repairOrder && $this->repairOrder->form2) {
             $form2 = $this->repairOrder->form2;
-            
-            $this->selectedOrderId = $form2->id;
+            // dd($this->selectedOrderId , $form2->id);
+            // $this->selectedOrderId = $form2->id;
             $this->location_id = $form2->location_id;
             $this->status_id = $form2->status_id;
             $this->actividade_realizada = $form2->actividade_realizada;
-            
+
             // Carregar técnicos existentes
             $existingEmployees = $form2->employees;
             $this->numero_tecnicos = $existingEmployees->count();
-            
+
             $this->tecnicos = $existingEmployees->map(function ($emp) {
                 return [
                     'employee_id' => $emp->employee_id,
-                    'horas_trabalhadas' => $emp->horas_trabalhadas
+                    'horas_trabalhadas' => $emp->horas_trabalhadas,
                 ];
             })->toArray();
-            
+
             // Carregar materiais selecionados
             $existingMaterials = $form2->materials;
             foreach ($existingMaterials as $material) {
@@ -222,19 +236,19 @@ class RepairOrderForm2 extends Component
                     $this->materiaisDisponiveis[$material->material_id]['quantidade'] = $material->quantidade;
                 }
             }
-            
+
             // Carregar materiais adicionais
             $additionalMaterials = $form2->additionalMaterials;
             $this->numero_materiais_adicionais = $additionalMaterials->count();
-            
+
             $this->materiaisAdicionais = $additionalMaterials->map(function ($mat) {
                 return [
                     'nome_material' => $mat->nome_material,
                     'custo_unitario' => $mat->custo_unitario,
-                    'quantidade' => $mat->quantidade
+                    'quantidade' => $mat->quantidade,
                 ];
             })->toArray();
-            
+
             $this->isEditing = true;
         }
     }
@@ -248,7 +262,7 @@ class RepairOrderForm2 extends Component
         $this->numero_tecnicos++;
         $this->tecnicos[] = [
             'employee_id' => '',
-            'horas_trabalhadas' => 0
+            'horas_trabalhadas' => 0,
         ];
     }
 
@@ -283,10 +297,10 @@ class RepairOrderForm2 extends Component
     public function toggleMaterial($materialId)
     {
         if (isset($this->materiaisDisponiveis[$materialId])) {
-            $this->materiaisDisponiveis[$materialId]['selected'] = !$this->materiaisDisponiveis[$materialId]['selected'];
-            
+            $this->materiaisDisponiveis[$materialId]['selected'] = ! $this->materiaisDisponiveis[$materialId]['selected'];
+
             // Se desmarcou, zerar quantidade
-            if (!$this->materiaisDisponiveis[$materialId]['selected']) {
+            if (! $this->materiaisDisponiveis[$materialId]['selected']) {
                 $this->materiaisDisponiveis[$materialId]['quantidade'] = 0;
             }
         }
@@ -298,7 +312,7 @@ class RepairOrderForm2 extends Component
         $this->materiaisAdicionais[] = [
             'nome_material' => '',
             'custo_unitario' => 0,
-            'quantidade' => 0
+            'quantidade' => 0,
         ];
     }
 
@@ -318,8 +332,9 @@ class RepairOrderForm2 extends Component
     public function save()
     {
         // Validar se uma ordem foi selecionada
-        if (!$this->selectedOrderId || !$this->repairOrder) {
+        if (! $this->selectedOrderId || ! $this->repairOrder) {
             session()->flash('error', 'Selecione uma ordem de reparação primeiro.');
+
             return;
         }
 
@@ -332,12 +347,12 @@ class RepairOrderForm2 extends Component
             });
 
             $this->showSuccessMessage = true;
-            $this->successMessage = $this->isEditing 
-                ? 'Formulário 2 atualizado com sucesso!' 
+            $this->successMessage = $this->isEditing
+                ? 'Formulário 2 atualizado com sucesso!'
                 : 'Formulário 2 salvo com sucesso!';
 
             // Atualizar status da ordem se necessário
-            if (!$this->isEditing && $this->repairOrder->current_form === 'form1') {
+            if (! $this->isEditing && $this->repairOrder->current_form === 'form1') {
                 $this->repairOrder->advanceToNextForm();
             }
 
@@ -345,7 +360,7 @@ class RepairOrderForm2 extends Component
             $this->loadSelectedOrder();
 
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao salvar formulário: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao salvar formulário: '.$e->getMessage());
         }
     }
 
@@ -356,13 +371,13 @@ class RepairOrderForm2 extends Component
         // Validar se pelo menos um técnico foi selecionado
         $hasValidTechnician = false;
         foreach ($this->tecnicos as $tecnico) {
-            if (!empty($tecnico['employee_id']) && $tecnico['horas_trabalhadas'] > 0) {
+            if (! empty($tecnico['employee_id']) && $tecnico['horas_trabalhadas'] > 0) {
                 $hasValidTechnician = true;
                 break;
             }
         }
 
-        if (!$hasValidTechnician) {
+        if (! $hasValidTechnician) {
             throw new \Exception('Selecione pelo menos um técnico com horas trabalhadas.');
         }
 
@@ -407,10 +422,10 @@ class RepairOrderForm2 extends Component
 
         // Adicionar novos técnicos
         foreach ($this->tecnicos as $tecnico) {
-            if (!empty($tecnico['employee_id']) && $tecnico['horas_trabalhadas'] > 0) {
+            if (! empty($tecnico['employee_id']) && $tecnico['horas_trabalhadas'] > 0) {
                 $form2->employees()->create([
                     'employee_id' => $tecnico['employee_id'],
-                    'horas_trabalhadas' => $tecnico['horas_trabalhadas']
+                    'horas_trabalhadas' => $tecnico['horas_trabalhadas'],
                 ]);
             }
         }
@@ -426,7 +441,7 @@ class RepairOrderForm2 extends Component
             if ($material['selected'] && $material['quantidade'] > 0) {
                 $form2->materials()->create([
                     'material_id' => $materialId,
-                    'quantidade' => $material['quantidade']
+                    'quantidade' => $material['quantidade'],
                 ]);
             }
         }
@@ -439,11 +454,11 @@ class RepairOrderForm2 extends Component
 
         // Adicionar novos materiais adicionais
         foreach ($this->materiaisAdicionais as $material) {
-            if (!empty($material['nome_material']) && $material['quantidade'] > 0) {
+            if (! empty($material['nome_material']) && $material['quantidade'] > 0) {
                 $form2->additionalMaterials()->create([
                     'nome_material' => $material['nome_material'],
                     'custo_unitario' => $material['custo_unitario'],
-                    'quantidade' => $material['quantidade']
+                    'quantidade' => $material['quantidade'],
                 ]);
             }
         }
@@ -451,8 +466,9 @@ class RepairOrderForm2 extends Component
 
     public function proceedToForm3()
     {
-        if (!$this->repairOrder || !$this->repairOrder->form2) {
+        if (! $this->repairOrder || ! $this->repairOrder->form2) {
             session()->flash('error', 'Salve o formulário antes de prosseguir.');
+
             return;
         }
 
@@ -476,7 +492,7 @@ class RepairOrderForm2 extends Component
     public function getTotalMaterialCostProperty()
     {
         $total = 0;
-        
+
         // Custo dos materiais cadastrados
         foreach ($this->materiaisDisponiveis as $materialId => $material) {
             if ($material['selected'] && $material['quantidade'] > 0) {
@@ -486,20 +502,21 @@ class RepairOrderForm2 extends Component
                 }
             }
         }
-        
+
         // Custo dos materiais adicionais
         foreach ($this->materiaisAdicionais as $material) {
-            if (!empty($material['nome_material']) && $material['quantidade'] > 0) {
+            if (! empty($material['nome_material']) && $material['quantidade'] > 0) {
                 $total += $material['custo_unitario'] * $material['quantidade'];
             }
         }
-        
+
         return $total;
     }
+
     public function render()
     {
         return view('livewire.company.forms.repair-order-form2')->layout('layouts.company', [
-                'title' => 'Formulário 2 - Técnicos e Materiais'
-            ]);
+            'title' => 'Formulário 2 - Técnicos e Materiais',
+        ]);
     }
 }
