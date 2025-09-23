@@ -103,12 +103,20 @@ class PermissionSeederNew extends Seeder
 
             // ========== ORDENS DE REPARAÇÃO ==========
             [
+                'name' => 'repair_orders.view_initial_page',
+                'description' => 'Ver a Página de Listagem de formulários',
+                'category' => 'repair_orders',
+                'group' => 'repair_management',
+                'is_system' => true,
+                'sort_order' => 10,
+            ],
+            [
                 'name' => 'repair_orders.view_all',
                 'description' => 'Ver todas as ordens de reparação',
                 'category' => 'repair_orders',
                 'group' => 'repair_management',
                 'is_system' => true,
-                'sort_order' => 10,
+                'sort_order' => 20,
             ],
             [
                 'name' => 'repair_orders.delete',
@@ -116,7 +124,7 @@ class PermissionSeederNew extends Seeder
                 'category' => 'repair_orders',
                 'group' => 'repair_management',
                 'is_system' => true,
-                'sort_order' => 20,
+                'sort_order' => 30,
             ],
             [
                 'name' => 'repair_orders.export',
@@ -124,7 +132,7 @@ class PermissionSeederNew extends Seeder
                 'category' => 'repair_orders',
                 'group' => 'export_data',
                 'is_system' => true,
-                'sort_order' => 30,
+                'sort_order' => 40,
             ],
 
             // ========== FATURAÇÃO ==========

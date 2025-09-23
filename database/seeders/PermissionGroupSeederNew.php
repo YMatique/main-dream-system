@@ -45,8 +45,8 @@ class PermissionGroupSeederNew extends Seeder
                 'is_active' => true,
                 'sort_order' => 20,
                 'permissions' => [
-                    'forms.form3.list',        // Lista de faturação
-                    'forms.form3.access',      // Acesso ao form de faturação
+                    // 'forms.form3.list',        // Lista de faturação
+                    // 'forms.form3.access',      // Acesso ao form de faturação
                     'billing.hh.manage',
                     'billing.estimated.manage',
                     'billing.real.manage',

@@ -53,15 +53,15 @@ class RepairOrderForm2 extends Component
     // Computed properties
     public $tempoTotalCalculado = 0;
 
-    public function mount($repairOrder = null)
+    public function mount($order = null)
     {
         $this->loadFormData();
         $this->loadAvailableOrders();
         $this->initializeTechnicians();
         
         // Se veio com uma ordem específica (do Form1)
-        if ($repairOrder) {
-            $this->selectedOrderId = $repairOrder->id;
+        if ($order) {
+            $this->selectedOrderId = RepairOrder::find($order)->id;
             $this->loadSelectedOrder();
         }
     }
@@ -198,6 +198,7 @@ class RepairOrderForm2 extends Component
         if ($this->repairOrder && $this->repairOrder->form2) {
             $form2 = $this->repairOrder->form2;
             
+            $this->selectedOrderId = $form2->id;
             $this->location_id = $form2->location_id;
             $this->status_id = $form2->status_id;
             $this->actividade_realizada = $form2->actividade_realizada;

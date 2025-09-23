@@ -1,10 +1,5 @@
 <?php
 
-use App\Livewire\Settings\Appearance;
-use App\Livewire\Settings\Password;
-use App\Livewire\Settings\Profile;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\System\CompanyController;
 use App\Livewire\Auth\System\ForgotPassword;
 use App\Livewire\Auth\System\ResetPassword;
 use App\Livewire\Company\Billing\BillingEstimatedManagement;
@@ -40,26 +35,17 @@ use App\Livewire\Company\Perfomance\MetricsManagement;
 use App\Livewire\Company\RequesterManagement;
 use App\Livewire\Company\StatusLocationManagement;
 use App\Livewire\Company\UserPermissionManagement;
-use App\Livewire\Portal\EmployeeDashboard;
-use App\Livewire\Portal\EmployeeEvaluations;
-use App\Livewire\Portal\EmployeePerformanceHistory;
-use App\Livewire\Portal\EmployeeProfile;
+use App\Livewire\Settings\Appearance;
+use App\Livewire\Settings\Password;
+use App\Livewire\Settings\Profile;
 use App\Livewire\System\ActivityLogsManagement;
 use App\Livewire\System\CompanyManagement;
 use App\Livewire\System\PlanManagement;
 use App\Livewire\System\SubscriptionManagement;
 use App\Livewire\System\SystemDashboard;
 use App\Livewire\System\UserManagement;
-use App\Livewire\Website\About;
-use App\Livewire\Website\CheckOut;
-use App\Livewire\Website\Contact;
-use App\Livewire\Website\Home;
-use App\Livewire\Website\Project;
-use App\Livewire\Website\Service;
-use App\Models\Company\Department;
-use App\Models\Company\Evaluation\EvaluationApprovalStage;
-use App\Models\Company\Evaluation\PerformanceEvaluation;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     Route::get('system-auth/forgot-password', ForgotPassword::class)->name('password.request');
@@ -78,7 +64,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | Super Admin Routes (/system)
@@ -92,7 +77,7 @@ Route::middleware(['auth.unified', 'user.type:super_admin'])->prefix('system')->
     // Company Management
     Route::get('/companies', CompanyManagement::class)->name('companies');
 
-    // User Management  
+    // User Management
     Route::get('/users', UserManagement::class)->name('users');
 
     // Subscription Management
@@ -130,11 +115,11 @@ Route::middleware(['auth.unified', 'user.type:super_admin'])->prefix('system')->
 | Área das Empresas
 |--------------------------------------------------------------------------
 */
-Route::get('/', function(){
+Route::get('/', function () {
     return redirect(route('company.login'));
 });
 Route::get('companies/login', CompanyLogin::class)->name('company.login');
-//Rotas para Admin de Empresa 
+// Rotas para Admin de Empresa
 Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,company_user'])->name('company.')->group(function () {
     Route::get('dashboard', Dashboard::class)->name('dashboard')->middleware('permission:dashboard');
 
@@ -147,16 +132,16 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
         Route::get('/employees', EmployeeManagement::class)->name('employees')->middleware('manager.access:employees');
 
         // Clientes
-        Route::get('/clients', ClientManagement::class)->name('clients')->middleware('manager.access:clients');;
+        Route::get('/clients', ClientManagement::class)->name('clients')->middleware('manager.access:clients');
 
         // Materiais
-        Route::get('/materials', MaterialManagement::class)->name('materials')->middleware('manager.access:materials');;
+        Route::get('/materials', MaterialManagement::class)->name('materials')->middleware('manager.access:materials');
 
         // Departamentos
-        Route::get('/departments', DepartmentManagement::class)->name('departments')->middleware('manager.access:departments');;
+        Route::get('/departments', DepartmentManagement::class)->name('departments')->middleware('manager.access:departments');
 
         // Tipos de Manutenção
-        Route::get('/maintenance-types', MaintenanceTypeManagement::class)->name('maintenance-types')->middleware('manager.access:maintenance_types');;
+        Route::get('/maintenance-types', MaintenanceTypeManagement::class)->name('maintenance-types')->middleware('manager.access:maintenance_types');
 
         // Estados
         Route::get('/statuses-locations', StatusLocationManagement::class)->name('statuses')->middleware('manager.access:statuses');
@@ -166,63 +151,123 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             return view('company.manage.locations', [
                 'title' => 'Gestão de Localizações',
                 'company' => auth()->user()->company,
-                'locations_count' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->count()
+                'locations_count' => \App\Models\Company\Location::where('company_id', auth()->user()->company_id)->count(),
             ]);
-        })->name('locations')->middleware('manager.access:locations');;
+        })->name('locations')->middleware('manager.access:locations');
 
         // Números de Máquina
-        Route::get('/machine-numbers', MachineNumberManagement::class)->name('machine-numbers')->middleware('manager.access:machines');;
+        Route::get('/machine-numbers', MachineNumberManagement::class)->name('machine-numbers')->middleware('manager.access:machines');
 
         // Solicitantes
-        Route::get('/requesters', RequesterManagement::class)->name('requesters')->middleware('manager.access:requesters');;
+        Route::get('/requesters', RequesterManagement::class)->name('requesters')->middleware('manager.access:requesters');
 
         // Custos por Cliente
-        Route::get('/client-costs', ClientCostManagement::class)->name('client-costs')->middleware('manager.access:locations:costs');;
+        Route::get('/client-costs', ClientCostManagement::class)->name('client-costs')->middleware('manager.access:locations:costs');
 
         // Usuários e Permissões
         Route::get('/users-permissions', UserPermissionManagement::class)->name('users-permissions')->middleware('manager.access:users');
     });
 
     // ===== FORMULÁRIOS DE ORDENS DE REPARAÇÃO =====
+    // Route::prefix('repair-orders')->name('repair-orders.')->group(function () {
+
+    //     // Formulário 1 - Inicial
+    //     Route::get('/form1', RepairOrderForm1::class)->name('form1')->middleware('form.access:1');
+
+    //     // Formulário 2 - Técnicos + Materiais
+    //     Route::get('/form2/{order?}', RepairOrderForm2::class)->name('form2')->middleware('form.access:2');
+
+    //     // Formulário 3 - Faturação Real
+    //     Route::get('/form3/{order?}', RepairOrderForm3::class)->name('form3')->middleware('form.access:3');
+
+    //     // Formulário 4 - Número de Máquina
+    //     Route::get('/form4/{order?}', RepairOrderForm4::class)->name('form4')->middleware('form.access:4');
+
+    //     // Formulário 5 - Equipamento + Validação
+    //     Route::get('/form5/{order?}', RepairOrderForm5::class)->name('form5')->middleware('form.access:5');;
+    // });
     Route::prefix('repair-orders')->name('repair-orders.')->group(function () {
 
         // Formulário 1 - Inicial
-        Route::get('/form1', RepairOrderForm1::class)->name('form1')->middleware('form.access:1');
+        Route::get('/form1', RepairOrderForm1::class)
+            ->name('form1')
+            ->middleware('form.permission:1,access');
 
-        // Formulário 2 - Técnicos + Materiais  
-        Route::get('/form2/{order?}', RepairOrderForm2::class)->name('form2')->middleware('form.access:2');
+        // Formulário 2 - Técnicos + Materiais
+        Route::get('/form2/{order?}', RepairOrderForm2::class)
+            ->name('form2')
+            ->middleware('form.permission:2,access');
 
         // Formulário 3 - Faturação Real
-        Route::get('/form3/{order?}', RepairOrderForm3::class)->name('form3')->middleware('form.access:3');
+        Route::get('/form3/{order?}', RepairOrderForm3::class)
+            ->name('form3')
+            ->middleware('form.permission:3,access');
 
         // Formulário 4 - Número de Máquina
-        Route::get('/form4/{order?}', RepairOrderForm4::class)->name('form4')->middleware('form.access:4');
+        Route::get('/form4/{order?}', RepairOrderForm4::class)
+            ->name('form4')
+            ->middleware('form.permission:4,access');
 
         // Formulário 5 - Equipamento + Validação
-        Route::get('/form5/{order?}', RepairOrderForm5::class)->name('form5')->middleware('form.access:5');;
+        Route::get('/form5/{order?}', RepairOrderForm5::class)
+            ->name('form5')
+            ->middleware('form.permission:5,access');
     });
 
     // ===== LISTAGENS DE ORDENS =====
+    // Route::prefix('repair-orders')->name('orders.')->group(function () {
+    //     Route::get('/', RepairOrdersList::class)->name('index');
+
+    //     // Listagens por formulário
+    //     Route::get('/form1-list', RepairOrdersForm1List::class)->name('form1-list');
+
+    //     Route::get('/form2-list', RepairOrdersForm2List::class)->name('form2-list');
+
+    //     Route::get('/form3-list', RepairOrdersForm3List::class)->name('form3-list');
+
+    //     Route::get('/form4-list', RepairOrdersForm4List::class)->name('form4-list');
+
+    //     Route::get('/form5-list', RepairOrdersForm5List::class)->name('form5-list');
+
+    //     // Listagem avançada (todos os campos de todos os formulários)
+    //     Route::get('/advanced-list', AdvancedListing::class)->name('advanced-list');
+    // });
     Route::prefix('repair-orders')->name('orders.')->group(function () {
-        Route::get('/', RepairOrdersList::class)->name('index');
-
-        // Listagens por formulário
-        Route::get('/form1-list', RepairOrdersForm1List::class)->name('form1-list');
-
-        Route::get('/form2-list', RepairOrdersForm2List::class)->name('form2-list');
-
-        Route::get('/form3-list', RepairOrdersForm3List::class)->name('form3-list');
-
-        Route::get('/form4-list', RepairOrdersForm4List::class)->name('form4-list');
-
-        Route::get('/form5-list', RepairOrdersForm5List::class)->name('form5-list');
-
-        // Listagem avançada (todos os campos de todos os formulários)
-        Route::get('/advanced-list', AdvancedListing::class)->name('advanced-list');
-    });
+    
+    // Listagem geral - precisa ter acesso a pelo menos um formulário
+    Route::get('/', RepairOrdersList::class)
+        ->name('index');
+        // ->middleware('can:has-permission,repair_orders.view_all');
+    
+    // Listagens por formulário - agora com permissão específica
+    Route::get('/form1-list', RepairOrdersForm1List::class)
+        ->name('form1-list')
+        ->middleware('form.permission:1,list');
+    
+    Route::get('/form2-list', RepairOrdersForm2List::class)
+        ->name('form2-list')
+        ->middleware('form.permission:2,list');
+    
+    Route::get('/form3-list', RepairOrdersForm3List::class)
+        ->name('form3-list')
+        ->middleware('form.permission:3,list');
+    
+    Route::get('/form4-list', RepairOrdersForm4List::class)
+        ->name('form4-list')
+        ->middleware('form.permission:4,list');
+    
+    Route::get('/form5-list', RepairOrdersForm5List::class)
+        ->name('form5-list')
+        ->middleware('form.permission:5,list');
+    
+    // Listagem avançada - precisa ter acesso a todos os formulários
+    Route::get('/advanced-list', AdvancedListing::class)
+        ->name('advanced-list');
+        // ->middleware('can:has-permission,repair_orders.view_all');
+});
 
     // ===== SISTEMA DE FATURAÇÃO =====
-    Route::prefix('billing')->name('billing.')/*->middleware('permission:billing.view_all')*/->group(function () {
+    Route::prefix('billing')->name('billing.')/* ->middleware('permission:billing.view_all') */ ->group(function () {
 
         // Faturação Real
         Route::get('/real', BillingRealManagement::class)->name('real')->middleware('permission:billing.real.manage');
@@ -245,9 +290,9 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
 
             // Avaliações
             Route::get('/evaluations', EvaluationManagement::class)->name('evaluations')->middleware('evaluation.access:create');
-            Route::get('/evaluations-stages-management', ApprovalStageManagement::class)->name('evaluations.stages')->middleware('evaluation.access:stages');;
+            Route::get('/evaluations-stages-management', ApprovalStageManagement::class)->name('evaluations.stages')->middleware('evaluation.access:stages');
 
-            Route::get('/evaluations/approvals', EvaluationApprovals::class)->name('evaluations.approvals')->middleware('evaluation.access:approve');;
+            Route::get('/evaluations/approvals', EvaluationApprovals::class)->name('evaluations.approvals')->middleware('evaluation.access:approve');
             // Relatórios de Desempenho
             Route::get('/reports', EvaluationReports::class)->name('reports')->middleware('evaluation.access:reports');
         });
@@ -264,8 +309,8 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                     'employees' => 'Funcionários',
                     'clients' => 'Clientes',
                     'materials' => 'Materiais',
-                    'performance' => 'Avaliações de Desempenho'
-                ]
+                    'performance' => 'Avaliações de Desempenho',
+                ],
             ]);
         })->name('export');
 
@@ -277,8 +322,8 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                     'orders_this_month' => 0,
                     'billing_this_month' => 0,
                     'active_employees' => \App\Models\Company\Employee::where('company_id', auth()->user()->company_id)->active()->count(),
-                    'active_clients' => \App\Models\Company\Client::where('company_id', auth()->user()->company_id)->active()->count()
-                ]
+                    'active_clients' => \App\Models\Company\Client::where('company_id', auth()->user()->company_id)->active()->count(),
+                ],
             ]);
         })->name('analytics');
     });
@@ -292,7 +337,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
             Route::get('/profile', function () {
                 return view('company.settings.profile', [
                     'title' => 'Perfil da Empresa',
-                    'company' => auth()->user()->company
+                    'company' => auth()->user()->company,
                 ]);
             })->name('profile');
 
@@ -300,7 +345,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                 return view('company.settings.users', [
                     'title' => 'Gestão de Usuários',
                     'company' => auth()->user()->company,
-                    'users' => auth()->user()->company->users
+                    'users' => auth()->user()->company->users,
                 ]);
             })->name('users');
 
@@ -308,13 +353,11 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
                 return view('company.settings.preferences', [
                     'title' => 'Preferências',
                     'company' => auth()->user()->company,
-                    'settings' => auth()->user()->company->settings ?? []
+                    'settings' => auth()->user()->company->settings ?? [],
                 ]);
             })->name('preferences');
         });
 });
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -374,4 +417,4 @@ Route::post('/company/logout', function () {
     ->middleware('auth')
     ->name('company.logout');
 
-require __DIR__ . '/portal.php';
+require __DIR__.'/portal.php';

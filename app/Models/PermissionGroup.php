@@ -1,104 +1,103 @@
-    <?php
+<?php
+namespace App\Models;
 
-    namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-    use Illuminate\Database\Eloquent\Factories\HasFactory;
-    use Illuminate\Database\Eloquent\Model;
+class PermissionGroup extends Model
+{
+    use HasFactory;
 
-    class PermissionGroup extends Model
+    protected $fillable = [
+        'name',
+        'description',
+        'color',
+        'is_system',
+        'is_active',
+        'sort_order',
+    ];
+
+    protected $casts = [
+        'is_system' => 'boolean',
+        'is_active' => 'boolean',
+        'sort_order' => 'integer',
+    ];
+
+    // Relationships
+    public function permissions()
     {
-        use HasFactory;
+        return $this->belongsToMany(Permission::class, 'permission_group_permissions')
+            ->withTimestamps();
+    }
 
-        protected $fillable = [
-            'name',
-            'description',
-            'color',
-            'is_system',
-            'is_active',
-            'sort_order',
-        ];
+    public function permissionGroupPermissions()
+    {
+        return $this->hasMany(PermissionGroupPermission::class);
+    }
 
-        protected $casts = [
-            'is_system' => 'boolean',
-            'is_active' => 'boolean',
-            'sort_order' => 'integer',
-        ];
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_permission_groups')
+            ->withPivot(['assigned_at', 'assigned_by'])
+            ->withTimestamps();
+    }
 
-        // Relationships
-        public function permissions()
-        {
-            return $this->belongsToMany(Permission::class, 'permission_group_permissions')
-                ->withTimestamps();
-        }
+    public function userPermissionGroups()
+    {
+        return $this->hasMany(UserPermissionGroup::class);
+    }
 
-        public function permissionGroupPermissions()
-        {
-            return $this->hasMany(PermissionGroupPermission::class);
-        }
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
 
-        public function users()
-        {
-            return $this->belongsToMany(User::class, 'user_permission_groups')
-                ->withPivot(['assigned_at', 'assigned_by'])
-                ->withTimestamps();
-        }
+    public function scopeSystem($query)
+    {
+        return $query->where('is_system', true);
+    }
 
-        public function userPermissionGroups()
-        {
-            return $this->hasMany(UserPermissionGroup::class);
-        }
+    public function scopeCustom($query)
+    {
+        return $query->where('is_system', false);
+    }
 
-        // Scopes
-        public function scopeActive($query)
-        {
-            return $query->where('is_active', true);
-        }
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('sort_order')->orderBy('name');
+    }
 
-        public function scopeSystem($query)
-        {
-            return $query->where('is_system', true);
-        }
+    // Helper methods
+    public function getPermissionNames(): array
+    {
+        return $this->permissions()->pluck('name')->toArray();
+    }
 
-        public function scopeCustom($query)
-        {
-            return $query->where('is_system', false);
-        }
+    public function hasPermission(string $permissionName): bool
+    {
+        return $this->permissions()->where('name', $permissionName)->exists();
+    }
 
-        public function scopeOrdered($query)
-        {
-            return $query->orderBy('sort_order')->orderBy('name');
-        }
-
-        // Helper methods
-        public function getPermissionNames(): array
-        {
-            return $this->permissions()->pluck('name')->toArray();
-        }
-
-        public function hasPermission(string $permissionName): bool
-        {
-            return $this->permissions()->where('name', $permissionName)->exists();
-        }
-
-        public function addPermission(Permission $permission): void
-        {
-            if (!$this->hasPermission($permission->name)) {
-                $this->permissions()->attach($permission->id);
-            }
-        }
-
-        public function removePermission(Permission $permission): void
-        {
-            $this->permissions()->detach($permission->id);
-        }
-
-        public function syncPermissions(array $permissionIds): void
-        {
-            $this->permissions()->sync($permissionIds);
-        }
-
-        public function getUsersCount(): int
-        {
-            return $this->users()->count();
+    public function addPermission(Permission $permission): void
+    {
+        if (! $this->hasPermission($permission->name)) {
+            $this->permissions()->attach($permission->id);
         }
     }
+
+    public function removePermission(Permission $permission): void
+    {
+        $this->permissions()->detach($permission->id);
+    }
+
+    public function syncPermissions(array $permissionIds): void
+    {
+        $this->permissions()->sync($permissionIds);
+    }
+
+    public function getUsersCount(): int
+    {
+        return $this->users()->count();
+    }
+}

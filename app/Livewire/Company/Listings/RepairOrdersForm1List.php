@@ -53,10 +53,10 @@ class RepairOrdersForm1List extends Component
     public function mount()
     {
         // Verificar permissões
-        if (! auth()->user()->can('repair_orders.form1.view') && ! auth()->user()->isCompanyAdmin()) {
-            // abort(403, 'Sem permissão para visualizar ordens do Formulário 1.');
-            return redirect()->route('company.my-permissions')->with('error', 'Sem permissão para visualizar ordens do Formulário 1.');
-        }
+        // if (! auth()->user()->can('repair_orders.form1.view') && ! auth()->user()->isCompanyAdmin()) {
+        //     // abort(403, 'Sem permissão para visualizar ordens do Formulário 1.');
+        //     return redirect()->route('company.my-permissions')->with('error', 'Sem permissão para visualizar ordens do Formulário 1.');
+        // }
 
         $this->loadFilterData();
         $this->calculateMetrics();

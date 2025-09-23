@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.unified' => \App\Http\Middleware\AuthenticatedMiddleware::class,
             'user.type' => \App\Http\Middleware\UserTypeMiddleware::class,
             'form.access'=>\App\Http\Middleware\System\CheckFormAccess::class,
+            'form.permission' => \App\Http\Middleware\CheckFormPermission::class,
             'permission'=> \App\Http\Middleware\CheckPermission::class,
             'portal.auth'=> \App\Http\Middleware\PortalEmployeeMiddleware::class,
             'manager.access'=>\App\Http\Middleware\CheckManagerAccess::class,

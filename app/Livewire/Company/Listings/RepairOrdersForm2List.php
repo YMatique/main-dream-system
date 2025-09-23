@@ -48,12 +48,12 @@ use WithPagination;
         'viewMode' => ['except' => 'table'],
     ];
 
-    public function mount()
+    public function mount($order=null)
     {
-        if (!auth()->user()->can('repair_orders.form2.view') && !auth()->user()->isCompanyAdmin()) {
-            // abort(403, 'Sem permissão para visualizar ordens do Formulário 2.');
-                        return  redirect()->route('company.my-permissions')->with('error', "Sem permissão para visualizar ordens do Formulário 2.");
-        }
+        // if (!auth()->user()->can('repair_orders.form2.view') && !auth()->user()->isCompanyAdmin()) {
+        //     // abort(403, 'Sem permissão para visualizar ordens do Formulário 2.');
+        //                 return  redirect()->route('company.my-permissions')->with('error', "Sem permissão para visualizar ordens do Formulário 2.");
+        // }
 
         $this->loadFilterData();
         $this->calculateMetrics();

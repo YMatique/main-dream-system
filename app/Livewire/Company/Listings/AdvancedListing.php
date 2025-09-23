@@ -73,6 +73,16 @@ class AdvancedListing extends Component
 
     public function mount()
     {
+          $user = auth()->user();
+         
+        
+        // Verificar permissão no mount
+        if (!in_array($user->user_type, ['super_admin', 'company_admin']) && 
+            !$user->can('repair_orders.view_all')) {
+            
+            return redirect()->route('company.my-permissions')
+                ->with('error', 'Sem acesso à listagem avançada. Contacte o administrador.');
+        }
         $this->initializeDefaultFilters();
         $this->loadFilterData();
         $this->defineAvailableFields();
