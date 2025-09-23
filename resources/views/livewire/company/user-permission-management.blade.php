@@ -659,7 +659,7 @@
 
                             <div class="space-y-6">
                                 <!-- Grupos de Permissões -->
-                                <div>
+                                {{-- <div>
                                     <h4 class="text-md font-medium text-zinc-900 dark:text-white mb-4">
                                         Grupos de Permissões
                                     </h4>
@@ -685,7 +685,7 @@
                                         </label>
                                         @endforeach
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <!-- Legenda -->
                                 <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">

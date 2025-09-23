@@ -174,6 +174,10 @@ class RepairOrdersForm3List extends Component
         $form3 = RepairOrderForm3::findOrFail($form3Id);
         return redirect()->route('company.repair-orders.form4', $form3->repair_order_id);
     }
+    public function editOrder($orderId)
+    {
+        return redirect()->route('company.repair-orders.form1', $orderId);
+    }
 
     public function viewOrder($form3Id)
     {

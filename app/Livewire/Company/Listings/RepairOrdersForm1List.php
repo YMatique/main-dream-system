@@ -223,6 +223,10 @@ class RepairOrdersForm1List extends Component
 
         return redirect()->route('company.repair-orders.form2', $order->id);
     }
+    public function editOrder($orderId)
+    {
+        return redirect()->route('company.repair-orders.form1', $orderId);
+    }
 
     public function viewOrder($orderId)
     {

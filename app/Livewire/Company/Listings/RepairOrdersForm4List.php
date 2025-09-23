@@ -14,21 +14,33 @@ class RepairOrdersForm4List extends Component
     use WithPagination;
 
     public $search = '';
+
     public $filterByOrderNumber = '';
+
     public $filterByMachineNumber = '';
+
     public $filterByStatus = '';
+
     public $filterByLocation = '';
+
     public $filterStartDate = '';
+
     public $filterEndDate = '';
+
     public $perPage = 15;
+
     public $sortField = 'created_at';
+
     public $sortDirection = 'desc';
+
     public $viewMode = 'table';
 
     public $statuses = [];
+
     public $locations = [];
 
     public $metrics = [];
+
     public $showMetrics = true;
 
     protected $queryString = [
@@ -55,7 +67,7 @@ class RepairOrdersForm4List extends Component
         $this->loadFilterData();
         $this->calculateMetrics();
 
-        if (!$this->filterStartDate && !$this->filterEndDate) {
+        if (! $this->filterStartDate && ! $this->filterEndDate) {
             $this->filterStartDate = Carbon::now()->subDays(30)->format('Y-m-d');
             $this->filterEndDate = Carbon::now()->format('Y-m-d');
         }
@@ -103,7 +115,7 @@ class RepairOrdersForm4List extends Component
 
         $query = RepairOrderForm4::with(['repairOrder', 'location', 'status']);
 
-        if (!$user->can('repair_orders.view_all')) {
+        if (! $user->can('repair_orders.view_all')) {
             if ($user->can('repair_orders.view_own')) {
                 $query->whereHas('repairOrder.form2.employees', function ($q) use ($user) {
                     $q->where('employee_id', $user->employee_id);
@@ -170,12 +182,18 @@ class RepairOrdersForm4List extends Component
     public function continueOrder($form4Id)
     {
         $form4 = RepairOrderForm4::findOrFail($form4Id);
+
         return redirect()->route('company.orders.form5', $form4->repair_order_id);
+    }
+
+    public function editOrder($orderId)
+    {
+        return redirect()->route('company.repair-orders.form1', $orderId);
     }
 
     public function viewOrder($form4Id)
     {
-        $form4 = RepairOrderForm4::with(['repairOrder', 'location', 'status','machineNumber'])->findOrFail($form4Id);
+        $form4 = RepairOrderForm4::with(['repairOrder', 'location', 'status', 'machineNumber'])->findOrFail($form4Id);
         $this->dispatch('show-order-details', [
             'form4Id' => $form4Id,
             'form4Data' => $form4->toArray(),
@@ -184,8 +202,9 @@ class RepairOrdersForm4List extends Component
 
     public function exportOrders($format = 'excel')
     {
-        if (!auth()->user()->can('repair_orders.export')) {
+        if (! auth()->user()->can('repair_orders.export')) {
             session()->flash('error', 'Sem permissão para exportar dados.');
+
             return;
         }
 
@@ -195,21 +214,21 @@ class RepairOrdersForm4List extends Component
             if ($this->search) {
                 $query->where(function ($q) {
                     $q->whereHas('repairOrder', function ($subQ) {
-                        $subQ->where('order_number', 'like', '%' . $this->search . '%')
-                             ->orWhere('machine_number', 'like', '%' . $this->search . '%');
+                        $subQ->where('order_number', 'like', '%'.$this->search.'%')
+                            ->orWhere('machine_number', 'like', '%'.$this->search.'%');
                     });
                 });
             }
 
             if ($this->filterByOrderNumber) {
                 $query->whereHas('repairOrder', function ($q) {
-                    $q->where('order_number', 'like', '%' . $this->filterByOrderNumber . '%');
+                    $q->where('order_number', 'like', '%'.$this->filterByOrderNumber.'%');
                 });
             }
 
             if ($this->filterByMachineNumber) {
                 $query->whereHas('repairOrder', function ($q) {
-                    $q->where('machine_number', 'like', '%' . $this->filterByMachineNumber . '%');
+                    $q->where('machine_number', 'like', '%'.$this->filterByMachineNumber.'%');
                 });
             }
 
@@ -233,10 +252,10 @@ class RepairOrdersForm4List extends Component
                 ];
             })->toArray();
 
-            $filename = 'ordens-form4-' . date('Y-m-d-H-i-s') . '.' . $format;
-            $filePath = storage_path('app/temp/' . $filename);
+            $filename = 'ordens-form4-'.date('Y-m-d-H-i-s').'.'.$format;
+            $filePath = storage_path('app/temp/'.$filename);
 
-            if (!file_exists(storage_path('app/temp'))) {
+            if (! file_exists(storage_path('app/temp'))) {
                 mkdir(storage_path('app/temp'), 0755, true);
             }
 
@@ -244,7 +263,7 @@ class RepairOrdersForm4List extends Component
                 case 'excel':
                 case 'csv':
                     $handle = fopen($filePath, 'w');
-                    if (!empty($exportData)) {
+                    if (! empty($exportData)) {
                         fputcsv($handle, array_keys($exportData[0]));
                         foreach ($exportData as $row) {
                             fputcsv($handle, $row);
@@ -255,18 +274,18 @@ class RepairOrdersForm4List extends Component
                 case 'pdf':
                     $html = '<html><body>';
                     $html .= '<h1>Ordens de Reparação - Formulário 4</h1>';
-                    $html .= '<p>Gerado em: ' . date('d/m/Y H:i:s') . '</p>';
-                    if (!empty($exportData)) {
+                    $html .= '<p>Gerado em: '.date('d/m/Y H:i:s').'</p>';
+                    if (! empty($exportData)) {
                         $html .= '<table border="1" cellpadding="5">';
                         $html .= '<tr>';
                         foreach (array_keys($exportData[0]) as $header) {
-                            $html .= '<th>' . htmlspecialchars($header) . '</th>';
+                            $html .= '<th>'.htmlspecialchars($header).'</th>';
                         }
                         $html .= '</tr>';
                         foreach ($exportData as $row) {
                             $html .= '<tr>';
                             foreach ($row as $cell) {
-                                $html .= '<td>' . htmlspecialchars($cell) . '</td>';
+                                $html .= '<td>'.htmlspecialchars($cell).'</td>';
                             }
                             $html .= '</tr>';
                         }
@@ -281,8 +300,8 @@ class RepairOrdersForm4List extends Component
 
             return response()->download($filePath, $filename)->deleteFileAfterSend();
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao exportar dados: ' . $e->getMessage());
-            \Log::error('Erro na exportação Form4: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao exportar dados: '.$e->getMessage());
+            \Log::error('Erro na exportação Form4: '.$e->getMessage());
         }
     }
 
@@ -293,25 +312,25 @@ class RepairOrdersForm4List extends Component
         if ($this->search) {
             $query->where(function ($q) {
                 $q->whereHas('repairOrder', function ($subQ) {
-                    $subQ->where('order_number', 'like', '%' . $this->search . '%')
-                         ->orWhere('machine_number', 'like', '%' . $this->search . '%');
+                    $subQ->where('order_number', 'like', '%'.$this->search.'%')
+                        ->orWhere('machine_number', 'like', '%'.$this->search.'%');
                 })
-                ->orWhere('machine_number', 'like', '%' . $this->search . '%');
+                    ->orWhere('machine_number', 'like', '%'.$this->search.'%');
             });
         }
 
         if ($this->filterByOrderNumber) {
             $query->whereHas('repairOrder', function ($q) {
-                $q->where('order_number', 'like', '%' . $this->filterByOrderNumber . '%');
+                $q->where('order_number', 'like', '%'.$this->filterByOrderNumber.'%');
             });
         }
 
         if ($this->filterByMachineNumber) {
             $query->where(function ($q) {
                 $q->whereHas('repairOrder', function ($subQ) {
-                    $subQ->where('machine_number', 'like', '%' . $this->filterByMachineNumber . '%');
+                    $subQ->where('machine_number', 'like', '%'.$this->filterByMachineNumber.'%');
                 })
-                ->orWhere('machine_number', 'like', '%' . $this->filterByMachineNumber . '%');
+                    ->orWhere('machine_number', 'like', '%'.$this->filterByMachineNumber.'%');
             });
         }
 
@@ -325,15 +344,15 @@ class RepairOrdersForm4List extends Component
 
         if ($this->sortField === 'repairOrder.order_number') {
             $query->join('repair_orders', 'repair_order_form4.repair_order_id', '=', 'repair_orders.id')
-                  ->orderBy('repair_orders.order_number', $this->sortDirection);
+                ->orderBy('repair_orders.order_number', $this->sortDirection);
         } elseif ($this->sortField === 'location.name') {
             $query->join('locations', 'repair_order_form4.location_id', '=', 'locations.id')
-                  ->orderBy('locations.name', $this->sortDirection);
+                ->orderBy('locations.name', $this->sortDirection);
         } elseif ($this->sortField === 'status.name') {
             $query->join('statuses', 'repair_order_form4.status_id', '=', 'statuses.id')
-                  ->orderBy('statuses.name', $this->sortDirection);
+                ->orderBy('statuses.name', $this->sortDirection);
         } else {
-            $query->orderBy('repair_order_form4.' . $this->sortField, $this->sortDirection);
+            $query->orderBy('repair_order_form4.'.$this->sortField, $this->sortDirection);
         }
 
         return $query->select('repair_order_form4.*')->paginate($this->perPage);
@@ -361,9 +380,10 @@ class RepairOrdersForm4List extends Component
     {
         return auth()->user()->can('repair_orders.create');
     }
+
     public function render()
     {
-        return view('livewire.company.listings.repair-orders-form4-list',[
+        return view('livewire.company.listings.repair-orders-form4-list', [
             'form4s' => $this->form4s,
             'metrics' => $this->metrics,
             'activeFiltersCount' => $this->activeFiltersCount,

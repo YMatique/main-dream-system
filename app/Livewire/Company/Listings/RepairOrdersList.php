@@ -306,10 +306,10 @@ class RepairOrdersList extends Component
         }
 
         // Verificar permissões de visualização
-        if (!$this->canViewOrder($order)) {
-            session()->flash('error', 'Sem permissão para visualizar esta ordem.');
-            return;
-        }
+        // if (!$this->canViewOrder($order)) {
+        //     session()->flash('error', 'Sem permissão para visualizar esta ordem.');
+        //     return;
+        // }
 
         // Dispatch evento para abrir modal de detalhes
         $this->dispatch('show-order-details', [

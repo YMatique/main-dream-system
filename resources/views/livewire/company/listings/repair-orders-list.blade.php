@@ -545,7 +545,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex items-center justify-end gap-2">
                                                 {{-- Ver detalhes --}}
-                                                <button wire:click="viewOrder({{ $order->id }})"
+                                                {{-- <button wire:click="viewOrder({{ $order->id }})"
                                                     class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
@@ -557,7 +557,7 @@
                                                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
                                                         </path>
                                                     </svg>
-                                                </button>
+                                                </button> --}}
 
                                                 {{-- Continuar/Editar --}}
                                                 @if (!$order->is_completed)
@@ -657,10 +657,10 @@
 
                                 {{-- Ações --}}
                                 <div class="flex justify-between items-center">
-                                    <button wire:click="viewOrder({{ $order->id }})"
+                                    {{-- <button wire:click="viewOrder({{ $order->id }})"
                                         class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm font-medium">
                                         Ver Detalhes
-                                    </button>
+                                    </button> --}}
 
                                     @if (!$order->is_completed)
                                         <button wire:click="continueOrder({{ $order->id }})"

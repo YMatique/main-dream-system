@@ -195,7 +195,7 @@
                 </div>
                 @if ($this->hasPermissionToExport)
                     <div class="flex gap-2">
-                        <button wire:click="exportOrders('excel')"
+                        {{-- <button wire:click="exportOrders('excel')"
                             class="px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 shadow-sm flex items-center">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -212,7 +212,7 @@
                                 </path>
                             </svg>
                             Exportar CSV
-                        </button>
+                        </button> --}}
                         <button wire:click="exportOrders('pdf')"
                             class="px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 shadow-sm flex items-center">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -285,6 +285,7 @@
                                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
                                         {{ Str::limit($order->form1?->descricao_avaria ?? '-', 50) }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <!-- Botão Ver -->
                                         <button wire:click="viewOrder({{ $order->id }})"
                                             class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-4 transition-colors duration-200 flex items-center">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
@@ -297,6 +298,20 @@
                                             </svg>
                                             Ver
                                         </button>
+
+                                        <!-- Botão Editar -->
+                                        <button wire:click="editOrder({{ $order->id }})"
+                                            class="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 mr-4 transition-colors duration-200 flex items-center">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                                </path>
+                                            </svg>
+                                            Editar
+                                        </button>
+
+                                        <!-- Botão Continuar -->
                                         <button wire:click="continueOrder({{ $order->id }})"
                                             class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors duration-200 flex items-center">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
@@ -500,8 +515,8 @@
                 <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Progresso</h4>
                 <div class="flex gap-1 mb-2">
                     ${Object.entries(data.completed_forms).map(([form, completed]) => `
-                            <div class="flex-1 h-2 rounded-full ${completed ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600'}"></div>
-                        `).join('')}
+                                <div class="flex-1 h-2 rounded-full ${completed ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-600'}"></div>
+                            `).join('')}
                 </div>
                 <div class="text-xs text-gray-500 dark:text-gray-400">
                     ${Object.keys(data.completed_forms).filter(f => data.completed_forms[f]).length} de ${Object.keys(data.completed_forms).length} formulários completados

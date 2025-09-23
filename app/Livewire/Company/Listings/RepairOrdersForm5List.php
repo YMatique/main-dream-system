@@ -213,7 +213,10 @@ class RepairOrdersForm5List extends Component
             'form5Data' => $form5->toArray(),
         ]);
     }
-
+    public function editOrder($orderId)
+    {
+        return redirect()->route('company.repair-orders.form1', $orderId);
+    }
     public function exportOrders($format = 'excel')
     {
         if (!auth()->user()->can('repair_orders.export')) {
