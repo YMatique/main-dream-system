@@ -518,7 +518,7 @@ class EvaluationApprovals extends Component
     {
         $currentYear = now()->year;
         $years = [];
-        for ($i = $currentYear - 2; $i <= $currentYear + 1; $i++) {
+        for ($i = $currentYear - 2; $i <= $currentYear + 5; $i++) {
             $years[$i] = $i;
         }
         return $years;

@@ -32,6 +32,7 @@ class PermissionGroupSeederNew extends Seeder
                     'forms.form5.access',
                     'repair_orders.view_all',
                     'repair_orders.export',
+                    'repair_orders.advanced_listing'
                 ],
             ],
 
@@ -50,7 +51,7 @@ class PermissionGroupSeederNew extends Seeder
                     'billing.hh.manage',
                     'billing.estimated.manage',
                     'billing.real.manage',
-                    'billing.view_all',
+                    // 'billing.view_all',
                     'reports.view',            // Para ver relatórios de faturação
                 ],
             ],
@@ -107,6 +108,7 @@ class PermissionGroupSeederNew extends Seeder
                 'sort_order' => 50,
                 'permissions' => [
                     'repair_orders.view_all',
+                    'repair_orders.advanced_listing',
                     'billing.view_all',
                     'reports.view',
                     'dashboard.view',

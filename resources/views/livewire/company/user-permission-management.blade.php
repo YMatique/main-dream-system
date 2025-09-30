@@ -707,7 +707,7 @@
                                     <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
                                         Selecione permissões extras além dos grupos escolhidos
                                     </p>
-                                    @foreach($availablePermissions->groupBy('category') as $category => $categoryPermissions)
+                                    {{-- @foreach($availablePermissions->groupBy('category') as $category => $categoryPermissions)
                                     <div class="mb-4">
                                         <h5 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2 capitalize">
                                             {{ str_replace('_', ' ', $category) }}
@@ -719,7 +719,7 @@
                                                        'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800': groupPermissions.includes({{ $permission->id }}),
                                                        'hover:bg-zinc-50 dark:hover:bg-zinc-700': !groupPermissions.includes({{ $permission->id }})
                                                    }">
-                                                <input wire:model="selectedPermissions" 
+                                                <input wire:model.live="selectedPermissions" 
                                                        type="checkbox" 
                                                        value="{{ $permission->id }}"
                                                        :checked="groupPermissions.includes({{ $permission->id }})"
@@ -735,6 +735,31 @@
                                                     </div>
                                                     <div class="text-xs text-zinc-500 dark:text-zinc-400">
                                                         {{ $permission->name }}
+                                                    </div>
+                                                </div>
+                                            </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @endforeach --}}
+                                      @foreach($availablePermissions->groupBy('category') as $category => $categoryPermissions)
+                                    <div class="mb-4">
+                                        <h5 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2 capitalize">
+                                            {{ str_replace('_', ' ', $category) }}
+                                        </h5>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                            @foreach($categoryPermissions as $permission)
+                                            <label class="flex items-center space-x-3 p-2 hover:bg-zinc-50 dark:hover:bg-zinc-700 rounded cursor-pointer">
+                                                <input wire:model="selectedPermissions" 
+                                                       type="checkbox" 
+                                                       value="{{ $permission->id }}"
+                                                       class="rounded border-zinc-300 dark:border-zinc-600 text-blue-600 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                                <div class="flex-1">
+                                                    <div class="text-sm text-zinc-900 dark:text-white">
+                                                        {{ $permission->display_name }}
+                                                    </div>
+                                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">
+                                                        {{ $permission->description }}
                                                     </div>
                                                 </div>
                                             </label>

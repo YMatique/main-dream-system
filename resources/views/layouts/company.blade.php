@@ -252,14 +252,14 @@
 
                                     @php
                                         $user = auth()->user();
-                                        $hasForm1List = $user->hasPermission('forms.form1.access');
-                                        $hasForm2List = $user->hasPermission('forms.form2.access');
-                                        $hasForm3List = $user->hasPermission('forms.form3.access');
-                                        $hasForm4List = $user->hasPermission('forms.form4.access');
-                                        $hasForm5List = $user->hasPermission('forms.form5.access');
+                                        $hasForm1List = $user->hasPermission('forms.form1.list');
+                                        $hasForm2List = $user->hasPermission('forms.form2.list');
+                                        $hasForm3List = $user->hasPermission('forms.form3.list');
+                                        $hasForm4List = $user->hasPermission('forms.form4.list');
+                                        $hasForm5List = $user->hasPermission('forms.form5.list');
 
                                         $hasAnyFormList = $hasForm1List || $hasForm2List || $hasForm3List || $hasForm4List || $hasForm5List;
-                                        $hasOrdersListAccess = auth()->user()->hasPermission('repair_orders.view_all');
+                                        $hasOrdersListAccess = auth()->user()->hasPermission('repair_orders.advanced_listing');
                                     @endphp
                                     @if ($hasAnyFormList || $hasOrdersListAccess)
                                         <div
@@ -701,7 +701,7 @@
                                     x-transition:enter-start="opacity-0 transform -translate-y-2"
                                     x-transition:enter-end="opacity-100 transform translate-y-0"
                                     class="ml-6 space-y-1">
-                                    @can('evaluation.metrics')
+                                    @if(auth()->user()->hasPermission('evaluation.metrics'))
                                         <a href="{{ route('company.performance.metrics') }}"
                                             class="group flex items-center px-4 py-2.5 text-sm rounded-lg transition-all duration-200
                       {{ request()->routeIs('company.performance.metrics')
@@ -713,7 +713,7 @@
                                             <span class="flex-1">Gestão de Métricas</span>
                                             <span class="text-xs text-orange-600 font-medium">GM</span>
                                         </a>
-                                    @endcan
+                                    @endif
                                     @if(auth()->user()->hasPermission('evaluation.stages'))
                                    
                                         <a href="{{ route('company.performance.evaluations.stages') }}"

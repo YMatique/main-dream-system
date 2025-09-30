@@ -44,6 +44,7 @@ use App\Livewire\System\PlanManagement;
 use App\Livewire\System\SubscriptionManagement;
 use App\Livewire\System\SystemDashboard;
 use App\Livewire\System\UserManagement;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -162,7 +163,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
         Route::get('/requesters', RequesterManagement::class)->name('requesters')->middleware('manager.access:requesters');
 
         // Custos por Cliente
-        Route::get('/client-costs', ClientCostManagement::class)->name('client-costs')->middleware('manager.access:locations:costs');
+        Route::get('/client-costs', ClientCostManagement::class)->name('client-costs')->middleware('manager.access:costs');
 
         // Usuários e Permissões
         Route::get('/users-permissions', UserPermissionManagement::class)->name('users-permissions')->middleware('manager.access:users');
@@ -262,7 +263,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
     
     // Listagem avançada - precisa ter acesso a todos os formulários
     Route::get('/advanced-list', AdvancedListing::class)
-        ->name('advanced-list');
+        ->name('advanced-list')->middleware('permission:repair_orders.advanced_listing');
         // ->middleware('can:has-permission,repair_orders.view_all');
 });
 
@@ -270,7 +271,7 @@ Route::prefix('company')->middleware(['auth.unified', 'user.type:company_admin,c
     Route::prefix('billing')->name('billing.')/* ->middleware('permission:billing.view_all') */ ->group(function () {
 
         // Faturação Real
-        Route::get('/real', BillingRealManagement::class)->name('real')->middleware('permission:billing.real.manage');
+        Route::get('/real', BillingRealManagement::class)->name('real')->middleware(['permission:billing.real.manage']);
 
         // Faturação Estimada
         Route::get('/estimated', BillingEstimatedManagement::class)->name('estimated')->middleware('permission:billing.estimated.manage');
@@ -417,4 +418,12 @@ Route::post('/company/logout', function () {
     ->middleware('auth')
     ->name('company.logout');
 
+Route::get('/clear-cache', function() {
+    Artisan::call('cache:clear');
+    Artisan::call('route:clear');
+    Artisan::call('config:clear');
+    Artisan::call('view:clear');
+
+    return "Cache de Aplicação, Rotas, Configurações e Views limpa com sucesso!";
+});
 require __DIR__.'/portal.php';

@@ -22,10 +22,10 @@
         <div class="mt-6">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-sm text-orange-100">Progresso dos Formulários</span>
-                <span class="text-sm text-orange-100">3 de 5</span>
+                <span class="text-sm text-orange-100">4 de 5</span>
             </div>
             <div class="w-full bg-white/20 rounded-full h-2">
-                <div class="bg-white h-2 rounded-full transition-all duration-300" style="width: 60%"></div>
+                <div class="bg-white h-2 rounded-full transition-all duration-300" style="width: 80%"></div>
             </div>
         </div>
 

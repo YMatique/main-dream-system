@@ -134,6 +134,14 @@ class PermissionSeederNew extends Seeder
                 'is_system' => true,
                 'sort_order' => 40,
             ],
+            [
+                'name' => 'repair_orders.advanced_listing',
+                'description' => 'Ver Listagem Avançada',
+                'category' => 'repair_orders',
+                'group' => 'repair_management',
+                'is_system' => true,
+                'sort_order' => 40,
+            ],
 
             // ========== FATURAÇÃO ==========
             [
@@ -253,21 +261,21 @@ class PermissionSeederNew extends Seeder
                 'sort_order' => 50,
             ],
             [
-                'name' => 'masters.statuses.manage',
-                'description' => 'Gerir estados',
+                'name' => 'masters.statuses_location.manage',
+                'description' => 'Gerir estados e localizações',
                 'category' => 'masters',
                 'group' => 'master_data',
                 'is_system' => true,
                 'sort_order' => 60,
             ],
-            [
-                'name' => 'masters.locations.manage',
-                'description' => 'Gerir localizações',
-                'category' => 'masters',
-                'group' => 'master_data',
-                'is_system' => true,
-                'sort_order' => 70,
-            ],
+            // [
+            //     'name' => 'masters.locations.manage',
+            //     'description' => 'Gerir localizações',
+            //     'category' => 'masters',
+            //     'group' => 'master_data',
+            //     'is_system' => true,
+            //     'sort_order' => 70,
+            // ],
             [
                 'name' => 'masters.machines.manage',
                 'description' => 'Gerir Máquinas',
@@ -312,14 +320,14 @@ class PermissionSeederNew extends Seeder
             ],
 
             // ========== RELATÓRIOS E EXPORTAÇÃO ==========
-            [
-                'name' => 'reports.view',
-                'description' => 'Ver relatórios',
-                'category' => 'reports',
-                'group' => 'reporting',
-                'is_system' => true,
-                'sort_order' => 10,
-            ],
+            // [
+            //     'name' => 'reports.view',
+            //     'description' => 'Ver relatórios',
+            //     'category' => 'reports',
+            //     'group' => 'reporting',
+            //     'is_system' => true,
+            //     'sort_order' => 10,
+            // ],
             [
                 'name' => 'exports.data',
                 'description' => 'Exportar dados',
