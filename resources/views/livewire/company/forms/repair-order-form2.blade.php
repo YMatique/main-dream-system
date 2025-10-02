@@ -48,6 +48,14 @@
                     <div class="text-sm text-green-100">Tempo Total</div>
                     <div class="text-2xl font-bold">{{ number_format($tempoTotalCalculado, 1) }}h</div>
                 </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div class="text-sm text-green-100">Número de Máquina</div>
+                    <div class="font-semibold">{{ $repairOrder->form1?->machineNumber?->number ?? 'N/A' }}</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div class="text-sm text-green-100">Descrição de Avaria</div>
+                    <div class=" text-sm ">   {{ \Illuminate\Support\Str::limit($repairOrder->form1?->descricao_avaria ?? 'N/A', 100) }}</div>
+                </div>
             </div>
         @endif
     </div>

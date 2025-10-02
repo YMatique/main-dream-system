@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-              $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
+            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('plan_id')->constrained('plans')->onDelete('restrict');
             $table->date('starts_at');
             $table->date('ends_at');
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamp('cancelled_at')->nullable();
             $table->string('cancelled_reason')->nullable();
             $table->timestamps();
-               $table->index(['company_id', 'status']);
+            $table->index(['company_id', 'status']);
             $table->index(['plan_id']);
             $table->index(['status']);
             $table->index(['starts_at', 'ends_at']);

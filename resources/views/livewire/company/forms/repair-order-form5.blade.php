@@ -49,6 +49,16 @@
                     <div class="text-xl font-bold">{{ number_format($this->orderSummary['total_hours_form5'], 1) }}h</div>
                 </div>
             </div>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div class="text-sm text-purple-100">Número de Máquina</div>
+                    <div class="text-xl font-bold">{{ $repairOrder->form1?->machineNumber?->number ?? 'N/A' }}</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div class="text-sm text-purple-100">Descrição de Avaria</div>
+                    <div class="text-sm">{{ \Illuminate\Support\Str::limit($repairOrder->form1?->descricao_avaria ?? 'N/A', 500) }}</div>
+                </div>
+            </div>
         @endif
     </div>
 
